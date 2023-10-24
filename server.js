@@ -332,7 +332,11 @@ app.get('/list/:num', async (요청, 응답) => {
     console.log(요청.params.num)
     let result = await db.collection('post').find().sort({ _id: -1 }).skip((요청.params.num-1)*5).limit(5).toArray()
     let cnt = await db.collection('post').count();
-    응답.render('list.ejs', { 글목록 : result , 글수 : cnt})
+    if(요청.user==undefined){
+        응답.render('list.ejs', { 글목록 : result , 글수 : cnt, 채팅사람 : "익명"})
+    } else {
+        응답.render('list.ejs', { 글목록 : result , 글수 : cnt, 채팅사람 : 요청.user.username})
+    }
 }) 
 
 
@@ -345,8 +349,11 @@ app.get('/list/next/:num', async (요청, 응답) => {
         응답.send('글 없샤🤍')
     }
     else{
-        
-        응답.render('list.ejs', { 글목록 : result, 글수 : cnt})
+        if(요청.user==undefined){
+            응답.render('list.ejs', { 글목록 : result , 글수 : cnt, 채팅사람 : "익명"})
+        } else {
+            응답.render('list.ejs', { 글목록 : result , 글수 : cnt, 채팅사람 : 요청.user.username})
+        }
     }
 }) 
 
@@ -520,31 +527,13 @@ app.post('/addlike', async (요청, 응답)=>{
     await db.collection('post').updateOne({ _id : new ObjectId(요청.body.postid)}, {$inc : {like : 1}})
 })
 
-// app.get('/dele', async (요청, 응답)=>{
-//     await db.collection('message').deleteMany({parent : null})
-//     응답.redirect('/list/1')
-// })
 
-// app.get('/socket', function(요청, 응답){
-//     응답.render('socket.ejs')
-// })
+io.on('connection', function(socket){
+    console.log('유저 웹소켓 접속됨');
 
-// io.on('connection', function(socket){
-//     console.log('유저 접속됨');
+    socket.on('user-send', function(data){
+        console.log(data);
+        io.emit('broadcast', data); 
+    });
 
-//     socket.on('joinroom', function(data){
-//         socket.join('room1');
-//     });
-
-//     socket.on('user-send', function(data){
-//         console.log(data);
-//         io.emit('broadcast', data); // 참여자 전원에게
-//         // io.to(socket.id).emit('broadcast', data) //1:1
-//     });
-
-//     socket.on('room1-send', function(data){
-//         io.to('room1').emit('broadcast', data)
-//     });   
-
-
-// })
+})

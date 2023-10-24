@@ -34,43 +34,51 @@
                         <button type="submit" class="btn btn-danger chat" data-id="<%= 글목록[i].작성자_id %>"
                             data-title="<%= 글목록[i].title %>">채팅하기</button>
                     </form>
-                    <!-- <button type="submit" class="btn btn-danger chat" data-id="<%= 글목록[i].작성자_id %>"
-                    data-title="<%= 글목록[i].title %>">채팅하기</button> -->
-
                 </h4>
             </div>
             
         <p style="clear: both; margin: 0px;"></p>
         </div>      
     <% }%>
-    <!-- <div>
-        <p>1234</p>
-    </div> -->
-    <div style="text-align: center;">
-        <%for (let i=0; i<Math.ceil(글수/5); i++){ %>
-            <span class="page-btn" data-num="<%= i+1 %>"><%= i+1 %></span>
-        <% }%>
-    </div>
-    <div style="text-align: center;">
-        <a class="list-loc" style="text-align: center;" href="/list/next/<%= 글목록[글목록.length-1]._id %>">다음페이지</a>
-    </div>
-    <div class="list-box">
-        <a href="/plus">글쓰기✏️</a>
-    </div>
-    <!-- 첫번째 검색기능 -->
-    <!-- <form style="height: 50px;" action="/search" method="POST">
-        <div style="text-align: center;">
-            <input class="search" type="text" name="info" placeholder="full-scan_구린성능">
-            <button type="submit">검색</button>
+    <div>
+        <div class="list-box" style="float: left; width: 20%;">
+            <button style="border: none; background-color: white;
+            border-radius: 5px; margin-left: 5px;"><a href="/plus"
+            style="text-decoration-line: none;">글쓰기✏️</a></button>
         </div>
-    </form> -->
-    <!-- 두번째 검색기능 -->
+        <div style="width: 80%; float: left;">
+            <p style="width: 23%; float: left;"></p>
+                <%for (let i=0; i<Math.ceil(글수/5); i++){ %>
+                    <span class="page-btn" data-num="<%= i+1 %>"><%= i+1 %></span>
+                <% }%>
+        </div>
+    </div>
+    <div style="text-align: center;">
+        <a class="list-loc" style="text-align: center;" 
+        href="/list/next/<%= 글목록[글목록.length-1]._id %>">다음페이지</a>
+    </div>
     <div style="text-align: center;">
         <input class="search_2" id="ssearch-input" placeholder="글제목으로 검색">
         <button type="submit" id="ssearch">검색</button>
     </div>
 
+    <!-- <div style="margin:10px">
+        <div>단체채팅방</div>
+        <input id="input1">
+        <button id="send">서버에 메세지 보내긔</button>
+    </div> -->
+    <div style="background-color: white; width: 50%; margin: 10px; height: 150px;">
+        <div class="input-group mb-3" style="margin-bottom: 0px !important;">
+            <input type="text" id="input1" class="form-control" aria-describedby="button-addon2" style="height: 25px;">
+            <button class="btn btn-outline-secondary" type="button" id="button-addon2"
+            style="height: 25px; background-color: #b8db95;"></button>
+        </div>
+        <div id="chatBox">
+        </div>
+    </div>
+
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
     <script>
         console.log('<%= 글목록.length %>')
         for (let i=0; i<'<%= 글목록.length %>'; i++){ 
@@ -118,14 +126,23 @@
             window.location.replace(`/list/${num}`) 
         });
 
-        // $('.page-btn').on('click', function(e){
-        //     var a = $(this)
-        //     a.css("background-color","#AAFA82");
-        //     $(this).css("background-color","#AAFA82");
-        //     var num = e.target.dataset.num;
-        //     window.location.replace(`/list/${num}`) 
-        // })
+        var socket = io();
 
+        $('#button-addon2').click(function(){
+            socket.emit('user-send', $('#input1').val())
+            $('#input1').val(''); 
+        })
+
+        $('.input-group').keypress(function(e){
+            if (e.keyCode===13){
+            socket.emit('user-send', $('#input1').val())
+            $('#input1').val(''); 
+            }
+        })
+        socket.on('broadcast', function(data){        
+            var chat = `<div class="chatOne">${'<%= 채팅사람 %>'}: ${data}<div>`
+            $('#chatBox').append(chat)
+        })
     </script>
     
 

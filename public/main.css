@@ -1,4 +1,5 @@
-body {
+  body 
+  {
     margin: 0;
   }
   .nav {
@@ -279,3 +280,16 @@ body {
     border-radius: 5px;
   }
 
+  .everyChat {
+    margin: auto;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    height: 150px;
+    width: 300px;
+    border: 1px solid black;
+    background-color: #b8db95;
+  }
+  .chatOne{
+    height: 15px;
+    font-size: small;
+  }

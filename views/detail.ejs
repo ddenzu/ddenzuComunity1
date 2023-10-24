@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="\main.css">
+</head>
+<body class="grey-bg">
+    <%- include('nav.ejs') %>
+    <div class="detail-bg">
+        <h4 style="font-size: x-large; padding: 5px; margin: 0px; border-top: 1px solid #4a4a4a;
+        border-bottom: 1px solid #4a4a4a;"><%= 글목록.title %></h4>
+        <p style="font-size: small;">작성자:  
+            <img style="width: 25px; height: 25px;" src="/image/<%= 프로필 %>" onerror="this.src='/image/dinosaur.png'"/><%= 글목록.작성자 %></p>
+        <div class="img-box">
+            <img src="<%= 이미지주소 %>">
+            <video src="<%= 동영상주소 %>" type="video/mp4" controls muted loop autoplay 
+            playsinline preload="metadata" 
+            style="width: 200px" onerror="this.style.display='none';">
+            </video>
+        </div>
+        <p><%= 글목록.content %></p>
+        <div>
+            <div class="like-box">
+                <div>
+                    <span name="like" class="like" data-postId="<%= 글목록._id %>">👍</span>
+                    <p class="like" style="margin: 0px;"><%= 글목록.like %></p>
+                </div>
+            </div>
+        </div>
+    </div> 
+
+    <div class="comment">
+        <form class="comment-write" action="/comment" method="POST">
+            <input class="commentInput" id="send-input" name="comment" size="5">
+            <button type="submit" class="comment-push" id="send">작성</button>
+        </form>
+        <div id="comment-box">
+            <%for (let i=0; i<댓글목록.length; i++){ %>
+                <p style="text-align: left; margin-bottom: 30px; clear: both">
+                    <div class="profile">
+                        <div class="profileImage">
+                            <img src="/image/<%= 댓글목록[i].userprofile %>">
+            
+                        </div>
+                        <div class="profile2">
+                            <div class="profiletext"><%= 댓글목록[i].username %></div>
+                        </div>
+                    </div>
+                    <div class="profile3"><%= 댓글목록[i].content %></div>
+                    <span name="add" id="commentDel" data-id="<%= 댓글목록[i]._id %>"
+                        data-postId="<%= 댓글목록[i].postId %>" data-userId="<%= 댓글목록[i].userId %>">🗑️</span>
+                    <br>
+                </p>
+            <% }%>
+        </div>
+    </div>
+    <div class="infomation" style="background-color:rgba(0, 0, 0, 0.2);">
+        <p style="font-weight: bold; height: 10vh;">⛔알림⛔<br>
+          <span style="color:red">1. (댓글작성, 삭제, 좋아요) 는 새로고침 후 적용됨<br></span>
+        </p>
+      </div>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script>
+        var 지금누른작성글id = '<%= 글목록._id %>'
+        var 지금누른작성글이름 = '<%= 글목록.title %>'
+        var 지금누른작성글 = '<%= 글목록.content %>'
+        var 지울거
+        $(document).on("click","span[name='add']", function(e){
+            var 지울거 = {id : this.dataset.id,
+            userId : this.dataset.userid}
+            $.post('/deletee2', 지울거).then(()=> {
+          })
+        })
+        $('#send').click(function(){
+            var 댓글내용 = $('#send-input').val();
+            var 보낼거 = {
+                parent : 지금누른작성글id,
+                content : 댓글내용,
+            }
+
+            $.post('/comment', 보낼거).then(()=> {
+            })
+            $('#chat-input').val('');
+        })     
+        $(document).on("click","span[name='like']", function(e){
+            var 보낼거 = {postid : 지금누른작성글id,
+            }
+            $.post('/addlike', 보낼거).then(()=> {
+          })
+        })
+        if(document.querySelector('.profile2').innerHTML.length>2){
+            document.querySelector('.profile2').innerText.substr(0,3)
+        }
+        var box = $(".profile2");
+        $('.profile2').change(function(){
+            console.log('변경')
+        })
+    </script>
+</body>
+</html>

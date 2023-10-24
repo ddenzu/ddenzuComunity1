@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="\main.css">
+</head>
+
+<body class="grey-bg">
+
+    <%- include('nav.ejs') %>
+
+    <!-- ejs 파일에선 아무데서나 자바스크립트문법 사용 가능  -->
+    <%for (let i=0; i<글목록.length; i++){ %>
+        <div class="white-bg">
+            <div class="list-box">
+            <h4>
+                <a href="/detail/<%= 글목록[i]._id %>"><%= 글목록[i].title %></a>
+                <a href="/edit/<%= 글목록[i]._id %>">✏️</a>
+                <span class="delete" data-id="<%= 글목록[i]._id %>">🗑️</span>
+            </h4>
+            <p><%= 글목록[i].content %></p>
+            </div>
+        </div>      
+    <% }%>
+
+    <div class="list-box">
+        <a href="/plus">+✏️</a>
+    </div>
+
+    <!-- <a href="/list/next/<%= 글목록[글목록.length-1]._id %>">다음</a> -->
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script>
+        
+    </script>
+    
+
+</body>
+
+
+</html>

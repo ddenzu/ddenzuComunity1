@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="\main.css">
+</head>
+
+<body class="grey-bg">
+
+    <%- include('nav.ejs') %>
+
+    <!-- ejs 파일에선 아무데서나 자바스크립트문법 사용 가능  -->
+    <%for (let i=0; i<글목록.length; i++){ %>
+        <div class="white-bg">
+            <div class="list-box">
+            <% if(글목록[i].vidName !== undefined){ %>
+                <a href="/detail/<%= 글목록[i]._id %>">
+                    <img class="list-left" src="/image/<%= 글목록[i].imgName %>" onerror="this.src='/image/dinosaurVid.png'" />
+                </a>
+            <% } else { %>
+                <a href="/detail/<%= 글목록[i]._id %>">
+                    <img class="list-left" src="/image/<%= 글목록[i].imgName %>" onerror="this.src='/image/dinosaur.png'" />
+                </a>
+            <% } %>
+                <h4 class="list-right">
+                    <a href="/detail/<%= 글목록[i]._id %>"><%= 글목록[i].title %></a>
+                    <a href="/edit/<%= 글목록[i]._id %>">✏️</a>
+                    <span class="delete" data-id="<%= 글목록[i]._id %>">🗑️</span>
+                    <p>작성자: <%= 글목록[i].작성자 %></p>
+                    <form action="/chat" method="POST">
+                        <button type="submit" class="btn btn-danger chat" data-id="<%= 글목록[i].작성자_id %>"
+                            data-title="<%= 글목록[i].title %>">채팅하기</button>
+                    </form>
+                    <!-- <button type="submit" class="btn btn-danger chat" data-id="<%= 글목록[i].작성자_id %>"
+                    data-title="<%= 글목록[i].title %>">채팅하기</button> -->
+
+                </h4>
+            </div>
+            
+        <p style="clear: both; margin: 0px;"></p>
+        </div>      
+    <% }%>
+    <!-- <div>
+        <p>1234</p>
+    </div> -->
+    <div style="text-align: center;">
+        <%for (let i=0; i<Math.ceil(글수/5); i++){ %>
+            <span class="page-btn" data-num="<%= i+1 %>"><%= i+1 %></span>
+        <% }%>
+    </div>
+    <div style="text-align: center;">
+        <a class="list-loc" style="text-align: center;" href="/list/next/<%= 글목록[글목록.length-1]._id %>">다음페이지</a>
+    </div>
+    <div class="list-box">
+        <a href="/plus">글쓰기✏️</a>
+    </div>
+    <!-- 첫번째 검색기능 -->
+    <!-- <form style="height: 50px;" action="/search" method="POST">
+        <div style="text-align: center;">
+            <input class="search" type="text" name="info" placeholder="full-scan_구린성능">
+            <button type="submit">검색</button>
+        </div>
+    </form> -->
+    <!-- 두번째 검색기능 -->
+    <div style="text-align: center;">
+        <input class="search_2" id="ssearch-input" placeholder="글제목으로 검색">
+        <button type="submit" id="ssearch">검색</button>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script>
+        console.log('<%= 글목록.length %>')
+        for (let i=0; i<'<%= 글목록.length %>'; i++){ 
+            document.querySelectorAll('.delete')[i].addEventListener('click', function(e){
+                if (confirm('징짜 삭제?')==true){
+                    fetch('/delete/?docid=' + e.target.dataset.id, {
+                    method : 'DELETE',
+                    })
+                    .then((r)=>r.text())
+                    .then((r)=>{
+                        e.target.parentElement.parentElement.style.display = 'none'
+                        // confirm('삭제 완료')
+                    }) // 삭제버튼 누르면 부모요소 통채로 숨김
+                }
+                else {
+                    return 0
+                }
+            })
+        }
+         
+        // 두번째 검색기능
+        $('#ssearch').click(function(){
+            var 입력값 = $('#ssearch-input').val()
+            window.location.replace('/ssearch?value='+입력값)  // url 바꾸는 함수 (get요청변환)
+        })
+
+        $('.chat').click(function(e){
+            var id = e.target.dataset.id;
+            var title = e.target.dataset.title;
+            $.post('/chatroom', {당한사람id : id, 채팅방 : title}).then(()=>{
+                console.log('성공')
+            })
+        });
+        $('.search_2').keypress(function(e){
+          if (e.keyCode===13){
+            var 입력값 = $('#ssearch-input').val()
+            window.location.replace('/ssearch?value='+입력값) 
+          }})
+
+        $('.page-btn').click(function(e){
+            var a = $(this)
+            a.css("background-color","#AAFA82");
+            $(this).css("background-color","#AAFA82");
+            var num = e.target.dataset.num;
+            window.location.replace(`/list/${num}`) 
+        });
+
+        // $('.page-btn').on('click', function(e){
+        //     var a = $(this)
+        //     a.css("background-color","#AAFA82");
+        //     $(this).css("background-color","#AAFA82");
+        //     var num = e.target.dataset.num;
+        //     window.location.replace(`/list/${num}`) 
+        // })
+
+    </script>
+    
+
+</body>
+
+
+</html>

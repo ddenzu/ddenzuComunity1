@@ -1,0 +1,281 @@
+body {
+    margin: 0;
+  }
+  .nav {
+    display: flex;
+    padding: 15px;
+    align-items: center;
+    background : white
+  }
+  .nav a {
+    margin-right: 10px;
+  }
+  .logo {
+    font-weight: bold;
+  }
+  .grey-bg {
+    background: #eee;
+  }
+  .white-bg {
+    /* clear: both; */
+    background: white;
+    margin: 10px;
+    border-radius: 5px;
+  }
+  .list-box {
+    padding : 0px;
+    /* border-bottom: 1px solid#eee; */
+  }
+  .list-box h4{
+    font-size: 16px;
+    margin: 5px;
+  }
+  .list-right {
+    float: left;
+  } 
+  .list-left {
+    float: left;
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+  } 
+
+  .list-box p {
+    font-size: 13px;
+    margin: 5px;
+    color: grey;
+  }
+  input,div {
+    box-sizing: border-box;
+  }
+  .form-box {
+    background : white;
+    padding : 25px;
+    margin: 20px;
+    border-radius: 8px;
+  }
+  .form-box input {
+    padding : 10px;
+    font-size: 16px;
+    width: 100%;
+    border: 1px solid black;
+    border-radius: 5px;
+    margin-bottom: 10px;
+  }
+  .form-box button {
+    padding: 10px;
+    border : none;
+    background : lightgrey;
+    border-radius: 5px;
+  }
+  .detail-bg {
+    background: white;
+    padding: 15px;
+    margin-top: 10px;
+  }
+
+  .search {
+    height: 30px;
+    text-align: center;
+    width: 30%;
+    border: 1px solid black;
+    border-radius: 5px;
+  }
+  .search_2 {
+    border-radius: 5px;
+    border: 1px solid #202124;
+  }
+  #ssearch {
+    background-color: #b8db95;
+    border-radius: 5px;
+    border: 1px solid #202124;
+  }
+  .dark-btn {
+    margin-left: auto;
+    margin-right: 5px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: bold;
+  }
+  .profile-input {
+    background-color: white;
+  }
+  .my {
+    margin-left: auto;
+    font-weight: bold;
+  }
+
+  .reg {
+    font-weight: bold;
+  }
+  .chat-content {
+    height: 450px;
+    overflow-y: scroll;
+    padding: 10px;
+  }
+  .chat-content li {
+    margin-top: 10px;
+    list-style: none;
+  }
+  .text-small {
+    font-size: 12px;
+    color: gray;
+    margin-bottom: 0;
+  }
+  .chat-box {
+    background: #eee;
+    padding: 5px;
+    border-radius: 5px;
+    float: left;
+  }
+  .mine {
+    float: right;
+  } 
+
+  .chat-box {
+    margin-top: 10px;
+    background-color: white;
+  }
+  .time-box {
+    font-size: 7px;
+  }
+  .chat-content li {
+    margin: 0px;
+  }
+  .chat-room{
+    background-color: #b8db95;
+    border-radius: 5px;
+    border: 1px solid grey;
+  }
+
+  .list-group-item {
+    display: inline-block;
+    text-align: left;
+
+  }
+  .dele {
+    border: none;
+    background-color: whitesmoke;
+    border-radius: 10px;
+    display: inline-block;
+  }
+
+  .chat {
+    background-color: #b8db95;
+    border: none;
+  }
+
+  .info {
+    text-align: center;
+  }
+
+  .infomation {
+    /* margin-left: 55px; */
+    height: auto;
+    margin: 40px auto;
+    width: 80%;
+    text-align: center;
+    background-color:rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+  }
+
+  .like-box {
+    height: 35px;
+    width: 20%;
+    border-radius: 15px;
+    background-color: #EEEEEE;
+    margin-left: 75%;
+  }
+
+  .like {
+    float: left;
+    padding: 5px;
+    text-align: center;
+    margin-left: 10px;
+  }
+
+  .comment {
+    width: 90%;
+    overflow:auto; 
+    background : white;
+    padding : 10px;
+    margin-top: 5px;
+    text-align: center;
+    border-radius: 15px;
+    margin: auto;
+    margin-top: 10px;
+  }
+
+  .commentInput {
+    width: 80%;
+    border-radius: 10px;
+    border: 1px solid black;
+    padding: 5px;
+  }
+
+  .send {
+    background-color: white;
+    border-radius: 10px;
+    border: 1px solid black;
+  }
+
+  .profile {
+    background-color:rgba(184, 219, 149, 0.5);
+    width: 42px;
+    height: 42px;
+    border-radius: 25px;
+    float: left;
+    position: relative;
+  }
+  .profile2 {
+    margin-top: 6px;
+    width: 90%;
+    height: 90%;
+    position: absolute;
+    transform: translate(0%,-40%);
+    text-align: center;
+  }
+  .profileImage {
+    margin-top: 1px;
+    width: 100%;
+    vertical-align: middle;
+  }
+  .profile3 {
+    max-width: 75%;
+    float: left;
+    margin-top: 7px;
+    margin-left: 5px;
+    border-bottom: 1px solid;
+
+  }
+  #commentDel {
+    margin-top: 7px;
+    float: right;
+  }
+  .comment-push {
+    border-radius: 10px;
+    border: 1px solid black;
+    background-color: white;
+    padding: 5px;
+    
+    
+  }
+  .dark {
+    background: #303134;
+    color : white;
+  }
+  .profiletext{
+    margin-left: 5px;
+    overflow: hidden;
+    white-space  : nowrap;
+  }
+  .page-btn{
+    padding-left: 4px;
+    padding-right: 4px;
+    /* margin: 1px; */
+    background-color: white;
+    font-size: larger;
+    border: 1px solid black;
+    border-radius: 5px;
+  }
+

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="\main.css">
+</head>
+<body class="grey-bg">
+    <%- include('nav.ejs') %>
+    <form class="form-box" action="/register" method="POST">
+        <h4>가입하기</h4>
+        <input name="username" placeholder="ID"> 
+        <input name="password" type="password" placeholder="PASSWORD"> 
+        <button type="submit">가입</button>
+    </form> 
+</body>
+</html>

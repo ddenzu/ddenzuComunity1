@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="\main.css">
+</head>
+<body class="grey-bg">
+    <%- include('nav.ejs') %>
+    <div class="container p-4 detail">
+        <div class="row">
+          <div class="col-3">
+            <ul class="list-group chat-list">
+                <% for (let i = 0; i < data.length; i++ ){%>
+                    <li class="list-group-item" data-id="<%= data[i]._id %>" data-i="<%= i %>" 
+                      data-cnt=0>
+                        <h6><%= data[i].title %></h6>
+                        <button class="dele" data-id="<%= data[i]._id %>">🗑️</button>
+                    </li>
+                <%}%>
+             </ul>
+           </div>
+      
+           <div class="col-9 p-0">
+             <div class="chat-room">
+                <ul class="list-group chat-content">
+                  <div class="infomation">
+                    <p style="font-weight: bold;">⛔사용방법⛔<br>
+                      1. 왼쪽선택창에서 채팅방 선택 후 채팅 시작<br>
+                      2. 채팅방 삭제 : 쓰레기통 아이콘 누른 후 새로고침<br>
+                      3. 글쓴이가 글 삭제하면 채팅방도 사라짐<br>
+                    </p>
+                  </div>
+                </ul>
+              <div class="input-group">
+                <input class="form-control" id="chat-input">
+                <button class="btn btn-secondary" id="send">전송</button>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div> 
+
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script>
+        var 지금누른채팅방id
+        var 채팅방삭제id
+        var eventSource;
+        var cnt;
+        $('.list-group-item').click(function(e){
+          지금누른채팅방id = this.dataset.id;
+          $('.chat-content').html('');
+          if(eventSource != undefined){
+            eventSource.close()
+          }
+          var 현재사람 = '<%= cur %>';
+          eventSource = new EventSource('/message/' + 지금누른채팅방id);
+          eventSource.addEventListener('test', function(e){
+            var 가져온거 = JSON.parse(e.data);
+            가져온거.forEach(function(i){
+              if(i.userid==현재사람){
+                $('.chat-content').append('<li><span class="chat-box mine">'+i.content+'</span></li>')
+                $('.chat-content').append('<li><span class="mine time-box">'+i.date+'</span></li>')
+              } 
+              else {
+                $('.chat-content').append('<li><span class="chat-box">'+i.content+'</span></li>')
+                $('.chat-content').append('<li><span class="time-box">'+i.date+'</span></li>')
+              }
+            })
+            var 실제높이 = document.querySelector('.chat-content').scrollHeight;
+            $('.chat-content').scrollTop(실제높이+100); // 여기서 스크롤맨밑으로 (데이터를 수신했을때)
+          })
+          if(this.dataset.cnt.length%2==1){
+            document.querySelectorAll('.list-group-item')[this.dataset.i].style.backgroundColor ="#5F5F5F";
+            document.querySelectorAll('.list-group-item')[this.dataset.i].style.border ='none';
+            document.querySelectorAll('.list-group-item')[this.dataset.i].style.color ='white';
+            this.dataset.cnt+=1;
+          }   
+          else{
+            document.querySelectorAll('.list-group-item')[this.dataset.i].style.backgroundColor ="white";
+            document.querySelectorAll('.list-group-item')[this.dataset.i].style.border ='1px solid rgba(0,0,0,.125)';
+            document.querySelectorAll('.list-group-item')[this.dataset.i].style.color ='#212529';
+            document.querySelectorAll('.list-group-item')[this.dataset.i].style.padding ='.5rem 1rem';
+            this.dataset.cnt+=1;
+          }
+        })
+        $('#send').click(function(){
+            var 채팅내용 = $('#chat-input').val();
+            var 보낼거 = {
+                parent : 지금누른채팅방id,
+                content : 채팅내용,
+            }
+            $.post('/message', 보낼거).then(()=> {
+            })
+            $('#chat-input').val('');
+        })
+        $('.input-group').keypress(function(e){
+          if (e.keyCode===13){
+            var 채팅내용 = $('#chat-input').val();
+            var 보낼거 = {
+                parent : 지금누른채팅방id,
+                content : 채팅내용,
+            }
+            $.post('/message', 보낼거).then(()=> {
+            })
+            $('#chat-input').val(''); 
+          } 
+        })
+
+        $('.dele').click(function(e){
+          채팅방삭제id = this.dataset.id  
+          var 보낼거 = {삭제id : 채팅방삭제id};
+          $.post('/deletee', 보낼거).then(()=> {
+          })
+        })
+
+
+    </script>
+</body>
+</html>

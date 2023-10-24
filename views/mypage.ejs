@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="\main.css">
+</head>
+<body class="grey-bg">
+    <%- include('nav.ejs') %>
+    <div style="margin-left: 10px;">
+        <h4>마이페이지</h4>
+        <p> ID : <%= 아이디.username %></p>
+        <img src="/image/<%= 아이디.imgName %>">
+        <form method="POST" action="/addprofile" enctype="multipart/form-data">
+            <input type="file" name="img1" accept="image/*">
+            <button type="submit">전송</button>
+        </form>
+        <form>
+            <a href="/logout">로그아웃</a>
+        </form>
+    </div>
+
+    <script>
+        document.querySelectorAll('.delete')[i].addEventListener('click', function(e){
+            e.target.parentElement.parentElement.style.display = 'none'
+        })
+    </script>
+</body>
+</html>

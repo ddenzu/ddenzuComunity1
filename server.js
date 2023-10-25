@@ -437,7 +437,6 @@ app.get('/logout',function(요청, 응답){
 // app.get('/image/:imageName', function(요청, 응답){
 //     응답.sendFile( __dirname + '/public/image' + 요청.params.imageName)
 // })
-// app.use('/board/sub',require('./routes/board.js'))
 
 
 app.post('/chatroom', checkLogin, function(요청, 응답){

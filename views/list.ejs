@@ -67,7 +67,19 @@
         <input id="input1">
         <button id="send">서버에 메세지 보내긔</button>
     </div> -->
-    <div style="background-color: white; width: 50%; margin: 10px; height: 150px;">
+    <div>
+        <div style="background-color: white; width: 50%; height: 150px; margin: auto; margin-top: 10px;
+        margin-bottom: 10px; overflow-y: scroll;">
+            <div class="input-group mb-3" style="margin-bottom: 0px !important;">
+                <input type="text" id="input1" class="form-control" aria-describedby="button-addon2" style="height: 25px;">
+                <button class="btn btn-outline-secondary" type="button" id="button-addon2"
+                style="height: 25px; background-color: #b8db95;"></button>
+            </div>
+            <div id="chatBox">
+            </div>
+        </div>
+    </div>
+    <!-- <div style="background-color: white; width: 50%; margin: 10px; height: 150px;">
         <div class="input-group mb-3" style="margin-bottom: 0px !important;">
             <input type="text" id="input1" class="form-control" aria-describedby="button-addon2" style="height: 25px;">
             <button class="btn btn-outline-secondary" type="button" id="button-addon2"
@@ -75,7 +87,7 @@
         </div>
         <div id="chatBox">
         </div>
-    </div>
+    </div> -->
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
@@ -89,7 +101,8 @@
                     })
                     .then((r)=>r.text())
                     .then((r)=>{
-                        e.target.parentElement.parentElement.style.display = 'none'
+                        // e.target.parentElement.parentElement.style.display = 'none'
+                        location.reload();
                         // confirm('삭제 완료')
                     }) // 삭제버튼 누르면 부모요소 통채로 숨김
                 }
@@ -140,7 +153,8 @@
             }
         })
         socket.on('broadcast', function(data){        
-            var chat = `<div class="chatOne">${'<%= 채팅사람 %>'}: ${data}<div>`
+            var chat = `<div class="chatOne"> ${data}<div>`
+            // var chat = `<div class="chatOne">${'<%= 채팅사람 %>'}: ${data}<div>`
             $('#chatBox').append(chat)
         })
     </script>

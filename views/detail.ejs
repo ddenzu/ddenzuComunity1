@@ -34,7 +34,7 @@
     <div class="comment">
         <form class="comment-write" action="/comment" method="POST">
             <input class="commentInput" id="send-input" name="comment" size="5">
-            <button type="submit" class="comment-push" id="send">작성</button>
+            <span name="comment-push1" class="comment-push" id="send">작성</span>
         </form>
         <div id="comment-box">
             <%for (let i=0; i<댓글목록.length; i++){ %>
@@ -50,7 +50,8 @@
                     </div>
                     <div class="profile3"><%= 댓글목록[i].content %></div>
                     <span name="add" id="commentDel" data-id="<%= 댓글목록[i]._id %>"
-                        data-postId="<%= 댓글목록[i].postId %>" data-userId="<%= 댓글목록[i].userId %>">🗑️</span>
+                        data-postId="<%= 댓글목록[i].postId %>" data-userId="<%= 댓글목록[i].userId %>">🗑️
+                    </span>
                     <br>
                 </p>
             <% }%>
@@ -66,37 +67,79 @@
         var 지금누른작성글id = '<%= 글목록._id %>'
         var 지금누른작성글이름 = '<%= 글목록.title %>'
         var 지금누른작성글 = '<%= 글목록.content %>'
-        var 지울거
-        $(document).on("click","span[name='add']", function(e){
-            var 지울거 = {id : this.dataset.id,
-            userId : this.dataset.userid}
-            $.post('/deletee2', 지울거).then(()=> {
-          })
-        })
-        $('#send').click(function(){
-            var 댓글내용 = $('#send-input').val();
-            var 보낼거 = {
-                parent : 지금누른작성글id,
-                content : 댓글내용,
-            }
-
-            $.post('/comment', 보낼거).then(()=> {
-            })
-            $('#chat-input').val('');
-        })     
+        var 지울거 
         $(document).on("click","span[name='like']", function(e){
             var 보낼거 = {postid : 지금누른작성글id,
             }
             $.post('/addlike', 보낼거).then(()=> {
           })
         })
-        if(document.querySelector('.profile2').innerHTML.length>2){
-            document.querySelector('.profile2').innerText.substr(0,3)
-        }
         var box = $(".profile2");
         $('.profile2').change(function(){
             console.log('변경')
         })
+    
+        document.querySelector('.comment-push').addEventListener('click', ()=>{
+            var 댓글내용 = $('#send-input').val();
+            var 보낼거 = {
+                parent : 지금누른작성글id,
+                content : 댓글내용,
+            }
+            fetch('/comment', {
+            method : 'POST',
+            async : false,
+            headers : {
+                'Content-Type' : 'application/json'
+            },
+            body : JSON.stringify(보낼거)
+            })
+            .then((r)=>r.text())
+            .then((r)=>{
+                location.reload();
+            }) 
+        })
+
+        document.getElementById("send-input").addEventListener("keyup", function(event) {
+            if (event.keyCode === 13) {
+                var 댓글내용 = $('#send-input').val();
+                var 보낼거 = {
+                    parent : 지금누른작성글id,
+                    content : 댓글내용,
+                }
+                fetch('/comment', {
+                method : 'POST',
+                async : false,
+                headers : {
+                    'Content-Type' : 'application/json'
+                },
+                body : JSON.stringify(보낼거)
+                })
+                .then((r)=>r.text())
+                .then((r)=>{
+                    location.reload();
+            })
+        }});
+
+
+        $(document).on("click","span[name='add']", function(e){
+            var 지울거 = {id : this.dataset.id,
+            userId : this.dataset.userid}
+            fetch('/deletee2', {
+            method : 'POST',
+            async : false,
+            headers : {
+                'Content-Type' : 'application/json'
+            },
+            body : JSON.stringify(지울거)
+            })
+            .then((r)=>r.text())
+            .then((r)=>{
+                location.reload();
+            }) 
+        }) 
+        if(document.querySelector('.profile2').innerHTML.length>2){
+            document.querySelector('.profile2').innerText.substr(0,3)
+        }
     </script>
 </body>
 </html>

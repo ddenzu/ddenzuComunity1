@@ -471,7 +471,7 @@ app.post('/message', checkLogin, function(요청, 응답){
     })}
 })
 
-app.post('/comment', checkLogin, function(요청, 응답){
+app.post('/comment', checkLogin, async (요청, 응답)=>{
     if (요청.body.content) {
         var 저장할거 = {
             postId : new ObjectId(요청.body.parent), // 작성글 id
@@ -481,8 +481,10 @@ app.post('/comment', checkLogin, function(요청, 응답){
             userprofile : 요청.user.imgName,
             date : new Date(),
         }
-        db.collection('comment').insertOne(저장할거).then(()=>{
-    })}
+        await db.collection('comment').insertOne(저장할거).then(()=>{
+            응답.send()
+        })
+    }
 })
 
 app.get('/message/:id', checkLogin, function(요청, 응답){
@@ -511,24 +513,26 @@ app.get('/message/:id', checkLogin, function(요청, 응답){
 app.post('/deletee', async (요청, 응답)=>{
     await db.collection('chatroom').deleteOne({ _id : new ObjectId(요청.body.삭제id)})
     // 응답.redirect('chat.ejs')
+
 })
 app.post('/deletee2', async (요청, 응답)=>{
     var 비교1 = JSON.stringify(요청.user._id)
     var 비교2 = JSON.stringify(요청.body.userId)
     if(비교1 == 비교2){
         await db.collection('comment').deleteOne({ _id : new ObjectId(요청.body.id)})
+        응답.send()
     }
     else {
         응답.send("지울 수 없성")
     }
 })
+
 app.post('/addlike', async (요청, 응답)=>{
     await db.collection('post').updateOne({ _id : new ObjectId(요청.body.postid)}, {$inc : {like : 1}})
 })
 
 
 io.on('connection', function(socket){
-    console.log('유저 웹소켓 접속됨');
 
     socket.on('user-send', function(data){
         console.log(data);

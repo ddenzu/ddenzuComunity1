@@ -67,17 +67,25 @@
         <input id="input1">
         <button id="send">서버에 메세지 보내긔</button>
     </div> -->
+    <!-- <div class="input-group mb-3" style="margin-bottom: 0px !important;">
+        <input type="text" id="input1" class="form-control" aria-describedby="button-addon2" style="height: 25px;">
+        <button class="btn btn-outline-secondary" type="button" id="button-addon2"
+        style="height: 25px; background-color: #b8db95;"></button>
+    </div> -->
+
     <div>
-        <div style="background-color: white; width: 50%; height: 150px; margin: auto; margin-top: 10px;
-        margin-bottom: 10px; overflow-y: scroll;">
-            <div class="input-group mb-3" style="margin-bottom: 0px !important;">
-                <input type="text" id="input1" class="form-control" aria-describedby="button-addon2" style="height: 25px;">
-                <button class="btn btn-outline-secondary" type="button" id="button-addon2"
-                style="height: 25px; background-color: #b8db95;"></button>
-            </div>
+        <div class="input-group mb-3" style="margin-bottom: 0px !important; margin: auto ; margin-top: 10px;
+        width: 50%;">
+            <input type="text" id="input1" class="form-control" aria-describedby="button-addon2" style="height: 25px;">
+            <button class="btn btn-outline-secondary" type="button" id="button-addon2"
+            style="height: 25px; background-color: #b8db95;"></button>
+        </div>
+        <div class="chat-Box" style="background-color: white; width: 50%; height: 150px; margin: auto;
+        margin-bottom: 10px; margin-top: 0px; border: 1px solid darkgray; overflow-y: scroll;">
             <div id="chatBox">
             </div>
         </div>
+
     </div>
     <!-- <div style="background-color: white; width: 50%; margin: 10px; height: 150px;">
         <div class="input-group mb-3" style="margin-bottom: 0px !important;">
@@ -153,10 +161,17 @@
             }
         })
         socket.on('broadcast', function(data){        
-            var chat = `<div class="chatOne"> ${data}<div>`
+            var chat = `<div class="chatOne"> 🐵${data}<div>`
             // var chat = `<div class="chatOne">${'<%= 채팅사람 %>'}: ${data}<div>`
             $('#chatBox').append(chat)
+            var 실제높이 = document.querySelector('.chat-Box').scrollHeight;
+            console.log(실제높이)
+            $('.chat-Box').scrollTop(실제높이+100); // 여기서 스크롤맨밑으로 (데이터를 수신했을때)
         })
+
+        // var 실제높이 = document.querySelector('.chat-Box').scrollHeight;
+        // console.log(실제높이)
+        // $('.chat-Box').scrollTop(실제높이+100); // 여기서 스크롤맨밑으로 (데이터를 수신했을때)
     </script>
     
 

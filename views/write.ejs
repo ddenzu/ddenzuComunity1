@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>승뮤니티</title>
     <link rel="stylesheet" href="\main.css">
 </head>
 <body class="grey-bg">
     <%- include('nav.ejs') %>
     <form class="form-box" action="/add" method="POST" enctype="multipart/form-data">
         <h4>글쓰기</h4>
-        <input name="title">
-        <input style="height: 150px;" name="content">
+        <input name="title" placeholder="제목" required>
+        <input style="height: 150px;" name="content" placeholder="본문" required>
         <input type="file" name="img1" accept="image/* video/*">
         <button type="submit">전송</button>
     </form> 

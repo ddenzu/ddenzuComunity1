@@ -3,15 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>승뮤니티</title>
     <link rel="stylesheet" href="\main.css">
 </head>
-<body class="grey-bg">
+<body>
     <%- include('nav.ejs') %>
+    <div style="height:60px;"></div>
     <div style="margin-left: 10px;">
         <h4>마이페이지</h4>
         <p> ID : <%= 아이디.username %></p>
         <img src="/image/<%= 아이디.imgName %>">
+        <p>프로필사진 설정</p>
         <form method="POST" action="/addprofile" enctype="multipart/form-data">
             <input type="file" name="img1" accept="image/*">
             <button type="submit">전송</button>

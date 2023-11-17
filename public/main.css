@@ -3,8 +3,10 @@
       min-height: 100vh;
       width: 100%;
       background: url('/image/loginbackground1.jpg')no-repeat;
+      background-color: #3b394e;
       background-position: center;
       background-size: cover;
+      
   }
   *{
     margin: 0;
@@ -17,7 +19,7 @@
     margin: 10px;
     border-radius: 10px;
     background: rgba(0,0,0,0.2);
-    /* backdrop-filter: blur(100px); */
+    /* backdrop-filter: blur(2px); */
   }
 
   .list-box {
@@ -34,6 +36,7 @@
 
   .list-right a{
     text-decoration-line: none;
+    color: #fff;
     font-weight: 600;
 
   }
@@ -46,9 +49,10 @@
   } 
 
   .list-box p {
-    font-size: 13px;
+    font-size: 12px;
     margin: 5px;
     color: #eeeeee;
+    /* color: grey; */
   }
   input,div {
     box-sizing: border-box;
@@ -90,15 +94,54 @@
     border: 1px solid black;
     border-radius: 5px;
   }
-  .search_2 {
-    border-radius: 5px;
-    border: 1px solid #202124;
+  .ccontainer {
+    margin: 5px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
-  #ssearch {
-    background-color: #b8db95;
-    border-radius: 5px;
-    border: 1px solid #202124;
+  .page-box{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
   }
+  .search-bar{
+    width: 55%;
+    max-width: 700px;
+    background: rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    border-radius: 60px;
+    padding: 10px;
+    backdrop-filter: blur(4px);
+    margin-bottom: 5px;
+  }
+  .search-bar input {
+    background: transparent;
+    flex: 1;
+    border: 0;
+    outline: none;
+    font-size: 16px;
+    color: #fff;
+  }
+  ::placeholder{
+    color: grey
+  }
+  .search-bar button ion-icon {
+    width: 100%;
+    height: 100%;
+  }
+  .search-bar button {
+    border: 0;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    background: transparent;
+    cursor: pointer;
+    color: #fff;
+  } 
   .dark-btn {
     border-radius: 10px;
     font-size: 12px;
@@ -283,10 +326,19 @@
     padding-left: 4px;
     padding-right: 4px;
     /* margin: 1px; */
-    background-color: white;
+    /* background-color: white; */
+    border: 2px solid #ecb4b2;
+    color: #ecb4b2;
+    background: transparent;
     font-size: larger;
-    border: 1px solid black;
+    /* border: 1px solid black; */
     border-radius: 5px;
+  }
+  .page-btn:hover {
+    background-color: grey;
+  }
+  .page-btn:active {
+    background-color: #fff;
   }
 
   .everyChat {
@@ -302,3 +354,40 @@
     height: 15px;
     font-size: small;
   }
+
+  .btn {
+    padding: 5px 10px;
+    border: 2px solid #ecb4b2;
+    background-color: transparent;
+    color: #ecb4b2;
+    text-transform: uppercase;
+    font-weight: bold;
+    position: relative;
+    transition: all 0.4s;
+    overflow: hidden;
+  }
+
+  .btn:focus {
+    outline: none;
+  }
+
+  .btn::before {
+    content: "";
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background-color: #ecb4b2;
+    top:0;
+    left:-100%;
+    transition: all 0.4s;
+    z-index: -1;
+  }
+
+  .btn:hover:before {
+    transform: translateX(100%);
+  }
+
+  .btn:hover {
+    background-color: #ecb4b2;
+  }
+

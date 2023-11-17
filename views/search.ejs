@@ -7,27 +7,42 @@
     <link rel="stylesheet" href="\main.css">
 </head>
 
-<body class="grey-bg">
-
+<body>
+    <div style="height:60px;"></div>
     <%- include('nav.ejs') %>
 
     <!-- ejs 파일에선 아무데서나 자바스크립트문법 사용 가능  -->
     <%for (let i=0; i<글목록.length; i++){ %>
         <div class="white-bg">
             <div class="list-box">
-            <h4>
-                <a href="/detail/<%= 글목록[i]._id %>"><%= 글목록[i].title %></a>
-                <a href="/edit/<%= 글목록[i]._id %>">✏️</a>
-                <span class="delete" data-id="<%= 글목록[i]._id %>">🗑️</span>
-            </h4>
-            <p><%= 글목록[i].content %></p>
+            <% if(글목록[i].vidName !== undefined){ %>
+                <a href="/detail/<%= 글목록[i]._id %>">
+                    <img class="list-left" src="/image/<%= 글목록[i].imgName %>" onerror="this.src='/image/dinosaurVid.png'" />
+                </a>
+            <% } else { %>
+                <a href="/detail/<%= 글목록[i]._id %>">
+                    <img class="list-left" src="/image/<%= 글목록[i].imgName %>" onerror="this.src='/image/dinosaur.png'" />
+                </a>
+            <% } %>
+                <h4 class="list-right">
+                    <a href="/detail/<%= 글목록[i]._id %>"><%= 글목록[i].title %></a>
+                    <a href="/edit/<%= 글목록[i]._id %>">✏️</a>
+                    <span class="delete" data-id="<%= 글목록[i]._id %>">🗑️</span>
+                    <p>작성자: <%= 글목록[i].작성자 %></p>
+                    <form action="/chat" method="POST">
+                        <button type="submit" class="btn" data-id="<%= 글목록[i].작성자_id %>"
+                            data-title="<%= 글목록[i].title %>">작성자랑 채팅하기</button>
+                    </form>
+                </h4>
             </div>
+            
+        <p style="clear: both; margin: 0px;"></p>
         </div>      
     <% }%>
 
-    <div class="list-box">
+    <!-- <div class="list-box">
         <a href="/plus">+✏️</a>
-    </div>
+    </div> -->
 
     <!-- <a href="/list/next/<%= 글목록[글목록.length-1]._id %>">다음</a> -->
 

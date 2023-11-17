@@ -7,10 +7,11 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="\main.css">
 </head>
-<body>
+<body >
 
     <%- include('nav.ejs') %>
     <div style="height:60px;"></div>
+    
     <!-- ejs 파일에선 아무데서나 자바스크립트문법 사용 가능  -->
     <%for (let i=0; i<글목록.length; i++){ %>
         <div class="white-bg">
@@ -30,8 +31,8 @@
                     <span class="delete" data-id="<%= 글목록[i]._id %>">🗑️</span>
                     <p>작성자: <%= 글목록[i].작성자 %></p>
                     <form action="/chat" method="POST">
-                        <button type="submit" class="btn btn-danger chat" data-id="<%= 글목록[i].작성자_id %>"
-                            data-title="<%= 글목록[i].title %>">채팅하기</button>
+                        <button type="submit" class="btn" data-id="<%= 글목록[i].작성자_id %>"
+                            data-title="<%= 글목록[i].title %>">작성자랑 채팅하기</button>
                     </form>
                 </h4>
             </div>
@@ -40,40 +41,49 @@
         </div>      
     <% }%>
     <div>
-        <div class="list-box" style="float: left; width: 20%;">
+        <!-- <div class="list-box" style="float: left; width: 20%;">
             <button style="border: none;
             background: rgba(0,0,0,0.3);
             border-radius: 5px; margin-left: 5px;"><a href="/plus"
             style="text-decoration-line: none; color: #fff;
             ">글쓰기✏️</a></button>
+        </div> -->
+
+
+        <div class="page-box">
+            <p></p>
+            <%for (let i=0; i<Math.ceil(글수/5); i++){ %>
+                <span style="margin: 3px;" class="page-btn" data-num="<%= i+1 %>"><%= i+1 %></span>
+            <% }%>
         </div>
-        <div style="width: 80%; float: left;">
-            <p style="width: 23%; float: left;"></p>
-                <%for (let i=0; i<Math.ceil(글수/5); i++){ %>
-                    <span class="page-btn" data-num="<%= i+1 %>"><%= i+1 %></span>
-                <% }%>
+        <div style="position: absolute; right: 20px; background: rgba(0, 0, 0, 0.2);
+        padding: 3px; border-radius: 5px;">
+            <a href="/plus" style="text-decoration-line: none; color: #fff;">글쓰기✏️</a></button>
         </div>
+        <!--  -->
     </div>
     <div style="text-align: center;">
         <a class="list-loc" style="text-align: center;
         text-decoration: none; color: white;" 
         href="/list/next/<%= 글목록[글목록.length-1]._id %>">다음페이지</a>
     </div>
-    <div style="text-align: center;">
-        <input class="search_2" id="ssearch-input" placeholder="글제목으로 검색">
-        <button type="submit" id="ssearch">검색</button>
+    <!-- <div>
+        <button style="border: none;
+        background: rgba(0,0,0,0.3);
+        border-radius: 5px; margin-left: 5px;"><a href="/plus"
+        style="text-decoration-line: none; color: #fff;
+        ">글쓰기✏️</a></button>
+    </div> -->
+    <!-- <div style="text-align: center;">
+        <input type="text" class="search_2" id="ssearch-input" placeholder="글제목으로 검색">
+        <button type="submit" id="ssearch"><ion-icon name="search-outline"></ion-icon></button>
+    </div> -->
+    <div class="ccontainer">
+        <div class="search-bar">
+            <input type="text" class="search_2" id="ssearch-input" placeholder="글제목으로 검색">
+            <button type="submit" id="ssearch"><ion-icon name="search-outline"></ion-icon></button>
+        </div>
     </div>
-
-    <!-- <div style="margin:10px">
-        <div>단체채팅방</div>
-        <input id="input1">
-        <button id="send">서버에 메세지 보내긔</button>
-    </div> -->
-    <!-- <div class="input-group mb-3" style="margin-bottom: 0px !important;">
-        <input type="text" id="input1" class="form-control" aria-describedby="button-addon2" style="height: 25px;">
-        <button class="btn btn-outline-secondary" type="button" id="button-addon2"
-        style="height: 25px; background-color: #b8db95;"></button>
-    </div> -->
 
     <div>
         <div class="input-group mb-3" style="margin-bottom: 0px !important; margin: auto ; margin-top: 10px;
@@ -82,7 +92,7 @@
             <button class="btn btn-outline-secondary" type="button" id="button-addon2"
             style="height: 25px; background-color: #b8db95;"></button>
         </div>
-        <div class="chat-Box" style="background-color: white; width: 50%; height: 150px; margin: auto;
+        <div class="chat-Box" style="background-color: white; width: 50%; height: 130px !important; margin: auto;
         margin-bottom: 10px; margin-top: 0px; border: 1px solid darkgray; overflow-y: scroll;
         background: rgba(255,255,255,0.3);">
             <div id="chatBox">
@@ -105,6 +115,8 @@
         </footer> -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
     <script>
         console.log('<%= 글목록.length %>')
         for (let i=0; i<'<%= 글목록.length %>'; i++){ 
@@ -129,6 +141,7 @@
         // 두번째 검색기능
         $('#ssearch').click(function(){
             var 입력값 = $('#ssearch-input').val()
+            console.log(입력값)
             window.location.replace('/ssearch?value='+입력값)  // url 바꾸는 함수 (get요청변환)
         })
 
@@ -147,8 +160,8 @@
 
         $('.page-btn').click(function(e){
             var a = $(this)
-            a.css("background-color","#AAFA82");
-            $(this).css("background-color","#AAFA82");
+            // a.css("background-color","#AAFA82");
+            // $(this).css("background-color","#AAFA82");
             var num = e.target.dataset.num;
             window.location.replace(`/list/${num}`) 
         });

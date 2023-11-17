@@ -210,7 +210,7 @@ app.post('/addprofile', upload.single('img1'), async (req, res, next) => { // wr
               console.log(`info : ${info}`);
               fs.unlink(`public/image/${req.file.filename}`, (err) => {
                  // 원본파일은 삭제해줍니다
-                 // 원본파일을 삭제하지 않을거면 생략해줍니다
+                 // 원본파일을 삭제하지 않을거면 생략
                 //  if (err) throw err;
               });
            });
@@ -313,7 +313,7 @@ app.delete('/delete', async (요청, 응답)=>{
 
 app.get('/plus', async (요청, 응답) => {
     if (요청.user == undefined){
-        응답.send('로그인 하삼')
+        응답.send('로그인 하세유')
     }
     else {
         let result = await db.collection('user').findOne({ username : 요청.user.username})
@@ -322,7 +322,7 @@ app.get('/plus', async (요청, 응답) => {
             응답.render('write.ejs')
         }
         else {
-            응답.send('로그인 하삼')
+            응답.send('로그인 하세유')
         }
     }
 })
@@ -365,24 +365,34 @@ app.post('/search', async (요청, 응답) => {
 
 // 두번째 검색기능
 app.get('/ssearch', async (요청, 응답) => {
-    var 검색조건 = [
-        {
-          $search: {
-            index: 'titleSearch',
-            text: {
-              query: 요청.query.value,
-              path: 'title'  // 제목날짜 둘다 찾고 싶으면 ['제목', '날짜']
-            }
-          }
-        },
-        { $sort : { _id : 1 }}, // id 순으로 정렬
-        { $limit : 10 }, // 10개만 보여줘
-        // { $project : {title:1, _id:0, score: { $meta : "searchScore"}}}
-
-    ] 
-    let result = await db.collection('post').aggregate(검색조건).toArray()
-    응답.render('search.ejs', { 글목록 : result})
+    console.log(요청.query.value)
+    try {
+        var 검색조건 = [
+            {
+              $search: {
+                index: 'titleSearch',
+                text: {
+                  query: 요청.query.value,
+                  path: 'title'  // 제목날짜 둘다 찾고 싶으면 ['제목', '날짜']
+                }
+              }
+            },
+            { $sort : { _id : 1 }}, // id 순으로 정렬
+            { $limit : 10 }, // 10개만 보여줘
+        ] 
+        let result = await db.collection('post').aggregate(검색조건).toArray()
+        console.log(result)
+        if(result.length!=0){
+            응답.render('search.ejs', { 글목록 : result})
+        }
+        else {
+            응답.send('존재하지 않는 글')
+        }
+    } catch(e){
+        응답.status(500).send('서버에러')
+    }
 }) 
+
 
 app.get('/login', async (요청, 응답) => {
     응답.render('login.ejs')

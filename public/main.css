@@ -1,18 +1,17 @@
-  body 
-  {
-      min-height: 100vh;
-      width: 100%;
-      background: url('/image/loginbackground1.jpg')no-repeat;
-      background-color: #3b394e;
-      background-position: center;
-      background-size: cover;
-      
-  }
-  *{
+    *{
     margin: 0;
     padding: 0;
     font-family: 'poppins', sans-serif;
-}
+    }
+  body 
+  {
+      /* min-height: 100vh; */
+      width: 99%;
+      background: url('/image/loginbackground1.jpg')no-repeat;
+      background-color: #3b394e;
+      background-position: center;
+      background-size: cover;  
+  }
   .white-bg {
     /* clear: both; */
     background: white;
@@ -85,6 +84,7 @@
     border-radius: 20px;
     margin-left: 10px;
     margin-right: 10px;
+    overflow: auto;
   }
 
   .search {
@@ -178,6 +178,7 @@
     padding: 5px;
     border-radius: 5px;
     float: left;
+    margin: 0px;
   }
   .mine {
     float: right;
@@ -298,6 +299,7 @@
     margin-top: 7px;
     margin-left: 5px;
     border-bottom: 1px solid;
+    text-align: left;
 
   }
   #commentDel {
@@ -340,7 +342,10 @@
   .page-btn:active {
     background-color: #fff;
   }
-
+  .nowPage {
+    color: white;
+    border: 2px solid white;
+  }
   .everyChat {
     margin: auto;
     margin-top: 5px;
@@ -391,3 +396,26 @@
     background-color: #ecb4b2;
   }
 
+  .snowFlake {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: white;
+    position: absolute;
+    top: -16px;
+    animation: fall 10s linear;
+  }
+
+  ion-icon {
+    cursor: pointer;
+    color: #ecb4b2;
+    font-size: 30px;
+  }
+
+  @keyframes fall {
+    from{}
+    to {
+      transform: translateY(100vh);
+      opacity: 0;
+    }
+  }

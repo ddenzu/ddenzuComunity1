@@ -7,10 +7,10 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="\main.css">
 </head>
-<body >
+<body style="position: relative;">
 
     <%- include('nav.ejs') %>
-    <div style="height:60px;"></div>
+    <div style="height:55px;"></div>
     
     <!-- ejs 파일에선 아무데서나 자바스크립트문법 사용 가능  -->
     <%for (let i=0; i<글목록.length; i++){ %>
@@ -52,9 +52,11 @@
 
         <div class="page-box">
             <p></p>
+            <ion-icon class="back" name="caret-back-outline"></ion-icon>
             <%for (let i=0; i<Math.ceil(글수/5); i++){ %>
                 <span style="margin: 3px;" class="page-btn" data-num="<%= i+1 %>"><%= i+1 %></span>
             <% }%>
+            <ion-icon class="forward" name="caret-forward-outline"></ion-icon>
         </div>
         <div style="position: absolute; right: 20px; background: rgba(0, 0, 0, 0.2);
         padding: 3px; border-radius: 5px;">
@@ -85,9 +87,9 @@
         </div>
     </div>
 
-    <div>
+    <!-- <div style="position: absolute; right: 0px; top: 50px;">
         <div class="input-group mb-3" style="margin-bottom: 0px !important; margin: auto ; margin-top: 10px;
-        width: 50%;">
+        width: 50%; ">
             <input type="text" id="input1" class="form-control" aria-describedby="button-addon2" style="height: 25px;">
             <button class="btn btn-outline-secondary" type="button" id="button-addon2"
             style="height: 25px; background-color: #b8db95;"></button>
@@ -98,17 +100,8 @@
             <div id="chatBox">
             </div>
         </div>
-
-    </div>
-    <!-- <div style="background-color: white; width: 50%; margin: 10px; height: 150px;">
-        <div class="input-group mb-3" style="margin-bottom: 0px !important;">
-            <input type="text" id="input1" class="form-control" aria-describedby="button-addon2" style="height: 25px;">
-            <button class="btn btn-outline-secondary" type="button" id="button-addon2"
-            style="height: 25px; background-color: #b8db95;"></button>
-        </div>
-        <div id="chatBox">
-        </div>
     </div> -->
+
     <!-- <hr>
         <footer>
             <p style="margin-top: 5px; margin-left: 10px;">🎄승주 커무니티🎄</p>
@@ -158,12 +151,15 @@
             window.location.replace('/ssearch?value='+입력값) 
           }})
 
+
+        document.getElementsByClassName('page-btn')['<%= 페이지넘버 %>'-1].classList.add('nowPage');
         $('.page-btn').click(function(e){
+            $('.page-btn').removeClass('nowPage')
             var a = $(this)
-            // a.css("background-color","#AAFA82");
-            // $(this).css("background-color","#AAFA82");
-            var num = e.target.dataset.num;
-            window.location.replace(`/list/${num}`) 
+            console.log(e.target.dataset)
+            num = e.target.dataset.num;
+            // window.location.replace(`/list/${num}`) 
+            window.location.href=`/list/${num}?페이지넘버=`+num;
         });
 
         var socket = io();
@@ -188,6 +184,15 @@
             $('.chat-Box').scrollTop(실제높이+100); // 여기서 스크롤맨밑으로 (데이터를 수신했을때)
         })
 
+        $('.back').click(function(){
+            console.log('<%= 페이지넘버 %>'-1)
+            num = '<%= 페이지넘버 %>'-1
+            window.location.href=`/list/prev/<%= 글목록[글목록.length-글목록.length]._id %>?pageNum=`+num;
+        })
+        $('.forward').click(function(){
+            num = parseInt('<%= 페이지넘버 %>')+1
+            window.location.href=`/list/next/<%= 글목록[글목록.length-1]._id %>?pageNum=`+num;
+        })
         // var 실제높이 = document.querySelector('.chat-Box').scrollHeight;
         // console.log(실제높이)
         // $('.chat-Box').scrollTop(실제높이+100); // 여기서 스크롤맨밑으로 (데이터를 수신했을때)

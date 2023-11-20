@@ -123,6 +123,7 @@ let multer = require('multer');
 const sharp = require("sharp");
 const fs = require('fs');
 const path = require('path');
+const { configDotenv } = require('dotenv')
 var storage = multer.diskStorage({
   destination : function(req, file, cb){
     cb(null, './public/image') // 이미지 어디에 저장할건지
@@ -173,7 +174,7 @@ app.post('/add', upload.single('img1'), async (요청, 응답) => { // write 페
                     }
                     else {
                         sharp(`public/image/${요청.file.filename}`,{ failOn: 'truncated' }) // 리사이징할 파일의 경로
-                        .resize({ width: 400 }) // 원본 비율 유지하면서 width 크기만 설정
+                        .resize({ width: 350 }) // 원본 비율 유지하면서 width 크기만 설정
                         .withMetadata()
                         .toFile(`public/image/resize-${요청.file.filename}`, (err, info) => {
                         if (err) throw err;
@@ -232,6 +233,11 @@ app.get('/detail/:id', async (요청, 응답)=>{
         let result = await db.collection('post').findOne({ _id : new ObjectId(요청.params.id)})
         let result2 = await db.collection('comment').find({ postId : new ObjectId(요청.params.id)}).toArray()
         let result3 = await db.collection('user').findOne({ _id : result.작성자_id})
+        if (요청.user==null){
+            var 현재접속자 = 'noUser'
+        } else {
+            var 현재접속자 = 요청.user.username
+        }
         if (result == null) {
             응답.status(400).send('이상한 url')
         } 
@@ -240,32 +246,33 @@ app.get('/detail/:id', async (요청, 응답)=>{
                 if(result3.imgName==undefined){
                     if(result.vidName==undefined){
                         응답.render('detail.ejs', {글목록 : result, 댓글목록 : result2, 
-                        이미지주소 : "", 프로필 : "", 동영상주소 : ""})                        
+                        이미지주소 : "", 프로필 : "", 동영상주소 : "",현재접속자 : 현재접속자})                        
                     }
                     else{
                         응답.render('detail.ejs', {글목록 : result, 댓글목록 : result2, 
-                        이미지주소 : "", 프로필 : "", 동영상주소 : "/image/"+result.vidName})                             
+                        이미지주소 : "", 프로필 : "", 동영상주소 : "/image/"+result.vidName,현재접속자 : 현재접속자})                             
                     } 
                 }
                 else {
                     if(result.vidName==undefined){
                         응답.render('detail.ejs', {글목록 : result, 댓글목록 : result2, 
-                        이미지주소 : "", 프로필 : result3.imgName, 동영상주소 : ""})                        
+                        이미지주소 : "", 프로필 : result3.imgName, 동영상주소 : "",현재접속자 : 현재접속자})                        
                     }
                     else {
                         응답.render('detail.ejs', {글목록 : result, 댓글목록 : result2, 
-                        이미지주소 : "", 프로필 : result3.imgName, 동영상주소 : "/image/"+result.vidName})                        
+                        이미지주소 : "", 프로필 : result3.imgName, 동영상주소 : "/image/"+result.vidName,현재접속자 : 현재접속자})                        
                     }
                 }
             } 
             else {
                 if(result3.imgName==undefined){
                     응답.render('detail.ejs', {글목록 : result, 댓글목록 : result2,
-                    이미지주소: "/image/"+result.imgName,  프로필 : "", 동영상주소 : ""})                     
+                    이미지주소: "/image/"+result.imgName,  프로필 : "", 동영상주소 : "",현재접속자 : 현재접속자})                     
                 }
                 else {
                     응답.render('detail.ejs', {글목록 : result, 댓글목록 : result2,
-                    이미지주소: "/image/"+result.imgName,  프로필 : result3.imgName, 동영상주소 : ""})                     
+                    이미지주소: "/image/"+result.imgName,  프로필 : result3.imgName, 동영상주소 : "",
+                    현재접속자 : 현재접속자})                     
                 }
             }
         }
@@ -329,13 +336,12 @@ app.get('/plus', async (요청, 응답) => {
 
 app.get('/list/:num', async (요청, 응답) => {
     console.log("client IP: " +requestIp.getClientIp(요청));
-    console.log(요청.params.num)
     let result = await db.collection('post').find().sort({ _id: -1 }).skip((요청.params.num-1)*5).limit(5).toArray()
     let cnt = await db.collection('post').count();
     if(요청.user==undefined){
-        응답.render('list.ejs', { 글목록 : result , 글수 : cnt, 채팅사람 : "익명"})
+        응답.render('list.ejs', { 글목록 : result , 글수 : cnt, 채팅사람 : "익명", 페이지넘버 :요청.params.num})
     } else {
-        응답.render('list.ejs', { 글목록 : result , 글수 : cnt, 채팅사람 : 요청.user.username})
+        응답.render('list.ejs', { 글목록 : result , 글수 : cnt, 채팅사람 : 요청.user.username, 페이지넘버 :요청.params.num})
     }
 }) 
 
@@ -346,13 +352,31 @@ app.get('/list/next/:num', async (요청, 응답) => {
     .find({_id : {$lt : new ObjectId(요청.params.num)}}).sort({ _id: -1 }).limit(5).toArray()
     let cnt = await db.collection('post').count();
     if(result.length<1){
-        응답.send('글 없샤🤍')
+        응답.send("<script>alert('다음페이지가 존재하지 않습니다.');window.location.replace(`/list/1`)</script>");
     }
     else{
         if(요청.user==undefined){
-            응답.render('list.ejs', { 글목록 : result , 글수 : cnt, 채팅사람 : "익명"})
+            응답.render('list.ejs', { 글목록 : result , 글수 : cnt, 채팅사람 : "익명",페이지넘버:요청.query.pageNum})
         } else {
-            응답.render('list.ejs', { 글목록 : result , 글수 : cnt, 채팅사람 : 요청.user.username})
+            응답.render('list.ejs', { 글목록 : result , 글수 : cnt, 채팅사람 : 요청.user.username,페이지넘버:요청.query.pageNum})
+        }
+    }
+}) 
+
+app.get('/list/prev/:num', async (요청, 응답) => {
+    console.log("client IP: " +requestIp.getClientIp(요청));
+    let result = await db.collection('post')
+    .find({_id : {$gt : new ObjectId(요청.params.num)}}).sort({}).limit(5).toArray()
+    result.reverse(); // 몽고디비 sort가 잘 적용되지 않아서 reverse함수로 대체함
+    let cnt = await db.collection('post').count();
+    if(result.length<1){
+        응답.send("<script>alert('이전페이지가 존재하지 않습니다.');window.location.replace(`/list/1`)</script>");
+    }
+    else{
+        if(요청.user==undefined){
+            응답.render('list.ejs', { 글목록 : result , 글수 : cnt, 채팅사람 : "익명",페이지넘버:요청.query.pageNum })
+        } else {
+            응답.render('list.ejs', { 글목록 : result , 글수 : cnt, 채팅사람 : 요청.user.username,페이지넘버:요청.query.pageNum})
         }
     }
 }) 
@@ -486,7 +510,7 @@ app.post('/comment', checkLogin, async (요청, 응답)=>{
         var 저장할거 = {
             postId : new ObjectId(요청.body.parent), // 작성글 id
             content : 요청.body.content, // 채팅내용
-            username : 요청.user.username, // 채팅 건 사람
+            username : 요청.user.username,
             userId : 요청.user._id,
             userprofile : 요청.user.imgName,
             date : new Date(),

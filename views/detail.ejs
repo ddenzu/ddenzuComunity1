@@ -35,7 +35,7 @@
 
     <div class="comment">
         <form class="comment-write" action="/comment" method="POST">
-            <input class="commentInput" id="send-input" name="comment" size="5">
+            <textarea style="white-space: pre-line;" class="commentInput" id="send-input" name="comment" size="5"></textarea>
             <span name="comment-push1" class="comment-push" id="send">작성</span>
         </form>
         <div id="comment-box">
@@ -80,9 +80,13 @@
         $('.profile2').change(function(){
             console.log('변경')
         })
-    
+
+
         document.querySelector('.comment-push').addEventListener('click', ()=>{
-            var 댓글내용 = $('#send-input').val();
+            var 댓글내용 = $('#send-input').val()
+            console.log(댓글내용)
+            // 댓글내용=댓글내용.replace(/(?:\r\n|\r|\n)/g,'<br>');
+
             var 보낼거 = {
                 parent : 지금누른작성글id,
                 content : 댓글내용,
@@ -101,26 +105,26 @@
             }) 
         })
 
-        document.getElementById("send-input").addEventListener("keyup", function(event) {
-            if (event.keyCode === 13) {
-                var 댓글내용 = $('#send-input').val();
-                var 보낼거 = {
-                    parent : 지금누른작성글id,
-                    content : 댓글내용,
-                }
-                fetch('/comment', {
-                method : 'POST',
-                async : false,
-                headers : {
-                    'Content-Type' : 'application/json'
-                },
-                body : JSON.stringify(보낼거)
-                })
-                .then((r)=>r.text())
-                .then((r)=>{
-                    location.reload();
-            })
-        }});
+        // document.getElementById("send-input").addEventListener("keyup", function(event) {
+        //     if (event.keyCode === 13) {
+        //         var 댓글내용 = $('#send-input').val();
+        //         var 보낼거 = {
+        //             parent : 지금누른작성글id,
+        //             content : 댓글내용,
+        //         }
+        //         fetch('/comment', {
+        //         method : 'POST',
+        //         async : false,
+        //         headers : {
+        //             'Content-Type' : 'application/json'
+        //         },
+        //         body : JSON.stringify(보낼거)
+        //         })
+        //         .then((r)=>r.text())
+        //         .then((r)=>{
+        //             location.reload();
+        //     })
+        // }});
 
 
         $(document).on("click","span[name='add']", function(e){
@@ -142,6 +146,15 @@
         if(document.querySelector('.profile2').innerHTML.length>2){
             document.querySelector('.profile2').innerText.substr(0,3)
         }
+
+        document.querySelector('.commentInput').addEventListener('click', ()=>{
+            if('<%= 현재접속자 %>'=="noUser"){
+                if (confirm('댓글작성을 위해 로그인 페이지로 이동하시겠슴까')==true){
+                    window.location.replace(`/login`) 
+                }
+            }
+        })
+
     </script>
 </body>
 </html>

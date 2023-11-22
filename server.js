@@ -481,26 +481,42 @@ app.get('/logout',function(요청, 응답){
 // })
 
 
-app.post('/chatroom', checkLogin, function(요청, 응답){
-    var 저장할거 = {
-        title : 요청.body.채팅방+"채팅방",
-        member : [new ObjectId(요청.body.당한사람id), 요청.user._id],
-        name : 요청.body.당한사람name,
-        date : new Date()
+app.post('/chatroom', checkLogin, async function(요청, 응답){
+    console.log(요청.body.당한사람name)
+    try{
+        let result = await db.collection('chatroom').findOne({ name : {$all:[요청.user.username,요청.body.당한사람name]}})
+        if(result==null){
+            var 저장할거 = {
+                title : 요청.user.username+" ➕ "+요청.body.당한사람name,
+                member : [new ObjectId(요청.body.당한사람id), 요청.user._id],
+                name : [요청.body.당한사람name, 요청.user.username],
+                date : new Date()
+            }
+            db.collection('chatroom').insertOne(저장할거).then((결과)=>{
+            })
+        } else {}
     }
-    db.collection('chatroom').insertOne(저장할거).then((결과)=>{
-    })
+    catch(e){
+        응답.send('cant')
+    }
 })
 
-app.post('/chat', checkLogin, async function(요청, 응답){
+app.post('/chat', checkLogin, async function(요청, 응답){ // list에서 올 때
     console.log(요청.body.name)
-    var result = await db.collection('chatroom').find({ member : 요청.user._id}).toArray()
-    응답.render('chat.ejs', { data : result, cur : 요청.user._id})
+    try{
+        let result = await db.collection('chatroom').find({ member : 요청.user._id}).toArray()
+        let result2 = await db.collection('chatroom').findOne({ name : {$all:[요청.user.username,요청.body.name]}})
+        응답.render('chat.ejs', { data : result, cur : 요청.user._id, arrow : result2._id})
+    }
+    catch(e){
+        let result = await db.collection('chatroom').find({ member : 요청.user._id}).toArray()
+        응답.render('chat.ejs', { data : result, cur : 요청.user._id, arrow : 0})
+    }
 })
 
-app.get('/chat', checkLogin, async function(요청, 응답){
-    var result = await db.collection('chatroom').find({ member : 요청.user._id}).toArray()
-    응답.render('chat.ejs', { data : result, cur : 요청.user._id})
+app.get('/chat', checkLogin, async function(요청, 응답){ // navbar에서 올 때
+    let result = await db.collection('chatroom').find({ member : 요청.user._id}).toArray()
+    응답.render('chat.ejs', { data : result, cur : 요청.user._id, arrow : 0})
 })
 
 app.post('/message', checkLogin, function(요청, 응답){

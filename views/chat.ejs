@@ -18,8 +18,7 @@
                 <% for (let i = 0; i < data.length; i++ ){%>
                     <li class="list-group-item" data-id="<%= data[i]._id %>" data-i="<%= i %>" 
                       data-cnt=0>
-                        <h6 style="font-size: 11px;"><%= data[i].title %></h6>
-                        <p style="font-size: 15px; margin-bottom: 5px;">'<%= data[i].name %>' 님과의 채팅</p>
+                        <h6 style="font-size: 15px;"><%= data[i].title %></h6>
                         <button style="margin: auto; display: block;" class="dele" data-id="<%= data[i]._id %>">
                           <ion-icon style="font-size: 20px; color: white;"
                           name="trash-outline"></ion-icon>
@@ -60,6 +59,15 @@
         var 채팅방삭제id
         var eventSource;
         var cnt;
+        if('<%= arrow %>'!=0){
+          let a = Array.from(document.querySelectorAll('.list-group-item'));
+          a.forEach((i,b)=>{
+            if(i.dataset.id=='<%= arrow %>'){
+              setTimeout(()=> $(i).trigger('click') ,100) //********************
+            }
+          })
+        } else {
+        }
         $('.list-group-item').click(function(e){
           지금누른채팅방id = this.dataset.id;
           $('.chat-content').html('');

@@ -1,17 +1,18 @@
-    *{
-    margin: 0;
-    padding: 0;
-    font-family: 'poppins', sans-serif;
-    }
+  *{
+  margin: 0;
+  padding: 0;
+  font-family: 'poppins', sans-serif;
+  }
   body 
   {
-      /* min-height: 100vh; */
-      width: 99%;
+      min-height: 100vh;
+      /* width: 99%; */
       background: url('/image/loginbackground1.jpg')no-repeat;
-      background-color: #3b394e;
+      background-color: #161A33;
       background-position: center;
       background-size: cover;  
   }
+  html, body { max-width: 100%; overflow-x: hidden; }
   .white-bg {
     /* clear: both; */
     background: white;
@@ -22,7 +23,7 @@
   }
 
   .list-box {
-    padding : 0px;
+   padding : 0px;
     /* border-bottom: 1px solid#eee; */
   }
   .list-box h4{
@@ -57,18 +58,22 @@
     box-sizing: border-box;
   }
   .form-box {
-    background : white;
-    padding : 25px;
+    padding: 20px 20px 10px 20px;
     margin: 20px;
-    border-radius: 8px;
+    background: transparent;
+    border: 2px solid rgba(255,255,255,0.5);
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    color: white;
   }
   .form-box input {
     padding : 10px;
     font-size: 16px;
     width: 100%;
-    border: 1px solid black;
     border-radius: 5px;
-    margin-bottom: 10px;
+    margin: 15px 0px 15px 0px;
+    border: 2px solid rgba(255,255,255,0.5);
+    background: transparent;
   }
   .form-box button {
     padding: 10px;
@@ -80,10 +85,10 @@
     background: white;
     padding: 15px;
     margin-top: 10px;
-    background: rgba(255,255,255,0.7);
+    background: rgba(255,255,255,0.5);
     border-radius: 20px;
-    margin-left: 10px;
-    margin-right: 10px;
+    margin-left: 15px;
+    margin-right: 15px;
     overflow: auto;
   }
 
@@ -100,17 +105,31 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-top: 5px;
   }
+
   .page-box{
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
+    margin-bottom: 5px;
   }
   .search-bar{
     width: 55%;
     max-width: 700px;
     background: rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    border-radius: 60px;
+    padding: 10px;
+    backdrop-filter: blur(4px);
+    margin-bottom: 5px;
+  }
+  .comment-bar{
+    width: 100%;
+    /* max-width: 700px; */
+    background: rgba(0, 0, 0, 0.5);
     display: flex;
     align-items: center;
     border-radius: 60px;
@@ -126,14 +145,39 @@
     font-size: 16px;
     color: #fff;
   }
+  .comment-bar textarea {
+    background: transparent;
+    flex: 1;
+    border: 0;
+    outline: none;
+    font-size: 16px;
+    color: #fff;
+    resize: none;
+    height: 23px;
+  }
   ::placeholder{
-    color: grey
+    /* color: grey; */
+    color: #cecccc
   }
   .search-bar button ion-icon {
     width: 100%;
     height: 100%;
   }
   .search-bar button {
+    border: 0;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    background: transparent;
+    cursor: pointer;
+    color: #fff;
+  } 
+  .comment-bar button ion-icon {
+    width: 100%;
+    height: 100%;
+    color: white;
+  }
+  .comment-bar button {
     border: 0;
     border-radius: 50%;
     width: 25px;
@@ -164,9 +208,12 @@
     overflow-y: scroll;
     padding: 10px;
   }
-  .chat-content li {
+
+  .chat-content li span{
     margin-top: 10px;
     list-style: none;
+    background: rgba(0, 0, 0, 0.4);
+    color: white;
   }
   .text-small {
     font-size: 12px;
@@ -189,8 +236,11 @@
     background-color: white;
   }
   .time-box {
-    font-size: 7px;
+    font-size: 10px;
+    margin-top: 4px !important;
+    background: transparent !important;
   }
+
   .chat-content li {
     margin: 0px;
   }
@@ -201,13 +251,25 @@
   }
 
   .list-group-item {
+    border: 1px solid grey;
+    background: transparent;
+    background-color: rgba(0, 0, 0, 0.3);
     display: inline-block;
     text-align: left;
-
+    color: white;
+  }
+  .list-group-item * {
+    text-align: center;
+  }
+  .odd {
+    background-color: rgba(255, 255, 255, 0.3);
+  }
+  .even {
+    background-color: rgba(0, 0, 0, 0.3);
   }
   .dele {
+    background: transparent;
     border: none;
-    background-color: whitesmoke;
     border-radius: 10px;
     display: inline-block;
   }
@@ -235,11 +297,12 @@
     height: 35px;
     width: 20%;
     border-radius: 15px;
-    background-color: #EEEEEE;
+    background-color: #5A545C;
     margin-left: 75%;
   }
 
   .like {
+    color: white;
     float: left;
     padding: 5px;
     text-align: center;
@@ -248,22 +311,28 @@
 
   .comment {
     width: 90%;
-    overflow:auto; 
+    overflow:hidden; 
     background : white;
-    padding : 10px;
+    padding : 15px;
     margin-top: 5px;
     text-align: center;
     border-radius: 15px;
     margin: auto;
     margin-top: 10px;
-    background: rgba(255,255,255,0.7);
+    background: rgba(255,255,255,0.5);
+    position: relative;
   }
 
   .commentInput {
-    width: 80%;
+    white-space: pre-line;
+    left: 20px;
+    width: 70%;
     border-radius: 10px;
     border: 1px solid black;
     padding: 5px;
+    height: 30px;
+    resize: none;
+    font-size: 1em;
   }
 
   .send {
@@ -273,7 +342,6 @@
   }
 
   .profile {
-    background-color:rgba(184, 219, 149, 0.5);
     width: 42px;
     height: 42px;
     border-radius: 25px;
@@ -298,8 +366,10 @@
     float: left;
     margin-top: 7px;
     margin-left: 5px;
-    border-bottom: 1px solid;
+    /* border-bottom: 1px solid; */
     text-align: left;
+    /* padding: 5px; */
+    /* background: rgba(0, 0, 0, 0.2); */
 
   }
   #commentDel {
@@ -311,9 +381,13 @@
     border: 1px solid black;
     background-color: white;
     padding: 5px;
+    position: absolute;
+    top:9px;
   }
   .img-box {
-    margin: 10px;
+    width: 100%;
+    margin: 10px 0px 10px 0px;
+    overflow: auto;
   }
   .dark {
     background: #303134;
@@ -321,6 +395,7 @@
   }
   .profiletext{
     margin-left: 5px;
+    margin-top: 3px;
     overflow: hidden;
     white-space  : nowrap;
   }
@@ -371,6 +446,10 @@
     transition: all 0.4s;
     overflow: hidden;
   }
+  .chat-btn {
+    border: 1px solid grey;
+    background: rgba(0, 0, 0, 0.5);
+  }
 
   .btn:focus {
     outline: none;
@@ -411,6 +490,7 @@
     color: #ecb4b2;
     font-size: 30px;
   }
+
 
   @keyframes fall {
     from{}

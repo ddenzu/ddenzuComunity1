@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, minimum-scale=1">
     <title>승뮤니티</title>
     <!-- <link rel="stylesheet" href="\main.css"> -->
     <style>
@@ -19,12 +19,11 @@
             left: 0;
             width: 100%;
             padding: 15px 20px;
-            border-radius: 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             z-index: 99;
-            background: rgba(0,0,0,0.2);
+            background: rgba(0,0,0,0.45);
         }
 
         .logo{
@@ -114,7 +113,7 @@
             const duration = Math.random()*50+min_duration;
 
             snowFlake.classList.add("snowFlake");
-            snowFlake.style.left = `${Math.random()*window.innerWidth}px`
+            snowFlake.style.left = `${Math.random()*window.screen.width-0.1}px`
             snowFlake.style.animationDelay = `${delay}s`;
             snowFlake.style.animation = `fall ${duration}s linear`;
             snowFlake.style.opacity = initialOpacity;
@@ -127,9 +126,12 @@
                 makeSnowflake();
             }, (duration + delay) * 800);
         }
-        for (let i = 0; i < 30; i++){
-            setTimeout(makeSnowflake(), 500 * i);
+        window.onload = function(){
+            for (let i = 0; i < 27; i++){
+                setTimeout(makeSnowflake(), 500 * i);
+            }
         }
+
     </script>
 </body>
 </html>

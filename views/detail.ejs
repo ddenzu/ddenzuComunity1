@@ -2,8 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>승뮤니티</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, minimum-scale=1">
     <link rel="stylesheet" href="\main.css">
 </head>
 <body>
@@ -22,11 +21,14 @@
             style="width: 200px" onerror="this.style.display='none';">
             </video>
         </div>
-        <p><%= 글목록.content %></p>
+        <p><%- 글목록.content.replace(/\n/g, '<br/>') %></p>
         <div>
             <div class="like-box">
                 <div>
-                    <span name="like" class="like" data-postId="<%= 글목록._id %>">👍</span>
+                    <span name="like" class="like" data-postId="<%= 글목록._id %>">
+                        <ion-icon style="color: white; 
+                        font-size: 26px;" name="thumbs-up-outline"></ion-icon>
+                    </span>
                     <p class="like" style="margin: 0px;"><%= 글목록.like %></p>
                 </div>
             </div>
@@ -35,10 +37,14 @@
 
     <div class="comment">
         <form class="comment-write" action="/comment" method="POST">
-            <textarea style="white-space: pre-line;" class="commentInput" id="send-input" name="comment" size="5"></textarea>
-            <span name="comment-push1" class="comment-push" id="send">작성</span>
+            <div class="ccontainer">
+                <div class="comment-bar">
+                    <textarea class="comment_2" id="comment-input" placeholder="엔터누르면 줄바꿈"></textarea>
+                    <button type="submit" id="comment-btn"><ion-icon name="paper-plane-outline"></ion-icon></button>
+                </div>
+            </div>
         </form>
-        <div id="comment-box">
+        <div id="comment-box" style="margin: 0;">
             <%for (let i=0; i<댓글목록.length; i++){ %>
                 <p style="text-align: left; margin-bottom: 30px; clear: both">
                     <div class="profile">
@@ -50,9 +56,11 @@
                             <div class="profiletext"><%= 댓글목록[i].username %></div>
                         </div>
                     </div>
-                    <div class="profile3"><%= 댓글목록[i].content %></div>
+                    <div class="profile3"><%- 댓글목록[i].content.replace(/\n/g, '<br/>') %></div>
+
                     <span name="add" id="commentDel" data-id="<%= 댓글목록[i]._id %>"
-                        data-postId="<%= 댓글목록[i].postId %>" data-userId="<%= 댓글목록[i].userId %>">🗑️
+                        data-postId="<%= 댓글목록[i].postId %>" data-userId="<%= 댓글목록[i].userId %>">
+                        <ion-icon style="font-size: 20px; color: #5a545c;" name="trash-outline"></ion-icon>
                     </span>
                     <br>
                 </p>
@@ -65,10 +73,12 @@
         </p>
       </div>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
     <script>
         var 지금누른작성글id = '<%= 글목록._id %>'
         var 지금누른작성글이름 = '<%= 글목록.title %>'
-        var 지금누른작성글 = '<%= 글목록.content %>'
+        var 지금누른작성글 = '<%- 글목록.content.replace(/(?:\r\n|\r|\n)/g, '<br>') %>'
         var 지울거 
         $(document).on("click","span[name='like']", function(e){
             var 보낼거 = {postid : 지금누른작성글id,
@@ -78,14 +88,12 @@
         })
         var box = $(".profile2");
         $('.profile2').change(function(){
-            console.log('변경')
         })
 
 
-        document.querySelector('.comment-push').addEventListener('click', ()=>{
-            var 댓글내용 = $('#send-input').val()
+        document.querySelector('#comment-btn').addEventListener('click', ()=>{
+            var 댓글내용 = $('#comment-input').val()
             console.log(댓글내용)
-            // 댓글내용=댓글내용.replace(/(?:\r\n|\r|\n)/g,'<br>');
 
             var 보낼거 = {
                 parent : 지금누른작성글id,
@@ -147,7 +155,7 @@
             document.querySelector('.profile2').innerText.substr(0,3)
         }
 
-        document.querySelector('.commentInput').addEventListener('click', ()=>{
+        document.querySelector('.comment-bar').addEventListener('click', ()=>{
             if('<%= 현재접속자 %>'=="noUser"){
                 if (confirm('댓글작성을 위해 로그인 페이지로 이동하시겠슴까')==true){
                     window.location.replace(`/login`) 

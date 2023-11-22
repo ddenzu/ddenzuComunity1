@@ -9,14 +9,14 @@
 <body>
     <%- include('nav.ejs') %>
     <div style="height:60px;"></div>
-    <div style="margin-left: 10px;">
+    <div style="margin-left: 10px; color: white;">
         <h4>마이페이지</h4>
         <p> ID : <%= 아이디.username %></p>
         <img src="/image/<%= 아이디.imgName %>">
         <p>프로필사진 설정</p>
         <form method="POST" action="/addprofile" enctype="multipart/form-data">
-            <input type="file" name="img1" accept="image/*">
-            <button type="submit">전송</button>
+            <input type="file" name="img1" accept="image/*" style="background-color: gray;">
+            <button type="submit">프로필사진 적용</button>
         </form>
         <form>
             <a href="/logout">로그아웃</a>

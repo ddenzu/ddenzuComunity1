@@ -10,41 +10,50 @@
 <body>
     <%- include('nav.ejs') %>
     <div style="height:60px;"></div>
-    <div class="container p-4 detail">
+    <div style="color: white;">
+    <div class="container p-3 detail">
         <div class="row">
-          <div class="col-3">
+          <div class="col-3" style="padding: 0 8px 0 0;">
             <ul class="list-group chat-list">
                 <% for (let i = 0; i < data.length; i++ ){%>
                     <li class="list-group-item" data-id="<%= data[i]._id %>" data-i="<%= i %>" 
                       data-cnt=0>
-                        <h6><%= data[i].title %></h6>
-                        <button class="dele" data-id="<%= data[i]._id %>">🗑️</button>
+                        <h6 style="font-size: 11px;"><%= data[i].title %></h6>
+                        <p style="font-size: 15px; margin-bottom: 5px;">'<%= data[i].name %>' 님과의 채팅</p>
+                        <button style="margin: auto; display: block;" class="dele" data-id="<%= data[i]._id %>">
+                          <ion-icon style="font-size: 20px; color: white;"
+                          name="trash-outline"></ion-icon>
+                        </button>
                     </li>
                 <%}%>
              </ul>
            </div>
       
            <div class="col-9 p-0">
-             <div class="chat-room">
+             <div class="chat-room" style="background: rgba(0, 0, 0, 0.2);">
                 <ul class="list-group chat-content">
                   <div class="infomation">
-                    <p style="font-weight: bold;">⛔사용방법⛔<br>
-                      1. 왼쪽선택창에서 채팅방 선택 후 채팅 시작<br>
-                      2. 채팅방 삭제 : 쓰레기통 아이콘 누른 후 새로고침<br>
-                      3. 글쓴이가 글 삭제하면 채팅방도 사라짐<br>
+                    <p style="font-weight: bold; color: red;
+                    padding: 5px; font-size: 20px;">⛔사용방법⛔<br>
+                      1. 왼쪽 선택창에서 채팅방을 선택하세요<br>
                     </p>
                   </div>
                 </ul>
               <div class="input-group">
-                <input class="form-control" id="chat-input">
-                <button class="btn btn-secondary" id="send">전송</button>
+                <input class="form-control" style="background: rgba(0, 0, 0, 0.5);
+                border: 1px solid grey; color: white;" id="chat-input">
+                <button class="btn chat-btn" style="padding: 0px;" id="send">
+                  <ion-icon style="color: white; padding-top: 5px; font-size: 25px;" 
+                  name="paper-plane-outline"></ion-icon>
+                </button>
               </div>
             </div>
           </div>
         </div>
     </div> 
 
-
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script>
         var 지금누른채팅방id
@@ -74,19 +83,12 @@
             var 실제높이 = document.querySelector('.chat-content').scrollHeight;
             $('.chat-content').scrollTop(실제높이+100); // 여기서 스크롤맨밑으로 (데이터를 수신했을때)
           })
-          if(this.dataset.cnt.length%2==1){
-            document.querySelectorAll('.list-group-item')[this.dataset.i].style.backgroundColor ="#5F5F5F";
-            document.querySelectorAll('.list-group-item')[this.dataset.i].style.border ='none';
-            document.querySelectorAll('.list-group-item')[this.dataset.i].style.color ='white';
-            this.dataset.cnt+=1;
-          }   
-          else{
-            document.querySelectorAll('.list-group-item')[this.dataset.i].style.backgroundColor ="white";
-            document.querySelectorAll('.list-group-item')[this.dataset.i].style.border ='1px solid rgba(0,0,0,.125)';
-            document.querySelectorAll('.list-group-item')[this.dataset.i].style.color ='#212529';
-            document.querySelectorAll('.list-group-item')[this.dataset.i].style.padding ='.5rem 1rem';
-            this.dataset.cnt+=1;
-          }
+          const elementsToRemove = document.querySelectorAll('.list-group-item');
+          elementsToRemove.forEach(a => {
+            a.classList.remove('even')
+            a.classList.remove('odd')
+          })
+          document.querySelectorAll('.list-group-item')[this.dataset.i].classList.add('odd');
         })
         $('#send').click(function(){
             var 채팅내용 = $('#chat-input').val();
@@ -114,8 +116,25 @@
         $('.dele').click(function(e){
           채팅방삭제id = this.dataset.id  
           var 보낼거 = {삭제id : 채팅방삭제id};
-          $.post('/deletee', 보낼거).then(()=> {
-          })
+          // $.post('/deletee', 보낼거).then(()=> {
+          // })
+          if (confirm('리얼루다가 삭제하시겠슴까?')==true){
+            fetch('/deletee', {
+            method : 'POST',
+            async : false,
+            headers : {
+                'Content-Type' : 'application/json'
+            },
+            body : JSON.stringify(보낼거)
+            })
+            .then((r)=>r.text())
+            .then((r)=>{
+                location.reload();
+            }) 
+          }
+          else {
+            return 0
+          }
         })
 
 

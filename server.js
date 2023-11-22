@@ -143,7 +143,7 @@ function checkLogin(요청, 응답, next) {
         next()
     }
     else {
-        응답.send('로그인 하삼')
+        응답.send("<script>alert('로그인 요망');window.location.replace(`/login`)</script>");
     }
 }
 
@@ -306,21 +306,28 @@ app.put('/edit', async (요청, 응답) => {
 
 app.delete('/delete', async (요청, 응답)=>{
     // console.log(요청.query) // 게시물id
-    // console.log(요청.user.username) // 유저 id
-    if (요청.user){
-        await db.collection('post').deleteOne({작성자 : 요청.user.username, _id : new ObjectId(요청.query.docid)})
-        응답.send('삭제완료') // ajax 요청 뒤에 redirect render 사용 x (장점사라짐) 
+    if(요청.user){
+        try {
+            let result = await db.collection('post').deleteOne({작성자 : 요청.user.username, _id : new ObjectId(요청.query.docid)})
+            if (result.deletedCount != 0){
+                응답.send('삭제완료') // ajax 요청 뒤에 redirect render 사용 x (장점사라짐) 
+            }
+            else {
+                응답.send('cant')
+            }
+        }
+        catch(e) {
+            응답.send('serverError')
+        }
+    }else{
+        응답.send('notLogin')
     }
-    else {
-        응답.send('삭제실패')
-    }
-
 })
 
 
 app.get('/plus', async (요청, 응답) => {
     if (요청.user == undefined){
-        응답.send('로그인 하세유')
+        응답.send("<script>alert('로그인 요망');window.location.replace(`/login`)</script>");
     }
     else {
         let result = await db.collection('user').findOne({ username : 요청.user.username})
@@ -329,7 +336,7 @@ app.get('/plus', async (요청, 응답) => {
             응답.render('write.ejs')
         }
         else {
-            응답.send('로그인 하세유')
+            응답.send("<script>alert('로그인 요망');window.location.replace(`/login`)</script>");
         }
     }
 })
@@ -410,7 +417,7 @@ app.get('/ssearch', async (요청, 응답) => {
             응답.render('search.ejs', { 글목록 : result})
         }
         else {
-            응답.send('존재하지 않는 글')
+            응답.send("<script>alert('존재하지 않는 글');window.location.replace(`/list/1`)</script>");
         }
     } catch(e){
         응답.status(500).send('서버에러')
@@ -436,7 +443,8 @@ app.post('/login', async (요청, 응답, next) => {
 
 app.get('/mypage', async (요청, 응답)=>{
     if (!요청.user){
-        응답.send('로그인 하삼')
+        // 응답.send('로그인 하삼')
+        응답.send("<script>alert('로그인 요망');window.location.replace(`/login`)</script>");
     }
     else {
         let result = await db.collection('user').findOne({ username : 요청.user.username})
@@ -477,6 +485,7 @@ app.post('/chatroom', checkLogin, function(요청, 응답){
     var 저장할거 = {
         title : 요청.body.채팅방+"채팅방",
         member : [new ObjectId(요청.body.당한사람id), 요청.user._id],
+        name : 요청.body.당한사람name,
         date : new Date()
     }
     db.collection('chatroom').insertOne(저장할거).then((결과)=>{
@@ -484,6 +493,7 @@ app.post('/chatroom', checkLogin, function(요청, 응답){
 })
 
 app.post('/chat', checkLogin, async function(요청, 응답){
+    console.log(요청.body.name)
     var result = await db.collection('chatroom').find({ member : 요청.user._id}).toArray()
     응답.render('chat.ejs', { data : result, cur : 요청.user._id})
 })
@@ -545,19 +555,35 @@ app.get('/message/:id', checkLogin, function(요청, 응답){
 });
 
 app.post('/deletee', async (요청, 응답)=>{
-    await db.collection('chatroom').deleteOne({ _id : new ObjectId(요청.body.삭제id)})
+    try{
+        let result = await db.collection('chatroom').deleteOne({ _id : new ObjectId(요청.body.삭제id)})
+        if(result){
+            응답.send('삭제완료')
+        } else{
+            응답.send('삭제실패')
+        }
+    } catch(e) {
+        응답.status(500).send('서버에러')
+    }
+
     // 응답.redirect('chat.ejs')
 
 })
 app.post('/deletee2', async (요청, 응답)=>{
-    var 비교1 = JSON.stringify(요청.user._id)
-    var 비교2 = JSON.stringify(요청.body.userId)
-    if(비교1 == 비교2){
-        await db.collection('comment').deleteOne({ _id : new ObjectId(요청.body.id)})
-        응답.send()
+    try {
+        var 비교1 = JSON.stringify(요청.user._id)
+        var 비교2 = JSON.stringify(요청.body.userId)
+        if(비교1 == 비교2){
+            await db.collection('comment').deleteOne({ _id : new ObjectId(요청.body.id)})
+            응답.send()
+        }
+        else {
+            응답.send("지울 수 없성")
+        }
     }
-    else {
-        응답.send("지울 수 없성")
+    catch {
+        
+        응답.status(500).send('서버에러')
     }
 })
 

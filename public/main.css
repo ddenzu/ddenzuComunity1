@@ -75,6 +75,12 @@
     border: 2px solid rgba(255,255,255,0.5);
     background: transparent;
   }
+  .form-box input:focus {
+    outline: none;
+  }
+  .form-box textarea:focus {
+    outline: none;
+  }
   .form-box button {
     padding: 10px;
     border : none;
@@ -86,6 +92,7 @@
     padding: 15px;
     margin-top: 10px;
     background: rgba(255,255,255,0.5);
+    /* background-color: white; */
     border-radius: 20px;
     margin-left: 15px;
     margin-right: 15px;
@@ -431,8 +438,10 @@
     background-color: #b8db95;
   }
   .chatOne{
-    height: 15px;
+    height: auto;
     font-size: small;
+    margin-right: 5px;
+    white-space: pre-line;
   }
 
   .btn {

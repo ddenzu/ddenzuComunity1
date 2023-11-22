@@ -112,7 +112,7 @@ app.get('/dbadd', (요청, 응답) => { //get : url을 서버에서 주면서 �
 app.get('/list', async (요청, 응답) => {
     let result = await db.collection('post').find().toArray() // await = blocking
     // ejs 파일은 sendFile 아니라 render 사용
-    응답.render('list.ejs', { 글목록 : result}) // 글목록 이란 이름으로 result 값 보냄
+    응답.redirect('/list/1')
 }) 
 
 app.get('/write', (요청, 응답) => {
@@ -297,7 +297,7 @@ app.put('/edit', async (요청, 응답) => {
         응답.redirect('/list/1')
     }
     else {
-        응답.send('지우지망')
+        응답.send("<script>alert('수정할 수 없슴다');window.location.replace(`/list/1`)</script>");
     }
     // await db.collection('post').updateOne({ _id : 1 }, {$inc : {like : 1}})
 

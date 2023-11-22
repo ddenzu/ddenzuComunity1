@@ -183,11 +183,10 @@
             }
         })
         socket.on('broadcast', function(data){        
-            var chat = `<div class="chatOne"> 🐵${data}<div>`
-            // var chat = `<div class="chatOne">${'<%= 채팅사람 %>'}: ${data}<div>`
+            var chat = `<div class="chatOne"> 🐵${data}<br/><div>`
+            // var chat = `<div class="chatOne"><%= 채팅사람 %>: ${data}<div>`
             $('#chatBox').append(chat)
             var 실제높이 = document.querySelector('.chat-Box').scrollHeight;
-            console.log(실제높이)
             $('.chat-Box').scrollTop(실제높이+100); // 여기서 스크롤맨밑으로 (데이터를 수신했을때)
         })
 

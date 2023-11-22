@@ -63,7 +63,7 @@
           let a = Array.from(document.querySelectorAll('.list-group-item'));
           a.forEach((i,b)=>{
             if(i.dataset.id=='<%= arrow %>'){
-              setTimeout(()=> $(i).trigger('click') ,100) //********************
+              setTimeout(()=> $(i).trigger('click') ,300) //********************
             }
           })
         } else {

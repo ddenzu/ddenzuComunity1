@@ -545,3 +545,26 @@
     background-color: #ecb4b2;
   }
 
+  .snowFlake {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: white;
+    position: absolute;
+    top: -16px;
+    animation: fall 10s linear;
+  }
+
+  ion-icon {
+    cursor: pointer;
+    color: #ecb4b2;
+    font-size: 30px;
+  }
+
+  @keyframes fall {
+    from{}
+    to {
+      transform: translateY(100vh);
+      opacity: 0;
+    }
+  }

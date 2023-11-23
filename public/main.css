@@ -508,3 +508,40 @@
       opacity: 0;
     }
   }
+
+  .btn {
+    padding: 5px 10px;
+    border: 2px solid #ecb4b2;
+    background-color: transparent;
+    color: #ecb4b2;
+    text-transform: uppercase;
+    font-weight: bold;
+    position: relative;
+    transition: all 0.4s;
+    overflow: hidden;
+  }
+
+  .btn:focus {
+    outline: none;
+  }
+
+  .btn::before {
+    content: "";
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background-color: #ecb4b2;
+    top:0;
+    left:-100%;
+    transition: all 0.4s;
+    z-index: -1;
+  }
+
+  .btn:hover:before {
+    transform: translateX(100%);
+  }
+
+  .btn:hover {
+    background-color: #ecb4b2;
+  }
+

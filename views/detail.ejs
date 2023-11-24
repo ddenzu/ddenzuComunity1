@@ -5,73 +5,89 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, minimum-scale=1">
     <link rel="stylesheet" href="\main.css">
 </head>
+<%- include('nav.ejs') %>
 <body>
 
-    <%- include('nav.ejs') %>
-    <div style="height:60px;"></div>
-    <div class="detail-bg">
-        <h4 style="font-size: x-large; padding: 5px; margin: 0px; border-top: 1px solid #4a4a4a;
-        border-bottom: 1px solid #4a4a4a;"><%= 글목록.title %></h4>
-        <p style="font-size: small;">작성자:  
-            <img style="width: 25px; height: 25px;" src="/image/<%= 프로필 %>" onerror="this.src='/image/dinosaur.png'"/><%= 글목록.작성자 %></p>
-        <div class="img-box">
-            <img src="<%= 이미지주소 %>">
-            <video src="<%= 동영상주소 %>" type="video/mp4" controls muted loop autoplay 
-            playsinline preload="metadata" 
-            style="width: 200px" onerror="this.style.display='none';">
-            </video>
-        </div>
-        <p><%- 글목록.content.replace(/\n/g, '<br/>') %></p>
-        <div>
-            <div class="like-box">
-                <div>
-                    <span name="like" class="like" data-postId="<%= 글목록._id %>">
-                        <ion-icon style="color: white; 
-                        font-size: 26px;" name="thumbs-up-outline"></ion-icon>
-                    </span>
-                    <p class="like" style="margin: 0px;"><%= 글목록.like %></p>
-                </div>
+    <div class="section2">
+        <div style="height:60px;"></div>
+        <div class="detail-bg">
+            <h4 style="font-size: x-large; padding: 5px; margin: 0px; border-top: 1px solid #4a4a4a;
+            border-bottom: 1px solid #4a4a4a;"><%= 글목록.title %></h4>
+            <p style="font-size: small;">작성자:  
+                <img style="width: 25px; height: 25px;" src="/image/<%= 프로필 %>" onerror="this.src='/image/dinosaur.png'"/><%= 글목록.작성자 %></p>
+            <div class="img-box">
+                <img src="<%= 이미지주소 %>">
+                <video src="<%= 동영상주소 %>" type="video/mp4" controls muted loop autoplay 
+                playsinline preload="metadata" 
+                style="width: 200px" onerror="this.style.display='none';">
+                </video>
             </div>
-        </div>
-    </div> 
-
-    <div class="comment">
-        <form class="comment-write" action="/comment" method="POST">
-            <div class="ccontainer">
-                <div class="comment-bar">
-                    <textarea class="comment_2" id="comment-input" placeholder="엔터누르면 줄바꿈"></textarea>
-                    <button type="submit" id="comment-btn"><ion-icon name="paper-plane-outline"></ion-icon></button>
-                </div>
-            </div>
-        </form>
-        <div id="comment-box" style="margin: 0;">
-            <%for (let i=0; i<댓글목록.length; i++){ %>
-                <p style="text-align: left; margin-bottom: 30px; clear: both">
-                    <div class="profile">
-                        <div class="profileImage">
-                            <img src="/image/<%= 댓글목록[i].userprofile %>">
-            
-                        </div>
-                        <div class="profile2">
-                            <div class="profiletext"><%= 댓글목록[i].username %></div>
-                        </div>
+            <p><%- 글목록.content.replace(/\n/g, '<br/>') %></p>
+            <div>
+                <div class="like-box">
+                    <div>
+                        <span name="like" class="like" data-postId="<%= 글목록._id %>">
+                            <ion-icon style="color: white; 
+                            font-size: 26px;" name="thumbs-up-outline"></ion-icon>
+                        </span>
+                        <p class="like" style="margin: 0px;"><%= 글목록.like %></p>
                     </div>
-                    <div class="profile3"><%- 댓글목록[i].content.replace(/\n/g, '<br/>') %></div>
+                </div>
+            </div>
+        </div> 
 
-                    <span name="add" id="commentDel" data-id="<%= 댓글목록[i]._id %>"
-                        data-postId="<%= 댓글목록[i].postId %>" data-userId="<%= 댓글목록[i].userId %>">
-                        <ion-icon style="font-size: 20px; color: #5a545c;" name="trash-outline"></ion-icon>
-                    </span>
-                    <br>
-                </p>
-            <% }%>
+        <div class="comment">
+            <form class="comment-write" action="/comment" method="POST">
+                <div class="ccontainer">
+                    <div class="comment-bar">
+                        <textarea class="comment_2" id="comment-input" placeholder="엔터누르면 줄바꿈"></textarea>
+                        <button type="submit" id="comment-btn"><ion-icon name="paper-plane-outline"></ion-icon></button>
+                    </div>
+                </div>
+            </form>
+            <div id="comment-box" style="margin: 0;">
+                <%for (let i=0; i<댓글목록.length; i++){ %>
+                    <p><%=  %></p>
+                    <p style="text-align: left; margin-bottom: 30px; clear: both">
+                        <div class="profile">
+
+                            <div class="profileImage" onclick="moveToChat(this)" 
+                            data-name="<%= 댓글목록[i].username %>" data-id="<%= 댓글목록[i].userId %>">
+                                <form action="/chat" method="POST">
+                                    <button type="submit" style="background: transparent; border: none;"
+                                    name="name" value="<%= 댓글목록[i].username %>">
+                                        <img style="cursor: pointer;" src="/image/<%= 댓글목록[i].userprofile %>"> 
+                                    </button>
+                                </form>
+                            </div>
+                            <div class="profile2">
+                                <div class="profiletext"><%= 댓글목록[i].username %></div>
+                            </div>
+                        </div>
+                        <div class="profile3"><%- 댓글목록[i].content.replace(/\n/g, '<br/>') %></div>
+                        <span name="add" id="commentDel" data-id="<%= 댓글목록[i]._id %>"
+                            data-postId="<%= 댓글목록[i].postId %>" data-userId="<%= 댓글목록[i].userId %>">
+                            <ion-icon style="font-size: 20px; color: #5a545c;" name="trash-outline"></ion-icon>
+                        </span>
+                        <br>
+                    </p>
+                <% }%>
+            </div>
+        </div>
+        <div class="infomation" style="background-color:rgba(0, 0, 0, 0.2);">
+            <p style="font-weight: bold; height: 10vh;">⛔알림⛔<br>
+            <span style="color:red">1. 좋아요는 새로고침 후 적용됨<br></span>
+            </p>
         </div>
     </div>
-    <div class="infomation" style="background-color:rgba(0, 0, 0, 0.2);">
-        <p style="font-weight: bold; height: 10vh;">⛔알림⛔<br>
-          <span style="color:red">1. 좋아요는 새로고침 후 적용됨<br></span>
-        </p>
-      </div>
+    <script type="module">
+        import {makeSnowflake2} from '/snow.js';
+        window.onload = function(){
+            for (let i = 0; i < 40; i++){
+                setTimeout(makeSnowflake2(), 500 * i);
+            }
+        }       
+      </script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
@@ -90,11 +106,8 @@
         $('.profile2').change(function(){
         })
 
-
         document.querySelector('#comment-btn').addEventListener('click', ()=>{
             var 댓글내용 = $('#comment-input').val()
-            console.log(댓글내용)
-
             var 보낼거 = {
                 parent : 지금누른작성글id,
                 content : 댓글내용,
@@ -134,22 +147,26 @@
         //     })
         // }});
 
-
         $(document).on("click","span[name='add']", function(e){
-            var 지울거 = {id : this.dataset.id,
-            userId : this.dataset.userid}
-            fetch('/deletee2', {
-            method : 'POST',
-            async : false,
-            headers : {
-                'Content-Type' : 'application/json'
-            },
-            body : JSON.stringify(지울거)
-            })
-            .then((r)=>r.text())
-            .then((r)=>{
-                location.reload();
-            }) 
+            if (confirm('리얼루다가 삭제하시겠슴까?')==true){
+                var 지울거 = {id : this.dataset.id,
+                userId : this.dataset.userid}
+                fetch('/deletee2', {
+                method : 'POST',
+                async : false,
+                headers : {
+                    'Content-Type' : 'application/json'
+                },
+                body : JSON.stringify(지울거)
+                })
+                .then((r)=>r.text())
+                .then((r)=>{
+                    location.reload();
+                }) 
+            }
+            else {
+                return 0
+            }
         }) 
         if(document.querySelector('.profile2').innerHTML.length>2){
             document.querySelector('.profile2').innerText.substr(0,3)
@@ -157,11 +174,14 @@
 
         document.querySelector('.comment-bar').addEventListener('click', ()=>{
             if('<%= 현재접속자 %>'=="noUser"){
-                if (confirm('댓글작성을 위해 로그인 페이지로 이동하시겠슴까')==true){
+                if (confirm('댓글작성을 위해 로그인 페이지로 이동하시겠습니까')==true){
                     window.location.replace(`/login`) 
                 }
             }
         })
+        function moveToChat(e){
+            $.post('/chatroom', {당한사람id : e.dataset.id, 당한사람name: e.dataset.name})
+        }
 
     </script>
 </body>

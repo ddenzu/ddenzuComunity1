@@ -4,134 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, minimum-scale=1">
     <title>승뮤니티</title>
-    <!-- <link rel="stylesheet" href="\main.css"> -->
-    <style>
-        *{
-            margin: 0;
-            padding:0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
-
-        .nav {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 99;
-            background: rgba(0,0,0,0.45);
-        }
-
-        .logo{
-            font-size: 1.2em;
-            color: #fff;
-            user-select: none;
-            margin: 0;
-        }
-
-        .logo a {
-            color: #fff !important;
-            text-decoration: none;
-            font-weight: 400;
-            margin: 3px;
-        }
-
-        .navigation a {
-            position: relative;
-            font-size: .9em;
-            color: #fff !important;
-            text-decoration: none;
-            font-weight: 400;
-            margin: 3px;
-        }
-
-        .navigation a::after {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 3px;
-            background: #fff;
-            border-radius: 5px;
-            left:0;
-            bottom: -6px;
-            transform: scaleX(0);
-            transition: 0.5s;
-        }
-        .navigation a:hover::after {
-            transform-origin: left;
-            transform: scaleX(1);
-        }
-    </style>
+    <link rel="stylesheet" href="\main.css">
 </head>
-<body>
-    <div class="nav">
-        <h2 class="logo"><a style="text-decoration: none;" href="/list/1">홈</a></h2>
-        <nav class="navigation">
-            <!-- <a href="/list/1">HOME</a> -->
-            
-            <a href="/mypage">MYPAGE</a>
-            <a href="/chat">CHATROOM</a>
-            <a href="/login">LOGIN</a>
-            <a href="/register">REGISTER</a>
-        </nav>
-        <!-- <a class="logo" href="/list/1">HOME</a>
-        <a class="my" href="/mypage">마이페이지</a>
-        <a class="reg" href="/chat">내 채팅방</a>
-        <a class="reg" href="/login">로그인</a>
-        <a class="reg" href="/register">회원가입</a> -->
-    </div> 
+<body style="background-color: #131931;">
+    <div class="wrap">
+        <div class="nav">
+            <h2 class="logo"><a style="text-decoration: none;" href="/list/1">홈</a></h2>
+            <nav class="navigation">
+                <a href="/mypage">MYPAGE</a>
+                <a href="/chat">CHATROOM</a>
+                <a href="/login">LOGIN</a>
+                <a href="/register">REGISTER</a>
+            </nav>
+        </div> 
+    </div>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-    <script>
-        // document.querySelectorAll('.reg')[0].addEventListener('click', function(e){
-        // })
-        // let darkmode_switch = true
-        // $('.dark-btn').on('click',function(){
-        //     if (darkmode_switch==true){
-        //         console.log('white mode')
-        //         $(".nav").addClass("dark");
-        //         $(".dark-btn").html("☀️일반모드");
-        //         darkmode_switch = false
-        //     }
-        //     else {
-        //         console.log('dark mode')
-        //         $(".nav").removeClass("dark");
-        //         $(".dark-btn").html("🌗다크모드");
-        //         darkmode_switch = true
-        //     }
-        // })
-
-        const min_duration = 15;
-        const body = document.querySelector('body');
-        function makeSnowflake(){
-            const snowFlake = document.createElement("div");
-            const delay = Math.random()*10;
-            const initialOpacity = Math.random();
-            const duration = Math.random()*50+min_duration;
-
-            snowFlake.classList.add("snowFlake");
-            snowFlake.style.left = `${Math.random()*window.screen.width-0.1}px`
-            snowFlake.style.animationDelay = `${delay}s`;
-            snowFlake.style.animation = `fall ${duration}s linear`;
-            snowFlake.style.opacity = initialOpacity;
-            snowFlake.style.zIndex = -1;
-
-            body.appendChild(snowFlake);
-
-            setTimeout(()=>{
-                body.removeChild(snowFlake);
-                makeSnowflake();
-            }, (duration + delay) * 800);
-        }
-        window.onload = function(){
-            for (let i = 0; i < 27; i++){
-                setTimeout(makeSnowflake(), 500 * i);
-            }
-        }
-
-    </script>
+    <!-- <script>
+        document.body.addEventListener('touchmove', function(event) {
+            // let color2 = '#131931'
+            let color3 = 'background-image: linear-gradient(#1b1e37, #35364b)'
+            // document.body.style.background= color2;
+            document.body.style.backgroundImage= color3;
+        }, { passive: true });
+    </script> -->
 </body>
 </html>

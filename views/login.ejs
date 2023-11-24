@@ -6,77 +6,6 @@
     <title>승뮤니티</title>
     <link rel="stylesheet" href="\main.css">
     <style>
-        *{
-            margin: 0;
-            padding: 0;
-            font-family: 'poppins', sans-serif;
-        }
-
-        section {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            width: 100%;
-            background: url('/image/loginbackground1.jpg')no-repeat;
-            background-position: center;
-            background-size: cover;
-        }
-
-        .form-box2 {
-            position: relative;
-            width: 400px;
-            height: 450px;
-            background: transparent;
-            border: 2px solid rgba(255,255,255,0.5);
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        h2{
-            font-size: 2em;
-            color: #fff;
-            text-align: center;
-        }
-        .inputbox{
-            position: relative;
-            margin: 30px 0;
-            width: 310px;
-            border-bottom: 2px solid #fff;
-        }
-        .inputbox label{
-            position: absolute;
-            top: 50%;
-            left: 5px;
-            transform: translateY(-50%);
-            color: #fff;
-            font-size: 1em;
-            pointer-events: none;
-            transition: 0.5s;
-        }
-        input:focus ~ label,
-        input:focus ~ :valid{
-        top: -5px;
-        }
-        .inputbox input{
-            width: 100%;
-            height: 50px;
-            background: transparent;
-            border: none;
-            outline: none;
-            font-size: 1em;
-            padding: 0 35px 0 5px;
-            color: #fff;
-        }
-        .inputbox ion-icon{
-            position: absolute;
-            right: 8px;
-            color:#fff;
-            font-size: 1.2em;
-            top: 20px;
-        }
         button {
             width: 100%;
             height: 40px;
@@ -87,32 +16,11 @@
             font-size: 1em;
             font-weight: 600;
         }
-        .register{
-            font-size: 0.9em;
-            color: #fff;
-            text-align: center;
-            margin: 25px 0 10px;
-        }
-        .register p a{
-            text-decoration: none;
-            color: #fff;
-            font-weight: 600;
-        }
-        .register p a:hover {
-            text-decoration: underline;
-        }
     </style>
 </head>
-
 <%- include('nav.ejs') %>
 <body>
-    <section>
-    <!-- <form class="form-box" action="/login" method="POST">
-        <h4>로그인</h4>
-        <input name="username" placeholder="ID"> 
-        <input name="password" type="password" placeholder="PASSWORD"> 
-        <button type="submit">전송</button>
-    </form>  -->
+    <div class="section">
         <div class="form-box2">
             <div class="form-value">
                 <form action="/login" method="POST">
@@ -134,8 +42,20 @@
                 </form>
             </div>
         </div>
-    </section>
+    </div>
+
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <script type="module">
+        import {makeSnowflake} from '/snow.js';
+
+        window.onload = function(){
+            for (let i = 0; i < 40; i++){
+                setTimeout(makeSnowflake(), 500 * i);
+            }
+        }      
+    </script>
+
+
 </body>
 </html>

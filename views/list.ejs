@@ -7,95 +7,104 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="\main.css">
 </head>
+<%- include('nav.ejs') %>
 <body style="position: relative;">
-
-    <%- include('nav.ejs') %>
-    <div style="height:55px;"></div>
-    
-    <!-- ejs 파일에선 아무데서나 자바스크립트문법 사용 가능  -->
-    <%for (let i=0; i<글목록.length; i++){ %>
-        <div class="white-bg">
-            <div class="list-box">
-            <% if(글목록[i].vidName !== undefined){ %>
-                <a href="/detail/<%= 글목록[i]._id %>">
-                    <img class="list-left" src="/image/<%= 글목록[i].imgName %>" onerror="this.src='/image/dinosaurVid.png'" />
-                </a>
-            <% } else { %>
-                <a href="/detail/<%= 글목록[i]._id %>">
-                    <img class="list-left" src="/image/<%= 글목록[i].imgName %>" onerror="this.src='/image/dinosaur.png'" />
-                </a>
-            <% } %>
-                <h4 class="list-right">
-                    <a href="/detail/<%= 글목록[i]._id %>"><%= 글목록[i].title %></a>
-                    <a style="vertical-align: middle;
-                    margin-left: 5px;" href="/edit/<%= 글목록[i]._id %>">
-                        <ion-icon style="font-size: 20px;" name="create-outline"></ion-icon>
+    <div class="section2">
+        <div style="height:60px;"></div>
+        <!-- ejs 파일에선 아무데서나 자바스크립트문법 사용 가능  -->
+        <%for (let i=0; i<글목록.length; i++){ %>
+            <div class="white-bg">
+                <div class="list-box">
+                <% if(글목록[i].vidName !== undefined){ %>
+                    <a href="/detail/<%= 글목록[i]._id %>">
+                        <img class="list-left" src="/image/<%= 글목록[i].imgName %>" onerror="this.src='/image/dinosaurVid.png'" />
                     </a>
-                    <span style="vertical-align: middle;
-                    margin-left: 5px;" class="delete" data-id="<%= 글목록[i]._id %>">
-                        <ion-icon style="font-size: 20px;" name="trash-outline"
-                        data-id="<%= 글목록[i]._id %>"></ion-icon>
-                    </span>
-                    <p>작성자: <%= 글목록[i].작성자 %></p>
-                    <form action="/chat" method="POST">
-                        <button type="submit" class="btn" data-id="<%= 글목록[i].작성자_id %>"
-                            data-name="<%= 글목록[i].작성자 %>" data-title="<%= 글목록[i].title %>"
-                            name="name" value="<%= 글목록[i].작성자 %>">
-                            작성자랑 채팅하기</button>
-                    </form>
-                </h4>
+                <% } else { %>
+                    <a href="/detail/<%= 글목록[i]._id %>">
+                        <img class="list-left" src="/image/<%= 글목록[i].imgName %>" onerror="this.src='/image/dinosaur.png'" />
+                    </a>
+                <% } %>
+                    <h4 class="list-right">
+                        <a href="/detail/<%= 글목록[i]._id %>"><%= 글목록[i].title %></a>
+                        <a style="vertical-align: middle;
+                        margin-left: 5px;" href="/edit/<%= 글목록[i]._id %>">
+                            <ion-icon style="font-size: 20px;" name="create-outline"></ion-icon>
+                        </a>
+                        <span style="vertical-align: middle;
+                        margin-left: 5px;" class="delete" data-id="<%= 글목록[i]._id %>">
+                            <ion-icon style="font-size: 20px;" name="trash-outline"
+                            data-id="<%= 글목록[i]._id %>"></ion-icon>
+                        </span>
+                        <p>작성자: <%= 글목록[i].작성자 %></p>
+                        <form action="/chat" method="POST">
+                            <button type="submit" class="btn" data-id="<%= 글목록[i].작성자_id %>"
+                                data-name="<%= 글목록[i].작성자 %>" data-title="<%= 글목록[i].title %>"
+                                name="name" value="<%= 글목록[i].작성자 %>">
+                                작성자랑 채팅하기</button>
+                        </form>
+                    </h4>
+                </div>
+                
+            <p style="clear: both; margin: 0px;"></p>
+            </div>      
+        <% }%>
+        <div>
+            <div class="page-box">
+                <p></p>
+                <ion-icon class="back" name="caret-back-outline"></ion-icon>
+                <%for (let i=0; i<Math.ceil(글수/5); i++){ %>
+                    <span style="margin: 3px;" class="page-btn" data-num="<%= i+1 %>"><%= i+1 %></span>
+                <% }%>
+                <ion-icon class="forward" name="caret-forward-outline"></ion-icon>
             </div>
-            
-        <p style="clear: both; margin: 0px;"></p>
-        </div>      
-    <% }%>
-    <div>
-        <div class="page-box">
-            <p></p>
-            <ion-icon class="back" name="caret-back-outline"></ion-icon>
-            <%for (let i=0; i<Math.ceil(글수/5); i++){ %>
-                <span style="margin: 3px;" class="page-btn" data-num="<%= i+1 %>"><%= i+1 %></span>
-            <% }%>
-            <ion-icon class="forward" name="caret-forward-outline"></ion-icon>
+            <div style="position: absolute; right: 20px; background: rgba(0, 0, 0, 0.2);
+            padding: 3px; border-radius: 5px;">
+                <a href="/plus" style="text-decoration-line: none; color: #fff;">글쓰기✏️</a></button>
+            </div>
         </div>
-        <div style="position: absolute; right: 20px; background: rgba(0, 0, 0, 0.2);
-        padding: 3px; border-radius: 5px;">
-            <a href="/plus" style="text-decoration-line: none; color: #fff;">글쓰기✏️</a></button>
+        <div style="text-align: center;">
+            <a class="list-loc" style="text-align: center;
+            text-decoration: none; color: white;" 
+            href="/list/next/<%= 글목록[글목록.length-1]._id %>">다음페이지</a>
         </div>
-    </div>
-    <div style="text-align: center;">
-        <a class="list-loc" style="text-align: center;
-        text-decoration: none; color: white;" 
-        href="/list/next/<%= 글목록[글목록.length-1]._id %>">다음페이지</a>
-    </div>
-    <div class="ccontainer">
-        <div class="search-bar">
-            <input type="text" class="search_2" id="ssearch-input" placeholder="글제목으로 검색">
-            <button type="submit" id="ssearch"><ion-icon name="search-outline"></ion-icon></button>
+        <div class="ccontainer">
+            <div class="search-bar">
+                <input type="text" class="search_2" id="ssearch-input" placeholder="글제목으로 검색">
+                <button type="submit" id="ssearch"><ion-icon name="search-outline"></ion-icon></button>
+            </div>
+
         </div>
 
-    </div>
 
+        <div class="curtain" style="position: absolute; right: 9px; top: 210px; width: 25%;">
+            <!-- <button class="curtain-btn" style="position: absolute; left: -25px; background-color: white;
+            width: 25px; height: 25px; z-index: 20;"></button> -->
 
-    <div class="curtain" style="position: absolute; right: 9px; top: 210px; width: 25%;">
-        <!-- <button class="curtain-btn" style="position: absolute; left: -25px; background-color: white;
-        width: 25px; height: 25px; z-index: 20;"></button> -->
-
-        <div class="chat-Box" style="background-color: white; width: 100%; height: 130px !important;
-        border: 1px solid darkgray; border-radius: 5px; overflow-y: scroll;
-        background: rgba(255,255,255,0.3); position: relative;">
-            <div id="chatBox"></div>
+            <div class="chat-Box" style="background-color: white; width: 100%; height: 130px !important;
+            border: 1px solid darkgray; border-radius: 5px; overflow-y: scroll;
+            background: rgba(255,255,255,0.3); position: relative;">
+                <div id="chatBox"></div>
+            </div>
+            <div class="input-group mb-3" style="width: 100%; ">
+                <input type="text" id="input1" class="form-control" aria-describedby="button-addon2" 
+                style="height: 25px; font-size: .8em;" placeholder="엔터시전송">
+                <button type="button" id="button-addon2"
+                style="height: 25px; background-color: #ecb4b2; border: none; border-radius: 2px;">
+                <ion-icon style="color: white; font-size: 18px;
+                margin-top: 3px;" name="paper-plane-outline"></ion-icon>
+                </button>
+            </div>
         </div>
-        <div class="input-group mb-3" style="width: 100%; ">
-            <input type="text" id="input1" class="form-control" aria-describedby="button-addon2" 
-            style="height: 25px; font-size: .8em;" placeholder="엔터시전송">
-            <button type="button" id="button-addon2"
-            style="height: 25px; background-color: #ecb4b2; border: none; border-radius: 2px;">
-            <ion-icon style="color: white; font-size: 18px;
-            margin-top: 3px;" name="paper-plane-outline"></ion-icon>
-            </button>
-        </div>
     </div>
+    <script type="module">
+        import {makeSnowflake2} from '/snow.js';
+
+        window.onload = function(){
+            for (let i = 0; i < 40; i++){
+                setTimeout(makeSnowflake2(), 500 * i);
+            }
+        }      
+    </script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
@@ -199,9 +208,6 @@
             num = parseInt('<%= 페이지넘버 %>')+1
             window.location.href=`/list/next/<%= 글목록[글목록.length-1]._id %>?pageNum=`+num;
         })
-        // var 실제높이 = document.querySelector('.chat-Box').scrollHeight;
-        // console.log(실제높이)
-        // $('.chat-Box').scrollTop(실제높이+100); // 여기서 스크롤맨밑으로 (데이터를 수신했을때)
     </script>
     
 

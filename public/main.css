@@ -1,30 +1,58 @@
   *{
-  margin: 0;
-  padding: 0;
-  font-family: 'poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    font-family: 'poppins', sans-serif;
   }
-  body 
-  {
-      min-height: 100vh;
-      /* width: 99%; */
-      background: url('/image/loginbackground1.jpg')no-repeat;
-      background-color: #161A33;
-      background-position: center;
-      background-size: cover;  
+  html {
+    overflow-x : hidden;
   }
-  html, body { max-width: 100%; overflow-x: hidden; }
+  body {
+    background-image: linear-gradient(#1b1e37, #35364b);
+    overflow-x: hidden;
+    width: 100%;
+    margin: 0 auto;
+  }
+  body::after {
+    /* background-image: linear-gradient(#1b1e37, #35364b); */
+    background-size: cover;
+  }  
+  .section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    position: relative;
+    background: url('/image/loginbackground1.jpg')no-repeat;
+    background-position: center;
+    background-size: cover;
+    z-index: 0;
+    margin: 0 auto;
+    max-width: 850px;
+    /* min-width: 430px; */
+    /* max-width: 850px; */
+  }
+  .section2 {
+    min-height: 100vh;
+    position: relative;
+    background: url('/image/loginbackground1.jpg')no-repeat;
+    background-position: center;
+    background-size: cover;
+    z-index: 0;
+    margin: 0 auto;
+    max-width: 850px; 
+    /* min-width: 430px; */
+  }
   .white-bg {
-    /* clear: both; */
     background: white;
-    margin: 10px;
+    margin: 15px;
     border-radius: 10px;
     background: rgba(0,0,0,0.2);
-    /* backdrop-filter: blur(2px); */
+    /* backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px); */
   }
 
   .list-box {
    padding : 0px;
-    /* border-bottom: 1px solid#eee; */
   }
   .list-box h4{
     font-size: 16px;
@@ -38,7 +66,6 @@
     text-decoration-line: none;
     color: #fff;
     font-weight: 600;
-
   }
 
   .list-left {
@@ -52,19 +79,21 @@
     font-size: 12px;
     margin: 5px;
     color: #eeeeee;
-    /* color: grey; */
   }
   input,div {
     box-sizing: border-box;
   }
   .form-box {
+    top: -50px;
     padding: 20px 20px 10px 20px;
-    margin: 20px;
+    margin: 40px;
     background: transparent;
     border: 2px solid rgba(255,255,255,0.5);
     border-radius: 20px;
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
     color: white;
+
   }
   .form-box input {
     padding : 10px;
@@ -88,17 +117,14 @@
     border-radius: 5px;
   }
   .detail-bg {
-    background: white;
     padding: 15px;
-    margin-top: 10px;
     background: rgba(255,255,255,0.5);
-    /* background-color: white; */
     border-radius: 20px;
-    margin-left: 15px;
-    margin-right: 15px;
     overflow: auto;
+    width: 90%;
+    margin: 0 auto;
+    margin-top: 5px;
   }
-
   .search {
     height: 30px;
     text-align: center;
@@ -321,7 +347,6 @@
     overflow:hidden; 
     background : white;
     padding : 15px;
-    margin-top: 5px;
     text-align: center;
     border-radius: 15px;
     margin: auto;
@@ -356,11 +381,11 @@
     position: relative;
   }
   .profile2 {
-    margin-top: 6px;
+    margin-top: 10px;
     width: 90%;
     height: 90%;
     position: absolute;
-    transform: translate(0%,-40%);
+    transform: translate(-3%,-40%);
     text-align: center;
   }
   .profileImage {
@@ -401,21 +426,21 @@
     color : white;
   }
   .profiletext{
-    margin-left: 5px;
+    width: 120%;
+    font-size: 16px;
     margin-top: 3px;
+    text-overflow: ellipsis;
     overflow: hidden;
-    white-space  : nowrap;
+    white-space: nowrap;
+    
   }
   .page-btn{
     padding-left: 4px;
     padding-right: 4px;
-    /* margin: 1px; */
-    /* background-color: white; */
     border: 2px solid #ecb4b2;
     color: #ecb4b2;
     background: transparent;
     font-size: larger;
-    /* border: 1px solid black; */
     border-radius: 5px;
   }
   .page-btn:hover {
@@ -444,6 +469,21 @@
     white-space: pre-line;
   }
 
+  .snowFlake {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: white;
+    position: absolute;
+    top: -16px;
+    animation: fall 10s linear;
+  }
+
+  ion-icon {
+    cursor: pointer;
+    color: #ecb4b2;
+    font-size: 30px;
+  }
   .btn {
     padding: 5px 10px;
     border: 2px solid #ecb4b2;
@@ -456,32 +496,43 @@
     overflow: hidden;
   }
   .chat-btn {
-    border: 1px solid grey;
+    border: 1px solid grey !important;
     background: rgba(0, 0, 0, 0.5);
+    color: transparent;
   }
-
   .btn:focus {
     outline: none;
   }
-
   .btn::before {
     content: "";
     position: absolute;
     height: 100%;
     width: 100%;
     background-color: #ecb4b2;
-    top:0;
+    top: 0;
     left:-100%;
     transition: all 0.4s;
     z-index: -1;
   }
-
-  .btn:hover:before {
-    transform: translateX(100%);
+  .chat-btn::before {
+    content: "";
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background-color: #0c0e1c;
+    top: 0;
+    left:-100%;
+    transition: all 0.4s;
+    z-index: -1;
   }
-
+  .btn:hover:before {
+    transform: translateX(+100%);
+  }
   .btn:hover {
     background-color: #ecb4b2;
+  }
+  .chat-btn:hover {
+    background-color: transparent
   }
 
   .snowFlake {
@@ -492,73 +543,134 @@
     position: absolute;
     top: -16px;
     animation: fall 10s linear;
+    z-index: 20;
   }
 
-  ion-icon {
-    cursor: pointer;
-    color: #ecb4b2;
-    font-size: 30px;
+  .logo{
+    font-size: 1.2em;
+    color: #fff;
+    user-select: none;
+    margin: 0;
   }
 
-
-  @keyframes fall {
-    from{}
-    to {
-      transform: translateY(100vh);
-      opacity: 0;
-    }
+  .logo a {
+      color: #fff !important;
+      text-decoration: none;
+      font-weight: 400;
+      margin: 3px;
   }
 
-  .btn {
-    padding: 5px 10px;
-    border: 2px solid #ecb4b2;
-    background-color: transparent;
-    color: #ecb4b2;
-    text-transform: uppercase;
-    font-weight: bold;
+  .navigation a {
+      position: relative;
+      font-size: .9em;
+      color: #fff !important;
+      text-decoration: none;
+      font-weight: 400;
+      margin: 3px;
+  }
+
+  .navigation a::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 3px;
+      background: #fff;
+      border-radius: 5px;
+      left:0;
+      bottom: -6px;
+      transform: scaleX(0);
+      transition: 0.5s;
+  }
+  .navigation a:hover::after {
+      transform-origin: left;
+      transform: scaleX(1);
+  }
+  .wrap {
+    max-width: 850px;
+    margin: 0 auto;
+  }
+  .nav {
+    position: fixed;
+    width: 100%;
+    max-width: 850px;
+    /* min-width: 430px; */
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 99;
+    background: rgba(0,0,0,0.45); 
+
+  }
+  .form-box2 {
+    top: -50px;
     position: relative;
-    transition: all 0.4s;
-    overflow: hidden;
+    width: 350px;
+    height: 400px;
+    background: transparent;
+    border: 2px solid rgba(255,255,255,0.5);
+    border-radius: 20px;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
-
-  .btn:focus {
-    outline: none;
+  h2{
+      font-size: 2em;
+      color: #fff;
+      text-align: center;
   }
-
-  .btn::before {
-    content: "";
-    position: absolute;
-    height: 100%;
-    width: 100%;
-    background-color: #ecb4b2;
-    top:0;
-    left:-100%;
-    transition: all 0.4s;
-    z-index: -1;
+  .inputbox{
+      position: relative;
+      margin: 30px 0;
+      width: 310px;
+      border-bottom: 2px solid #fff;
   }
-
-  .btn:hover:before {
-    transform: translateX(100%);
+  .inputbox label{
+      position: absolute;
+      top: 50%;
+      left: 5px;
+      transform: translateY(-50%);
+      color: #fff;
+      font-size: 1em;
+      pointer-events: none;
+      transition: 0.5s;
   }
-
-  .btn:hover {
-    background-color: #ecb4b2;
+  input:focus ~ label,
+  input:focus ~ :valid{
+  top: -5px;
   }
-
-  .snowFlake {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background-color: white;
-    position: absolute;
-    top: -16px;
-    animation: fall 10s linear;
+  .inputbox input{
+      width: 100%;
+      height: 50px;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-size: 1em;
+      padding: 0 35px 0 5px;
+      color: #fff;
   }
-
-  ion-icon {
-    cursor: pointer;
-    color: #ecb4b2;
-    font-size: 30px;
+  .inputbox ion-icon{
+      position: absolute;
+      right: 8px;
+      color:#fff;
+      font-size: 1.2em;
+      top: 20px;
+  }
+  .register{
+      font-size: 0.9em;
+      color: #fff;
+      text-align: center;
+      margin: 25px 0 10px;
+  }
+  .register p a{
+      text-decoration: none;
+      color: #fff;
+      font-weight: 600;
+  }
+  .register p a:hover {
+      text-decoration: underline;
   }
 
   @keyframes fall {

@@ -6,23 +6,32 @@
     <title>승뮤니티</title>
     <link rel="stylesheet" href="\main.css">
 </head>
+<%- include('nav.ejs') %>
 <body>
-    <%- include('nav.ejs') %>
-    <div style="height:60px;"></div>
-    <div style="margin-left: 10px; color: white;">
-        <h4>마이페이지</h4>
-        <p> ID : <%= 아이디.username %></p>
-        <img src="/image/<%= 아이디.imgName %>">
-        <p>프로필사진 설정</p>
-        <form method="POST" action="/addprofile" enctype="multipart/form-data">
-            <input type="file" name="img1" accept="image/*" style="background-color: gray;">
-            <button type="submit">프로필사진 적용</button>
-        </form>
-        <form>
-            <a href="/logout">로그아웃</a>
-        </form>
+    <div class="section2">
+        <div style="height:60px;"></div>
+        <div style="margin-left: 10px; color: white;">
+            <h4>마이페이지</h4>
+            <p> ID : <%= 아이디.username %></p>
+            <img src="/image/<%= 아이디.imgName %>">
+            <p>프로필사진 설정</p>
+            <form method="POST" action="/addprofile" enctype="multipart/form-data">
+                <input type="file" name="img1" accept="image/*" style="background-color: gray;">
+                <button type="submit">프로필사진 적용</button>
+            </form>
+            <form>
+                <a href="/logout">로그아웃</a>
+            </form>
+        </div>
     </div>
-
+    <script type="module">
+        import {makeSnowflake2} from '/snow.js';
+        window.onload = function(){
+            for (let i = 0; i < 40; i++){
+                setTimeout(makeSnowflake2(), 500 * i);
+            }
+        }       
+      </script>
     <script>
         document.querySelectorAll('.delete')[i].addEventListener('click', function(e){
             e.target.parentElement.parentElement.style.display = 'none'

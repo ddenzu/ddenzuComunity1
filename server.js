@@ -208,7 +208,7 @@ app.post('/addprofile', upload.single('img1'), async (req, res, next) => { // wr
            .withMetadata()
            .toFile(`public/image/resize-${req.file.filename}`, (err, info) => {
               if (err) throw err;
-              console.log(`info : ${info}`);
+            //   console.log(`info : ${info}`);
               fs.unlink(`public/image/${req.file.filename}`, (err) => {
                  // 원본파일은 삭제해줍니다
                  // 원본파일을 삭제하지 않을거면 생략
@@ -216,6 +216,7 @@ app.post('/addprofile', upload.single('img1'), async (req, res, next) => { // wr
               });
            });
            await db.collection('user').updateOne({ _id : new ObjectId(req.user._id)}, {$set : {imgName : 'resize-'+req.file.filename}})
+           await db.collection('comment').updateMany({userId: new ObjectId(req.user._id)}, {$set : {userprofile : 'resize-'+req.file.filename}})
             res.redirect('/list/1')
      } catch (err) {
         console.log(err);
@@ -460,7 +461,7 @@ app.post('/register', async (요청, 응답) => {
     // 회원가입시 아이디 비번 조건 필터링기능 만들기
     let result = await db.collection('user').findOne({ username : 요청.body.username})
     if (result){
-        응답.send('이미존재하는 ID')
+        응답.send("<script>alert('이미 존재하는 아이디입니다');location.replace(location.href);</script>");
     }
     else {
         let 해시 = await bcrypt.hash(요청.body.password, 10) // 10 이면 적당히 꼬은거
@@ -480,10 +481,12 @@ app.get('/logout',function(요청, 응답){
 //     응답.sendFile( __dirname + '/public/image' + 요청.params.imageName)
 // })
 
-
 app.post('/chatroom', checkLogin, async function(요청, 응답){
-    console.log(요청.body.당한사람name)
+    // console.log(요청.body.당한사람name)
     try{
+        if(요청.body.당한사람name==요청.user.username){
+            throw(err)
+        }
         let result = await db.collection('chatroom').findOne({ name : {$all:[요청.user.username,요청.body.당한사람name]}})
         if(result==null){
             var 저장할거 = {
@@ -494,19 +497,29 @@ app.post('/chatroom', checkLogin, async function(요청, 응답){
             }
             db.collection('chatroom').insertOne(저장할거).then((결과)=>{
             })
-        } else {}
+        } else {
+            응답.send("<script>alert('다시 시도해 주세요');location.reload()</script>");
+        }
     }
     catch(e){
         응답.send('cant')
     }
 })
 
-app.post('/chat', checkLogin, async function(요청, 응답){ // list에서 올 때
-    console.log(요청.body.name)
+app.post('/chat', checkLogin, async function(요청, 응답){ // list에서 올 때, 프사에서 올 때
+    // console.log(요청.body)
     try{
+        if(요청.body.name==요청.user.username){
+            throw(err)
+        }
         let result = await db.collection('chatroom').find({ member : 요청.user._id}).toArray()
         let result2 = await db.collection('chatroom').findOne({ name : {$all:[요청.user.username,요청.body.name]}})
-        응답.render('chat.ejs', { data : result, cur : 요청.user._id, arrow : result2._id})
+        if(result && result2){
+            응답.render('chat.ejs', { data : result, cur : 요청.user._id, arrow : result2._id})
+        }
+        else{
+            응답.send("<script>location.reload()</script>");
+        }
     }
     catch(e){
         let result = await db.collection('chatroom').find({ member : 요청.user._id}).toArray()
@@ -519,16 +532,26 @@ app.get('/chat', checkLogin, async function(요청, 응답){ // navbar에서 올
     응답.render('chat.ejs', { data : result, cur : 요청.user._id, arrow : 0})
 })
 
-app.post('/message', checkLogin, function(요청, 응답){
-    if (요청.body.content) {
-        var 저장할거 = {
-            parent : 요청.body.parent, // 채팅방의 id
-            content : 요청.body.content, // 채팅내용
-            userid : 요청.user._id, // 채팅 건 사람
-            date : new Date(),
-        }
-        db.collection('message').insertOne(저장할거).then(()=>{
-    })}
+app.post('/message', checkLogin, async function(요청, 응답){ // 수정필요
+    console.log(요청.body.content)
+    try {
+        if (요청.body.content) {
+            var 저장할거 = {
+                parent : 요청.body.parent, // 채팅방의 id
+                content : 요청.body.content, // 채팅내용
+                userid : 요청.user._id, // 채팅 건 사람
+                date : new Date(),
+            }
+            let result = await db.collection('message').insertOne(저장할거)
+            if(result){
+            }
+            else {
+                throw err
+            }
+        }}
+    catch (err){
+        응답.send("<script>alert('넘빨랑');window.location.replace(`/chat`)</script>");
+    }
 })
 
 app.post('/comment', checkLogin, async (요청, 응답)=>{
@@ -552,6 +575,7 @@ app.get('/message/:id', checkLogin, function(요청, 응답){
       "Connection": "keep-alive",
       "Content-Type": "text/event-stream",
       "Cache-Control": "no-cache",
+      "X-Accel-Buffering": "no",
     });
     db.collection('message').find({parent: 요청.params.id}).toArray().then((결과)=>{
         응답.write('event: test\n');
@@ -572,6 +596,7 @@ app.get('/message/:id', checkLogin, function(요청, 응답){
 
 app.post('/deletee', async (요청, 응답)=>{
     try{
+        // let result = await db.collection('message').deleteMany({}) // 도큐먼트 전부 비우기
         let result = await db.collection('chatroom').deleteOne({ _id : new ObjectId(요청.body.삭제id)})
         if(result){
             응답.send('삭제완료')
@@ -581,7 +606,6 @@ app.post('/deletee', async (요청, 응답)=>{
     } catch(e) {
         응답.status(500).send('서버에러')
     }
-
     // 응답.redirect('chat.ejs')
 
 })

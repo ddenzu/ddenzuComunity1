@@ -13,8 +13,8 @@
         <div class="detail-bg">
             <h4 style="font-size: x-large; padding: 5px; margin: 0px; border-top: 1px solid #4a4a4a;
             border-bottom: 1px solid #4a4a4a;"><%= 글목록.title %></h4>
-            <p style="font-size: small;">작성자:  
-                <img style="width: 25px; height: 25px;" src="/image/<%= 프로필 %>" onerror="this.src='/image/dinosaur.png'"/><%= 글목록.작성자 %></p>
+            <p style="font-size: small; margin-top: 5px;">작성자:  
+                <img style="width: 25px; height: 25px; vertical-align: bottom;" src="/image/<%= 프로필 %>" onerror="this.src='/image/dinosaur.png'"/><%= 글목록.작성자 %></p>
             <div class="img-box">
                 <img src="<%= 이미지주소 %>">
                 <video src="<%= 동영상주소 %>" type="video/mp4" controls muted loop autoplay 
@@ -25,9 +25,9 @@
             <p><%- 글목록.content.replace(/\n/g, '<br/>') %></p>
             <div>
                 <div class="like-box">
-                    <div>
+                    <div id="likee">
                         <span name="like" class="like" data-postId="<%= 글목록._id %>">
-                            <ion-icon style="color: white; 
+                            <ion-icon class="likeIcon" style="color: white; 
                             font-size: 26px;" name="thumbs-up-outline"></ion-icon>
                         </span>
                         <p class="like" style="margin: 0px;"><%= 글목록.like %></p>
@@ -37,18 +37,20 @@
         </div> 
 
         <div class="comment">
-            <form class="comment-write" action="/comment" method="POST">
+            <!-- <form class="comment-write" action="/comment" method="POST"> -->
                 <div class="ccontainer">
                     <div class="comment-bar">
-                        <textarea class="comment_2" id="comment-input" placeholder="엔터누르면 줄바꿈"></textarea>
-                        <button type="submit" id="comment-btn"><ion-icon name="paper-plane-outline"></ion-icon></button>
+                        <div class="comment-write" style="width:97%;">
+                            <textarea style="width: 80%; float: left;" class="comment_2" id="comment-input" placeholder="엔터누르면 줄바꿈"></textarea>
+                            <button style="float: right;" id="comment-btn"><ion-icon name="paper-plane-outline"></ion-icon></button>
+                        </div>
                     </div>
                 </div>
-            </form>
+            <!-- </form> -->
             <div id="comment-box" style="margin: 0;">
                 <%for (let i=0; i<댓글목록.length; i++){ %>
                     <p><%=  %></p>
-                    <p style="text-align: left; margin-bottom: 30px; clear: both">
+                    <p style="text-align: left; margin-bottom: 20px; clear: both;">
                         <div class="profile">
 
                             <div class="profileImage" onclick="moveToChat(this)" 
@@ -71,13 +73,14 @@
                         </span>
                         <br>
                     </p>
+                    <p class="comment-line"></p>
                 <% }%>
             </div>
         </div>
         <div class="infomation" style="background-color:rgba(0, 0, 0, 0.2);">
-            <p style="font-weight: bold; height: 10vh;">⛔알림⛔<br>
+            <!-- <p style="font-weight: bold; height: 10vh;">⛔알림⛔<br>
             <span style="color:red">1. 좋아요는 새로고침 후 적용됨<br></span>
-            </p>
+            </p> -->
         </div>
     </div>
     <script type="module">
@@ -100,6 +103,7 @@
             var 보낼거 = {postid : 지금누른작성글id,
             }
             $.post('/addlike', 보낼거).then(()=> {
+                reloadLike();
           })
         })
         var box = $(".profile2");
@@ -122,7 +126,12 @@
             })
             .then((r)=>r.text())
             .then((r)=>{
-                location.reload();
+                if(r=="댓글저장"){
+                    $('#comment-box').load(location.href+' #comment-box');
+                    $('.comment_2').val('');
+                } else {
+                    alert('서버오류')
+                }
             }) 
         })
 
@@ -161,7 +170,8 @@
                 })
                 .then((r)=>r.text())
                 .then((r)=>{
-                    location.reload();
+                    // location.reload(true);
+                    $('#comment-box').load(location.href+' #comment-box');
                 }) 
             }
             else {
@@ -181,6 +191,9 @@
         })
         function moveToChat(e){
             $.post('/chatroom', {당한사람id : e.dataset.id, 당한사람name: e.dataset.name})
+        }
+        function reloadLike(){
+            $('#likee').load(location.href+' #likee');
         }
 
     </script>

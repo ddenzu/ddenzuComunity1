@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, minimum-scale=1">
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, minimum-scale=1"> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>승뮤니티</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="\main.css">
@@ -27,28 +28,39 @@
                     <h4 class="list-right">
                         <a href="/detail/<%= 글목록[i]._id %>"><%= 글목록[i].title %></a>
                         <a style="vertical-align: middle;
-                        margin-left: 5px;" href="/edit/<%= 글목록[i]._id %>">
+                        margin-left: 3px;" href="/edit/<%= 글목록[i]._id %>">
                             <ion-icon style="font-size: 20px;" name="create-outline"></ion-icon>
                         </a>
                         <span style="vertical-align: middle;
-                        margin-left: 5px;" class="delete" data-id="<%= 글목록[i]._id %>">
+                        margin-left: 3px;" class="delete" data-id="<%= 글목록[i]._id %>">
                             <ion-icon style="font-size: 20px;" name="trash-outline"
                             data-id="<%= 글목록[i]._id %>"></ion-icon>
                         </span>
                         <p>작성자: <%= 글목록[i].작성자 %></p>
-                        <form action="/chat" method="POST">
-                            <button type="submit" class="btn" data-id="<%= 글목록[i].작성자_id %>"
-                                data-name="<%= 글목록[i].작성자 %>" data-title="<%= 글목록[i].title %>"
-                                name="name" value="<%= 글목록[i].작성자 %>">
-                                작성자랑 채팅하기</button>
-                        </form>
+                        <!-- <form action="/chatroom" method="POST"> -->
+                            <!-- <button type="submit" class="btn"
+                                name="당한사람name" value="<%= 글목록[i].작성자 %>"
+                                onclick="twoForm(this)" 
+                                data-id="<%= 글목록[i].작성자_id %>" data-name="<%= 글목록[i].작성자 %>">
+                                작성자랑 채팅하기
+                            </button>
+                            <input type="submit" name="당한사람id" 
+                            value="<%= 글목록[i].작성자_id %>" style="display: none;"> -->
+
+                            <div>
+                                <button class="btn"
+                                data-id="<%= 글목록[i].작성자_id %>" data-name="<%= 글목록[i].작성자 %>">
+                                작성자랑 채팅하기
+                                </button>
+                            </div>
+                        <!-- </form> -->
                     </h4>
                 </div>
                 
             <p style="clear: both; margin: 0px;"></p>
             </div>      
         <% }%>
-        <div>
+        <div style="position: relative;">
             <div class="page-box">
                 <p></p>
                 <ion-icon class="back" name="caret-back-outline"></ion-icon>
@@ -57,16 +69,17 @@
                 <% }%>
                 <ion-icon class="forward" name="caret-forward-outline"></ion-icon>
             </div>
-            <div style="position: absolute; right: 20px; background: rgba(0, 0, 0, 0.2);
-            padding: 3px; border-radius: 5px;">
-                <a href="/plus" style="text-decoration-line: none; color: #fff;">글쓰기✏️</a></button>
+            <div style="position: absolute; right: 5px; background: rgba(0, 0, 0, 0.3);
+            padding: 3px; padding-left: 5px; border-radius: 5px; top: 0px;">
+                <a href="/plus" style="text-decoration-line: none; color: #fff;
+                font-size: 14px;">글쓰기✏️</a></button>
             </div>
         </div>
-        <div style="text-align: center;">
+        <!-- <div style="text-align: center;">
             <a class="list-loc" style="text-align: center;
             text-decoration: none; color: white;" 
             href="/list/next/<%= 글목록[글목록.length-1]._id %>">다음페이지</a>
-        </div>
+        </div> -->
         <div class="ccontainer">
             <div class="search-bar">
                 <input type="text" class="search_2" id="ssearch-input" placeholder="글제목으로 검색">
@@ -153,14 +166,46 @@
             window.location.replace('/ssearch?value='+입력값)  // url 바꾸는 함수 (get요청변환)
         })
 
-        $('.btn').click(function(e){
+        for (let i=0; i<'<%= 글목록.length %>'; i++){ // 채팅
+            document.querySelectorAll('.btn')[i].addEventListener('click', (e)=>{
+
             var id = e.target.dataset.id;
-            var title = e.target.dataset.title;
             var name = e.target.dataset.name;
-            $.post('/chatroom', {당한사람id : id, 당한사람name: name}).then(()=>{
-                console.log('성공')
+            var 보낼거 = {
+                당한사람name : name,
+                당한사람id : id,
+            }
+            fetch('/chatroom', {
+            method : 'POST',
+            async : false,
+            headers : {
+                'Content-Type' : 'application/json'
+            },
+            body : JSON.stringify(보낼거)
             })
-        });
+            .then((r)=>r.text())
+            .then((r)=>{
+                if(r=="채팅방생성"){
+                    $.post('/chat', {당한사람id : id, 당한사람name: name})
+                } else {
+                    alert('?')
+                }
+            }) 
+        })
+        }
+        //     $.post('/chat', {당한사람id : id, 당한사람name: name}).then(()=>{
+        //         console.log('성공')
+        // })
+        ; 
+        
+        // $('.btn').click(function(e){
+        //     var id = e.target.dataset.id;
+        //     var title = e.target.dataset.title;
+        //     var name = e.target.dataset.name;
+        //     $.post('/chatroom', {당한사람id : id, 당한사람name: name}).then(()=>{
+        //         console.log('성공')
+        //     })
+        // });
         $('.search_2').keypress(function(e){
           if (e.keyCode===13){
             var 입력값 = $('#ssearch-input').val()

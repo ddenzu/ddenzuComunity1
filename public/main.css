@@ -43,26 +43,35 @@
     /* min-width: 430px; */
   }
   .white-bg {
-    background: white;
-    margin: 15px;
     border-radius: 10px;
     background: rgba(0,0,0,0.2);
+    width: 95%;
+    margin: 0 auto;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    /* min-width: 400px; */
     /* backdrop-filter: blur(2px);
     -webkit-backdrop-filter: blur(2px); */
   }
 
   .list-box {
    padding : 0px;
+   width: 100%;
+   height: 100%;
   }
-  .list-box h4{
+  .list-box > a {
+    width: 100%;
+    height: 100%;
+   }
+  .list-box h4 {
     font-size: 16px;
-    margin: 5px;
+    margin: 5px 3px 7px 6px;
   }
   .list-right {
     float: left;
   } 
 
-  .list-right a{
+  .list-right a {
     text-decoration-line: none;
     color: #fff;
     font-weight: 600;
@@ -70,14 +79,28 @@
 
   .list-left {
     float: left;
-    width: 100px;
-    height: 100px;
+    margin-top: 6px;
+    margin-left: 5px;
+    width: 75px;
+    height: 85px;
     object-fit: cover;
+    border-radius: 7px;
   } 
+  @media screen and (max-width: 390px) {
+    .list-left{
+      width: 70px;
+      height: 80px;
+      margin-top: 8px;
+      margin-left: 5px;
+    }
+    .list-right > a {
+      font-size: 13px;
+    }
+  }
 
   .list-box p {
     font-size: 12px;
-    margin: 5px;
+    margin: 4px 5px 5px 5px;
     color: #eeeeee;
   }
   input,div {
@@ -146,18 +169,20 @@
     align-items: center;
     justify-content: center;
     position: relative;
+    margin: 0 auto;
     margin-bottom: 5px;
+    width: 65%;
   }
   .search-bar{
     width: 55%;
     max-width: 700px;
-    background: rgba(0, 0, 0, 0.2);
+    background: rgba(0, 0, 0, 0.25);
     display: flex;
     align-items: center;
     border-radius: 60px;
     padding: 10px;
     backdrop-filter: blur(4px);
-    margin-bottom: 5px;
+    margin: 10px 0px 0px 5px;
   }
   .comment-bar{
     width: 100%;
@@ -168,7 +193,6 @@
     border-radius: 60px;
     padding: 10px;
     backdrop-filter: blur(4px);
-    margin-bottom: 5px;
   }
   .search-bar input {
     background: transparent;
@@ -317,7 +341,6 @@
   }
 
   .infomation {
-    /* margin-left: 55px; */
     height: auto;
     margin: 40px auto;
     width: 80%;
@@ -328,10 +351,10 @@
 
   .like-box {
     height: 35px;
-    width: 20%;
+    width: 25%;
     border-radius: 15px;
     background-color: #5A545C;
-    margin-left: 75%;
+    margin-left: 70%;
   }
 
   .like {
@@ -341,16 +364,21 @@
     text-align: center;
     margin-left: 10px;
   }
+  .likeIcon:hover {
+    animation: like 0.3s linear;
+  }
+  /* .likeIcon:active{
+    animation: like 0.3s linear;
+  } */
 
   .comment {
     width: 90%;
     overflow:hidden; 
-    background : white;
     padding : 15px;
     text-align: center;
     border-radius: 15px;
     margin: auto;
-    margin-top: 10px;
+    margin-top: 7px;
     background: rgba(255,255,255,0.5);
     position: relative;
   }
@@ -396,14 +424,24 @@
   .profile3 {
     max-width: 75%;
     float: left;
-    margin-top: 7px;
+    margin-top: 10px;
     margin-left: 5px;
     /* border-bottom: 1px solid; */
     text-align: left;
     /* padding: 5px; */
     /* background: rgba(0, 0, 0, 0.2); */
-
   }
+  .comment-line{
+    top: 10px;
+    text-align: left; 
+    margin-bottom: 5px; 
+    clear: both;
+    position: relative;
+    border-bottom: 2px #5c596e solid;
+    border-radius: 2px;
+    text-decoration: underline;
+  }
+
   #commentDel {
     margin-top: 7px;
     float: right;
@@ -428,7 +466,7 @@
   .profiletext{
     width: 120%;
     font-size: 16px;
-    margin-top: 3px;
+    margin-top: 2px;
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
@@ -600,7 +638,7 @@
     align-items: center;
     z-index: 99;
     background: rgba(0,0,0,0.45); 
-
+    min-width: 347px;
   }
   .form-box2 {
     top: -50px;
@@ -678,5 +716,13 @@
     to {
       transform: translateY(100vh);
       opacity: 0;
+    }
+  }
+  @keyframes like {
+    0% {
+      transform: rotate( 0deg );
+    }
+    100% {
+      transform: rotate( 360deg );
     }
   }

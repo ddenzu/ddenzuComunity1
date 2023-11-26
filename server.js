@@ -343,6 +343,7 @@ app.get('/plus', async (요청, 응답) => {
 })
 
 app.get('/list/:num', async (요청, 응답) => {
+    // console.log(요청.user)
     console.log("client IP: " +requestIp.getClientIp(요청));
     let result = await db.collection('post').find().sort({ _id: -1 }).skip((요청.params.num-1)*5).limit(5).toArray()
     let cnt = await db.collection('post').count();
@@ -482,12 +483,15 @@ app.get('/logout',function(요청, 응답){
 // })
 
 app.post('/chatroom', checkLogin, async function(요청, 응답){
-    // console.log(요청.body.당한사람name)
+    console.log(요청.body)
+    console.log('2')
     try{
         if(요청.body.당한사람name==요청.user.username){
             throw(err)
         }
+        console.log('asdf')
         let result = await db.collection('chatroom').findOne({ name : {$all:[요청.user.username,요청.body.당한사람name]}})
+        console.log(result)
         if(result==null){
             var 저장할거 = {
                 title : 요청.user.username+" ➕ "+요청.body.당한사람name,
@@ -495,30 +499,34 @@ app.post('/chatroom', checkLogin, async function(요청, 응답){
                 name : [요청.body.당한사람name, 요청.user.username],
                 date : new Date()
             }
-            db.collection('chatroom').insertOne(저장할거).then((결과)=>{
-            })
+            await db.collection('chatroom').insertOne(저장할거)
+            응답.send('채팅방생성')
         } else {
-            응답.send("<script>alert('다시 시도해 주세요');location.reload()</script>");
+            응답.send("<script>alert('다시 시도해 주세요');</script>");
         }
     }
     catch(e){
+        console.log('chatroomCant')
         응답.send('cant')
     }
 })
 
 app.post('/chat', checkLogin, async function(요청, 응답){ // list에서 올 때, 프사에서 올 때
-    // console.log(요청.body)
+    console.log(요청.body)
+    console.log('1')
     try{
         if(요청.body.name==요청.user.username){
             throw(err)
         }
         let result = await db.collection('chatroom').find({ member : 요청.user._id}).toArray()
         let result2 = await db.collection('chatroom').findOne({ name : {$all:[요청.user.username,요청.body.name]}})
+        console.log(result, result2)
         if(result && result2){
             응답.render('chat.ejs', { data : result, cur : 요청.user._id, arrow : result2._id})
         }
         else{
-            응답.send("<script>location.reload()</script>");
+            console.log('asdfasdf')
+            응답.send("<script>alert('머고')</script>");
         }
     }
     catch(e){
@@ -555,18 +563,24 @@ app.post('/message', checkLogin, async function(요청, 응답){ // 수정필요
 })
 
 app.post('/comment', checkLogin, async (요청, 응답)=>{
-    if (요청.body.content) {
-        var 저장할거 = {
-            postId : new ObjectId(요청.body.parent), // 작성글 id
-            content : 요청.body.content, // 채팅내용
-            username : 요청.user.username,
-            userId : 요청.user._id,
-            userprofile : 요청.user.imgName,
-            date : new Date(),
+    try {
+        if (요청.body.content) {
+            var 저장할거 = {
+                postId : new ObjectId(요청.body.parent), // 작성글 id
+                content : 요청.body.content, // 채팅내용
+                username : 요청.user.username,
+                userId : 요청.user._id,
+                userprofile : 요청.user.imgName,
+                date : new Date(),
+            }
+            await db.collection('comment').insertOne(저장할거)
+            응답.send('댓글저장')
+        } else {
+            응답.send('댓글저장실패')
         }
-        await db.collection('comment').insertOne(저장할거).then(()=>{
-            응답.send()
-        })
+    }
+    catch(e) {
+        응답.status(500).send('서버에러')
     }
 })
 
@@ -628,7 +642,9 @@ app.post('/deletee2', async (요청, 응답)=>{
 })
 
 app.post('/addlike', async (요청, 응답)=>{
-    await db.collection('post').updateOne({ _id : new ObjectId(요청.body.postid)}, {$inc : {like : 1}})
+    db.collection('post').updateOne({ _id : new ObjectId(요청.body.postid)}, {$inc : {like : 1}}).then(()=>{
+        응답.send("<script>reloadLike();</script>");
+    })
 })
 
 

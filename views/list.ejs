@@ -8,7 +8,9 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="\main.css">
 </head>
+<div style="color: white">
 <%- include('nav.ejs') %>
+</div>
 <body style="position: relative;">
     <div class="section2">
         <div style="height:60px;"></div>
@@ -64,11 +66,14 @@
             <div class="page-box">
                 <p></p>
                 <!-- <p><%= Math.ceil(글수/5) %></p> -->
+                <ion-icon style="font-size: 24px;" class="first" name="ellipsis-horizontal-outline"></ion-icon>
                 <ion-icon class="back" name="caret-back-outline"></ion-icon>
-                <%for (let i=0; i<Math.ceil(글수/5); i++){ %>
-                    <span style="margin: 3px;" class="page-btn" data-num="<%= i+1 %>"><%= i+1 %></span>
+                <%for (let i=((Math.ceil(페이지넘버/5))*5)-4; i<((Math.ceil(페이지넘버/5))*5)+1; i++){ %>
+                    <% if(i>(Math.ceil(글수/5))){break} %>
+                    <span style="margin: 3px;" class="page-btn" data-num="<%= i %>"><%= i %></span>
                 <% }%>
                 <ion-icon class="forward" name="caret-forward-outline"></ion-icon>
+                <ion-icon style="font-size: 24px;" class="last" name="ellipsis-horizontal-outline"></ion-icon>
             </div>
             <div style="position: absolute; right: 5px; background: rgba(0, 0, 0, 0.3);
             padding: 3px; padding-left: 5px; border-radius: 5px; top: 0px;">
@@ -124,6 +129,8 @@
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
     <script>
+        // var 시작페이지1 = Math.ceil('<%= 페이지넘버 %>'/5)
+        // console.log(시작페이지1)
         console.log('<%= 글목록.length %>')
         for (let i=0; i<'<%= 글목록.length %>'; i++){ 
             document.querySelectorAll('.delete')[i].addEventListener('click', function(e){
@@ -174,15 +181,25 @@
           }})
 
 
-        document.getElementsByClassName('page-btn')['<%= 페이지넘버 %>'-1].classList.add('nowPage');
+        document.getElementsByClassName('page-btn')[('<%= 페이지넘버 %>'-1)%5].classList.add('nowPage');
         $('.page-btn').click(function(e){
             $('.page-btn').removeClass('nowPage')
             var a = $(this)
             console.log(e.target.dataset)
             num = e.target.dataset.num;
-            // window.location.replace(`/list/${num}`) 
+            // console.log(Math.ceil('<%= 글수 %>'/num))
+            // if(Math.ceil('<%= 글수 %>'/num) >= 5){
+            //     window.location.href=`/list/${num}?페이지넘버=`+num;
+            // }
             window.location.href=`/list/${num}?페이지넘버=`+num;
         });
+
+        $('.first').click(function(){
+            window.location.href=`/list/1?페이지넘버=1`;
+        })
+        $('.last').click(function(){
+            window.location.href=`/list/${Math.ceil('<%= 글수 %>'/5)}?페이지넘버=`+Math.ceil('<%= 글수 %>'/5);
+        })  
 
         var socket = io();
 
@@ -211,6 +228,7 @@
             window.location.href=`/list/prev/<%= 글목록[글목록.length-글목록.length]._id %>?pageNum=`+num;
         })
         $('.forward').click(function(){
+            console.log(parseInt('<%= 페이지넘버 %>')+1)
             num = parseInt('<%= 페이지넘버 %>')+1
             window.location.href=`/list/next/<%= 글목록[글목록.length-1]._id %>?pageNum=`+num;
         })

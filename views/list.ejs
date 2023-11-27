@@ -50,7 +50,7 @@
                             <div>
                                 <button class="btn"
                                 data-id="<%= 글목록[i].작성자_id %>" data-name="<%= 글목록[i].작성자 %>">
-                                작성자랑 채팅하기
+                                <a class="btn-a" href="/chatroom?name=<%= 글목록[i].작성자 %>&id=<%= 글목록[i].작성자_id %>">작성자랑 채팅하기</a>
                                 </button>
                             </div>
                         <!-- </form> -->
@@ -63,6 +63,7 @@
         <div style="position: relative;">
             <div class="page-box">
                 <p></p>
+                <!-- <p><%= Math.ceil(글수/5) %></p> -->
                 <ion-icon class="back" name="caret-back-outline"></ion-icon>
                 <%for (let i=0; i<Math.ceil(글수/5); i++){ %>
                     <span style="margin: 3px;" class="page-btn" data-num="<%= i+1 %>"><%= i+1 %></span>
@@ -166,46 +167,6 @@
             window.location.replace('/ssearch?value='+입력값)  // url 바꾸는 함수 (get요청변환)
         })
 
-        for (let i=0; i<'<%= 글목록.length %>'; i++){ // 채팅
-            document.querySelectorAll('.btn')[i].addEventListener('click', (e)=>{
-
-            var id = e.target.dataset.id;
-            var name = e.target.dataset.name;
-            var 보낼거 = {
-                당한사람name : name,
-                당한사람id : id,
-            }
-            fetch('/chatroom', {
-            method : 'POST',
-            async : false,
-            headers : {
-                'Content-Type' : 'application/json'
-            },
-            body : JSON.stringify(보낼거)
-            })
-            .then((r)=>r.text())
-            .then((r)=>{
-                if(r=="채팅방생성"){
-                    $.post('/chat', {당한사람id : id, 당한사람name: name})
-                } else {
-                    alert('?')
-                }
-            }) 
-        })
-        }
-        //     $.post('/chat', {당한사람id : id, 당한사람name: name}).then(()=>{
-        //         console.log('성공')
-        // })
-        ; 
-        
-        // $('.btn').click(function(e){
-        //     var id = e.target.dataset.id;
-        //     var title = e.target.dataset.title;
-        //     var name = e.target.dataset.name;
-        //     $.post('/chatroom', {당한사람id : id, 당한사람name: name}).then(()=>{
-        //         console.log('성공')
-        //     })
-        // });
         $('.search_2').keypress(function(e){
           if (e.keyCode===13){
             var 입력값 = $('#ssearch-input').val()
@@ -252,6 +213,9 @@
         $('.forward').click(function(){
             num = parseInt('<%= 페이지넘버 %>')+1
             window.location.href=`/list/next/<%= 글목록[글목록.length-1]._id %>?pageNum=`+num;
+        })
+        $('.btn').click(function(){
+
         })
     </script>
     

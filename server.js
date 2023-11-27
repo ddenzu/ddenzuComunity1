@@ -332,7 +332,7 @@ app.get('/plus', async (요청, 응답) => {
     }
     else {
         let result = await db.collection('user').findOne({ username : 요청.user.username})
-        console.log("client IP: " +requestIp.getClientIp(요청));
+        // console.log("client IP: " +requestIp.getClientIp(요청));
         if (요청.user.username==result.username){
             응답.render('write.ejs')
         }
@@ -482,58 +482,34 @@ app.get('/logout',function(요청, 응답){
 //     응답.sendFile( __dirname + '/public/image' + 요청.params.imageName)
 // })
 
-app.post('/chatroom', checkLogin, async function(요청, 응답){
-    console.log(요청.body)
-    console.log('2')
+app.get('/chatroom', checkLogin, async function(요청, 응답){
     try{
-        if(요청.body.당한사람name==요청.user.username){
+        if(요청.query.name==요청.user.username){
             throw(err)
         }
-        console.log('asdf')
-        let result = await db.collection('chatroom').findOne({ name : {$all:[요청.user.username,요청.body.당한사람name]}})
-        console.log(result)
+        let result = await db.collection('chatroom').findOne({ name : {$all:[요청.user.username,요청.query.name]}})
         if(result==null){
             var 저장할거 = {
-                title : 요청.user.username+" ➕ "+요청.body.당한사람name,
-                member : [new ObjectId(요청.body.당한사람id), 요청.user._id],
-                name : [요청.body.당한사람name, 요청.user.username],
+                title : 요청.user.username+" ➕ "+요청.query.name,
+                member : [new ObjectId(요청.query.id), 요청.user._id],
+                name : [요청.query.name, 요청.user.username],
                 date : new Date()
             }
             await db.collection('chatroom').insertOne(저장할거)
-            응답.send('채팅방생성')
+            let result1 = await db.collection('chatroom').find({ member : 요청.user._id}).toArray()
+            let result2 = await db.collection('chatroom').findOne({ name : {$all:[요청.user.username,요청.query.name]}})
+            응답.render('chat.ejs', { data : result1, cur : 요청.user._id, arrow : result2._id})
         } else {
-            응답.send("<script>alert('다시 시도해 주세요');</script>");
+            let result1 = await db.collection('chatroom').find({ member : 요청.user._id}).toArray()
+            let result2 = await db.collection('chatroom').findOne({ name : {$all:[요청.user.username,요청.query.name]}})
+            응답.render('chat.ejs', { data : result1, cur : 요청.user._id, arrow : result2._id})
         }
     }
     catch(e){
-        console.log('chatroomCant')
-        응답.send('cant')
+        응답.send("<script>window.location.replace('/chat')</script>");
     }
 })
 
-app.post('/chat', checkLogin, async function(요청, 응답){ // list에서 올 때, 프사에서 올 때
-    console.log(요청.body)
-    console.log('1')
-    try{
-        if(요청.body.name==요청.user.username){
-            throw(err)
-        }
-        let result = await db.collection('chatroom').find({ member : 요청.user._id}).toArray()
-        let result2 = await db.collection('chatroom').findOne({ name : {$all:[요청.user.username,요청.body.name]}})
-        console.log(result, result2)
-        if(result && result2){
-            응답.render('chat.ejs', { data : result, cur : 요청.user._id, arrow : result2._id})
-        }
-        else{
-            console.log('asdfasdf')
-            응답.send("<script>alert('머고')</script>");
-        }
-    }
-    catch(e){
-        let result = await db.collection('chatroom').find({ member : 요청.user._id}).toArray()
-        응답.render('chat.ejs', { data : result, cur : 요청.user._id, arrow : 0})
-    }
-})
 
 app.get('/chat', checkLogin, async function(요청, 응답){ // navbar에서 올 때
     let result = await db.collection('chatroom').find({ member : 요청.user._id}).toArray()
@@ -576,7 +552,7 @@ app.post('/comment', checkLogin, async (요청, 응답)=>{
             await db.collection('comment').insertOne(저장할거)
             응답.send('댓글저장')
         } else {
-            응답.send('댓글저장실패')
+            응답.send("<script>alert('댓글등록실패');</script>")
         }
     }
     catch(e) {
@@ -610,13 +586,16 @@ app.get('/message/:id', checkLogin, function(요청, 응답){
 
 app.post('/deletee', async (요청, 응답)=>{
     try{
-        // let result = await db.collection('message').deleteMany({}) // 도큐먼트 전부 비우기
-        let result = await db.collection('chatroom').deleteOne({ _id : new ObjectId(요청.body.삭제id)})
-        if(result){
-            응답.send('삭제완료')
-        } else{
-            응답.send('삭제실패')
-        }
+        await db.collection('chatroom').deleteOne({ _id : new ObjectId(요청.body.삭제id)})
+        let result1 = await db.collection('chatroom').find({ member : 요청.user._id}).toArray()
+        응답.render('chat.ejs', { data : result1, cur : 요청.user._id, arrow : 0})
+
+        // if(result){
+        //     응답.render('chat.ejs')
+        //     // 응답.send('삭제완료')
+        // } else{
+        //     응답.send('삭제실패')
+        // }
     } catch(e) {
         응답.status(500).send('서버에러')
     }

@@ -7,8 +7,8 @@
 </head>
 <%- include('nav.ejs') %>
 <body>
-
     <div class="section2">
+        
         <div style="height:60px;"></div>
         <div class="detail-bg">
             <h4 style="font-size: x-large; padding: 5px; margin: 0px; border-top: 1px solid #4a4a4a;
@@ -52,21 +52,20 @@
                     <p><%=  %></p>
                     <p style="text-align: left; margin-bottom: 20px; clear: both;">
                         <div class="profile">
-
-                            <div class="profileImage" onclick="moveToChat(this)" 
-                            data-name="<%= 댓글목록[i].username %>" data-id="<%= 댓글목록[i].userId %>">
-                                <form action="/chat" method="POST">
-                                    <button type="submit" style="background: transparent; border: none;"
-                                    name="name" value="<%= 댓글목록[i].username %>">
-                                        <img style="cursor: pointer;" src="/image/<%= 댓글목록[i].userprofile %>"> 
-                                    </button>
-                                </form>
+                            <div class="profileImage" data-name="<%= 댓글목록[i].username %>" data-id="<%= 댓글목록[i].userId %>">
+                                <button style="background: transparent; border: none;">
+                                    <a class="btn-a" href="/chatroom?name=<%= 댓글목록[i].username %>&id=<%= 댓글목록[i].userId %>">
+                                        <img style="cursor: pointer;" src="/image/<%= 댓글목록[i].userprofile %>">
+                                    </a>
+                                </button>
                             </div>
                             <div class="profile2">
                                 <div class="profiletext"><%= 댓글목록[i].username %></div>
                             </div>
                         </div>
-                        <div class="profile3"><%- 댓글목록[i].content.replace(/\n/g, '<br/>') %></div>
+                        <div class="profile3"><%- 댓글목록[i].content.replace(/\n/g, '<br/>') %>
+                            <p class="commentTime"><%= 댓글목록[i].date %></p>
+                        </div>
                         <span name="add" id="commentDel" data-id="<%= 댓글목록[i]._id %>"
                             data-postId="<%= 댓글목록[i].postId %>" data-userId="<%= 댓글목록[i].userId %>">
                             <ion-icon style="font-size: 20px; color: #5a545c;" name="trash-outline"></ion-icon>
@@ -78,9 +77,6 @@
             </div>
         </div>
         <div class="infomation" style="background-color:rgba(0, 0, 0, 0.2);">
-            <!-- <p style="font-weight: bold; height: 10vh;">⛔알림⛔<br>
-            <span style="color:red">1. 좋아요는 새로고침 후 적용됨<br></span>
-            </p> -->
         </div>
     </div>
     <script type="module">
@@ -157,7 +153,7 @@
         // }});
 
         $(document).on("click","span[name='add']", function(e){
-            if (confirm('리얼루다가 삭제하시겠슴까?')==true){
+            if (confirm('리얼루다가 삭제하시겠슴까나리?')==true){
                 var 지울거 = {id : this.dataset.id,
                 userId : this.dataset.userid}
                 fetch('/deletee2', {
@@ -184,14 +180,11 @@
 
         document.querySelector('.comment-bar').addEventListener('click', ()=>{
             if('<%= 현재접속자 %>'=="noUser"){
-                if (confirm('댓글작성을 위해 로그인 페이지로 이동하시겠습니까')==true){
+                if (confirm('댓글작성을 위해 로그인 페이지로 이동하시겠습니까탈레나')==true){
                     window.location.replace(`/login`) 
                 }
             }
         })
-        function moveToChat(e){
-            $.post('/chatroom', {당한사람id : e.dataset.id, 당한사람name: e.dataset.name})
-        }
         function reloadLike(){
             $('#likee').load(location.href+' #likee');
         }

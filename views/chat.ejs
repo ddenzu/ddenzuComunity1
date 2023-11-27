@@ -14,7 +14,7 @@
     <div class="container p-3 detail">
         <div class="row">
           <div class="col-3" style="padding: 0 8px 0 0;">
-            <ul class="list-group chat-list">
+            <ul class="list-group chat-list" id="kk">
                 <% for (let i = 0; i < data.length; i++ ){%>
                     <li class="list-group-item" data-id="<%= data[i]._id %>" data-i="<%= i %>" 
                       data-cnt=0>
@@ -136,8 +136,6 @@
         $('.dele').click(function(e){
           채팅방삭제id = this.dataset.id  
           var 보낼거 = {삭제id : 채팅방삭제id};
-          // $.post('/deletee', 보낼거).then(()=> {
-          // })
           if (confirm('리얼루다가 삭제하시겠슴까?')==true){
             fetch('/deletee', {
             method : 'POST',
@@ -149,12 +147,8 @@
             })
             .then((r)=>r.text())
             .then((r)=>{
-              location.replace(location.href);
-              
+              location.replace('/chat')
             }) 
-          }
-          else {
-            return 0
           }
         })
 

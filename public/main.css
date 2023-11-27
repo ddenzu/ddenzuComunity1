@@ -194,6 +194,15 @@
     padding: 10px;
     backdrop-filter: blur(4px);
   }
+  .commentTime{
+    font-size: 10px;
+    color: #35364b;
+    margin-top: 3px;
+    /* width: 50%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; */
+  }
   .search-bar input {
     background: transparent;
     flex: 1;
@@ -424,7 +433,7 @@
   .profile3 {
     max-width: 75%;
     float: left;
-    margin-top: 10px;
+    margin-top: 5px;
     margin-left: 5px;
     /* border-bottom: 1px solid; */
     text-align: left;
@@ -533,6 +542,10 @@
     transition: all 0.4s;
     overflow: hidden;
   }
+  .btn > a {
+    color: #ecb4b2;
+    background: transparent;
+  }
   .chat-btn {
     border: 1px solid grey !important;
     background: rgba(0, 0, 0, 0.5);
@@ -569,6 +582,10 @@
   .btn:hover {
     background-color: #ecb4b2;
   }
+  .btn:hover .btn-a{
+    background: transparent;
+    color: #181C33;
+  }
   .chat-btn:hover {
     background-color: transparent
   }
@@ -589,6 +606,10 @@
     color: #fff;
     user-select: none;
     margin: 0;
+  }
+  .logo:hover {
+    transform: rotate( 15deg );
+    font-size: 1.3em;
   }
 
   .logo a {

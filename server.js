@@ -122,8 +122,8 @@ app.get('/write', (요청, 응답) => {
 let multer = require('multer');
 const sharp = require("sharp");
 const fs = require('fs');
-const path = require('path');
 const { configDotenv } = require('dotenv')
+const path = require('path');
 var storage = multer.diskStorage({
   destination : function(req, file, cb){
     cb(null, './public/image') // 이미지 어디에 저장할건지
@@ -146,12 +146,10 @@ function checkLogin(요청, 응답, next) {
         응답.send("<script>alert('로그인 요망');window.location.replace(`/login`)</script>");
     }
 }
-
 // sharp('/image/'+요청.file.filename)
 //     .resize( {width: 100})
 //     .toFile(요청.file.filename)
 //     .then(()=> console.log('done'))
-
 app.post('/add', upload.single('img1'), async (요청, 응답) => { // write 페이지에서 post 요청하면 여기로 데이터 날라옴
     console.log(요청.file)
     try {
@@ -490,7 +488,7 @@ app.get('/chatroom', checkLogin, async function(요청, 응답){
         let result = await db.collection('chatroom').findOne({ name : {$all:[요청.user.username,요청.query.name]}})
         if(result==null){
             var 저장할거 = {
-                title : 요청.user.username+" ➕ "+요청.query.name,
+                title : 요청.user.username+" 🤝 "+요청.query.name,
                 member : [new ObjectId(요청.query.id), 요청.user._id],
                 name : [요청.query.name, 요청.user.username],
                 date : new Date()
@@ -516,28 +514,6 @@ app.get('/chat', checkLogin, async function(요청, 응답){ // navbar에서 올
     응답.render('chat.ejs', { data : result, cur : 요청.user._id, arrow : 0})
 })
 
-app.post('/message', checkLogin, async function(요청, 응답){ // 수정필요
-    console.log(요청.body.content)
-    try {
-        if (요청.body.content) {
-            var 저장할거 = {
-                parent : 요청.body.parent, // 채팅방의 id
-                content : 요청.body.content, // 채팅내용
-                userid : 요청.user._id, // 채팅 건 사람
-                date : new Date(),
-            }
-            let result = await db.collection('message').insertOne(저장할거)
-            if(result){
-            }
-            else {
-                throw err
-            }
-        }}
-    catch (err){
-        응답.send("<script>alert('넘빨랑');window.location.replace(`/chat`)</script>");
-    }
-})
-
 app.post('/comment', checkLogin, async (요청, 응답)=>{
     try {
         if (요청.body.content) {
@@ -557,6 +533,30 @@ app.post('/comment', checkLogin, async (요청, 응답)=>{
     }
     catch(e) {
         응답.status(500).send('서버에러')
+    }
+})
+
+app.post('/message', checkLogin, async function(요청, 응답){ // 수정필요
+    // console.log(요청.body.content)
+    try {
+        if (요청.body.content) {
+            var 저장할거 = {
+                parent : 요청.body.parent, // 채팅방의 id
+                content : 요청.body.content, // 채팅내용
+                userid : 요청.user._id, // 채팅 건 사람
+                date : new Date(),
+            }
+            let result = await db.collection('message').insertOne(저장할거)
+            if(result){
+                응답.send('성공')
+            }
+            else {
+                응답.send('실패')
+                throw err
+            }
+        }}
+    catch (err){
+        응답.send("<script>alert('넘빨랑');window.location.replace(`/chat`)</script>");
     }
 })
 

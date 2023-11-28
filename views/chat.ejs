@@ -6,10 +6,15 @@
     <title>승뮤니티</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="\main.css">
+    <style>
+      :root{
+        scroll-behavior:auto
+      }
+    </style>
 </head>
 <%- include('nav.ejs') %>
 <body>
-    <div class="section2" style="display: flex;justify-content: center;">
+    <div class="section2" style="display: flex;justify-content: center; height: 100vh;">
     <div style="color: white; width: 90%;margin-top: 80px;">
     <div class="container p-3 detail">
         <div class="row">
@@ -28,7 +33,7 @@
              </ul>
            </div>
       
-           <div class="col-9 p-0">
+           <div class="col-9 p-0" >
              <div class="chat-room" style="background: rgba(0, 0, 0, 0.2);">
                 <ul class="list-group chat-content">
                   <div class="infomation">
@@ -40,7 +45,8 @@
                 </ul>
               <div class="input-group">
                 <input class="form-control" style="background: rgba(0, 0, 0, 0.5);
-                border: 1px solid grey; color: white;" id="chat-input">
+                border: 1px solid grey; color: white;" id="chat-input"
+                placeholder="엔터 누르면 전송">
                 <button class="btn chat-btn" style="padding: 0px;" id="send">
                   <ion-icon style="color: white; padding-top: 5px; font-size: 25px;" 
                   name="paper-plane-outline"></ion-icon>
@@ -77,6 +83,7 @@
           })
         } else {
         }
+        
         $('.list-group-item').click(function(e){
           지금누른채팅방id = this.dataset.id;
           $('.chat-content').html('');
@@ -100,7 +107,6 @@
             })
             var 실제높이 = document.querySelector('.chat-content').scrollHeight;
             $('.chat-content').scrollTop(실제높이+100); // 여기서 스크롤맨밑으로 (데이터를 수신했을때)
-            document.getElementById('send').disabled = false;
           })
           const elementsToRemove = document.querySelectorAll('.list-group-item');
           elementsToRemove.forEach(a => {
@@ -109,14 +115,14 @@
           })
           document.querySelectorAll('.list-group-item')[this.dataset.i].classList.add('odd');
         })
+
         $('#send').click(function(){
-            document.getElementById('send').disabled = true;
             var 채팅내용 = $('#chat-input').val();
             var 보낼거 = {
                 parent : 지금누른채팅방id,
                 content : 채팅내용,
             }
-            $.post('/message', 보낼거).then(()=> {
+            $.post('/message', 보낼거).done((a) => {
             })
             $('#chat-input').val('');
         })
@@ -127,8 +133,10 @@
                 parent : 지금누른채팅방id,
                 content : 채팅내용,
             }
-            $.post('/message', 보낼거).then(()=> {
+            $.post('/message', 보낼거).done((a) => {
             })
+            // $.post('/message', 보낼거).then((a) => {
+            // })
             $('#chat-input').val(''); 
           } 
         })
@@ -151,7 +159,12 @@
             }) 
           }
         })
-
+        
+        $('.form-control').click(function(){
+          setTimeout(()=>{
+            window.scrollTo(0, 30)
+          },200)
+        })
 
     </script>
 </body>

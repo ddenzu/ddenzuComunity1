@@ -274,6 +274,13 @@
     overflow-y: scroll;
     padding: 10px;
   }
+  @media screen and (max-width: 430px) {
+    .chat-content{
+      height: 300px;
+      overflow-y: scroll;
+      padding: 10px;
+    }
+  }
 
   .chat-content li span{
     margin-top: 10px;

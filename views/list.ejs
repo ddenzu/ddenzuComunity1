@@ -49,7 +49,6 @@
                             </button>
                             <input type="submit" name="당한사람id" 
                             value="<%= 글목록[i].작성자_id %>" style="display: none;"> -->
-
                             <div>
                                 <button class="btn"
                                 data-id="<%= 글목록[i].작성자_id %>" data-name="<%= 글목록[i].작성자 %>">
@@ -172,13 +171,13 @@
         $('#ssearch').click(function(){
             var 입력값 = $('#ssearch-input').val()
             console.log(입력값)
-            window.location.replace('/ssearch?value='+입력값)  // url 바꾸는 함수 (get요청변환)
+            window.location.replace('/search2?value='+입력값)  // url 바꾸는 함수 (get요청변환)
         })
 
         $('.search_2').keypress(function(e){
           if (e.keyCode===13){
             var 입력값 = $('#ssearch-input').val()
-            window.location.replace('/ssearch?value='+입력값) 
+            window.location.replace('/search2?value='+입력값) 
           }})
 
 

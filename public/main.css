@@ -195,9 +195,10 @@
     backdrop-filter: blur(4px);
   }
   .commentTime{
-    font-size: 10px;
+    font-size: 11px;
     color: #35364b;
     margin-top: 3px;
+    /* padding-top: 5px; */
     /* width: 50%;
     white-space: nowrap;
     overflow: hidden;
@@ -223,7 +224,7 @@
   }
   ::placeholder{
     /* color: grey; */
-    color: #cecccc
+    color: #cecccc;
   }
   .search-bar button ion-icon {
     width: 100%;

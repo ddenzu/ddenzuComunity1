@@ -9,6 +9,7 @@ const http = require('http').createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(http);
 require('dotenv').config()
+const dateFormat1 = require("./public/time.js");
 
 app.use(methodOverride('_method')) 
 app.use(express.static(__dirname + '/public')) //(css.js,jpg...= static파일)은 public 폴더 사용
@@ -32,27 +33,6 @@ app.use(session({
   })
 }))
 app.use(passport.session()) 
-
-// const { S3Client } = require('@aws-sdk/client-s3')
-// const multer = require('multer')
-// const multerS3 = require('multer-s3')
-// const s3 = new S3Client({
-//   region : 'ap-northeast-2',
-//   credentials : {
-//       accessKeyId : process.env.S3_KEY,
-//       secretAccessKey : process.env.S3_SECRET,
-//   }
-// })
-
-// const upload = multer({
-//   storage: multerS3({
-//     s3: s3,
-//     bucket: 'ddenzubucket',
-//     key: function (요청, file, cb) {
-//       cb(null, Date.now().toString()) //업로드시 파일명 변경가능 겹치면안됨
-//     }
-//   })
-// })
 
 let db
 const url = process.env.DB_URL
@@ -104,9 +84,7 @@ app.get('/', (요청, 응답) => {
 }) 
 
 app.get('/dbadd', (요청, 응답) => { //get : url을 서버에서 주면서 서버에게 요청,밑에 함수 실행
-    // db.collection('post').insertOne({title : '111'})
     응답.send('db넣기 성공')
-
 }) 
 
 app.get('/list', async (요청, 응답) => {
@@ -138,6 +116,28 @@ var storage = multer.diskStorage({
 
 var upload = multer({storage : storage}); // 갖다 쓰면됨
 
+// const { S3Client } = require('@aws-sdk/client-s3')
+// const multer = require('multer')
+// const multerS3 = require('multer-s3')
+// const s3 = new S3Client({
+//   region : 'ap-northeast-2',
+//   credentials : {
+//       accessKeyId : process.env.S3_KEY,
+//       secretAccessKey : process.env.S3_SECRET,
+//   }
+// })
+
+// const upload = multer({
+//   storage: multerS3({
+//     s3: s3,
+//     bucket: 'ddenzubucket',
+//     key: function (요청, file, cb) {
+//       cb(null, Date.now()+file.originalname) //업로드시 파일명 변경가능 겹치면안됨
+//     }
+//   })
+// })
+
+
 function checkLogin(요청, 응답, next) {
     if (요청.user) {
         next()
@@ -160,14 +160,15 @@ app.post('/add', upload.single('img1'), async (요청, 응답) => { // write 페
             try {
                 if (요청.file==undefined){
                     await db.collection('post').insertOne({title : 요청.body.title , 
-                    content : 요청.body.content , 작성자_id : 요청.user._id, 작성자 : 요청.user.username, like : 0})
+                    content : 요청.body.content , 작성자_id : 요청.user._id, 작성자 : 요청.user.username, like : 0,
+                    date : dateFormat1.dateFormat(new Date()),})
                     응답.redirect('/list/1')
                 }
                 else {
                     if(요청.file.mimetype=='video/mp4' || 요청.file.mimetype=='video/quicktime'){
                         await db.collection('post').insertOne({title : 요청.body.title , 
                         content : 요청.body.content , 작성자_id : 요청.user._id, 작성자 : 요청.user.username, like : 0
-                        ,vidName : 요청.file.filename})
+                        ,vidName : 요청.file.filename, date : dateFormat1.dateFormat(new Date()),})
                         응답.redirect('/list/1') // redirect 하면 url 로 GET 요청을 자동으로 해줌, 그래서  { 글목록 : result} 이런거 안줘도됨                        
                     }
                     else {
@@ -185,7 +186,7 @@ app.post('/add', upload.single('img1'), async (요청, 응답) => { // write 페
                         });
                         await db.collection('post').insertOne({title : 요청.body.title , 
                         content : 요청.body.content , 작성자_id : 요청.user._id, 작성자 : 요청.user.username, like : 0
-                        ,imgName : 'resize-'+요청.file.filename})
+                        ,imgName : 'resize-'+요청.file.filename, date : dateFormat1.dateFormat(new Date())})
                         응답.redirect('/list/1') // redirect 하면 url 로 GET 요청을 자동으로 해줌, 그래서  { 글목록 : result} 이런거 안줘도됨                         
                     }
                 }
@@ -199,7 +200,7 @@ app.post('/add', upload.single('img1'), async (요청, 응답) => { // write 페
     }
 })
 
-app.post('/addprofile', upload.single('img1'), async (req, res, next) => { // write 페이지에서 post 요청하면 여기로 데이터 날라옴
+app.post('/add-profile', upload.single('img1'), async (req, res, next) => {
     try {
         sharp(`public/image/${req.file.filename}`,{ failOn: 'truncated' }) // 리사이징할 파일의 경로
            .resize({ width: 25}) // 원본 비율 유지하면서 width 크기만 설정
@@ -245,33 +246,33 @@ app.get('/detail/:id', async (요청, 응답)=>{
                 if(result3.imgName==undefined){
                     if(result.vidName==undefined){
                         응답.render('detail.ejs', {글목록 : result, 댓글목록 : result2, 
-                        이미지주소 : "", 프로필 : "", 동영상주소 : "",현재접속자 : 현재접속자})                        
+                        이미지주소 : "", 프로필 : "", 동영상주소 : "",현재접속자 : 현재접속자, dateFormat1 : dateFormat1})                        
                     }
                     else{
                         응답.render('detail.ejs', {글목록 : result, 댓글목록 : result2, 
-                        이미지주소 : "", 프로필 : "", 동영상주소 : "/image/"+result.vidName,현재접속자 : 현재접속자})                             
+                        이미지주소 : "", 프로필 : "", 동영상주소 : "/image/"+result.vidName,현재접속자 : 현재접속자, dateFormat1 : dateFormat1})                             
                     } 
                 }
                 else {
                     if(result.vidName==undefined){
                         응답.render('detail.ejs', {글목록 : result, 댓글목록 : result2, 
-                        이미지주소 : "", 프로필 : result3.imgName, 동영상주소 : "",현재접속자 : 현재접속자})                        
+                        이미지주소 : "", 프로필 : result3.imgName, 동영상주소 : "",현재접속자 : 현재접속자, dateFormat1 : dateFormat1})                        
                     }
                     else {
                         응답.render('detail.ejs', {글목록 : result, 댓글목록 : result2, 
-                        이미지주소 : "", 프로필 : result3.imgName, 동영상주소 : "/image/"+result.vidName,현재접속자 : 현재접속자})                        
+                        이미지주소 : "", 프로필 : result3.imgName, 동영상주소 : "/image/"+result.vidName,현재접속자 : 현재접속자, dateFormat1 : dateFormat1})                        
                     }
                 }
             } 
             else {
                 if(result3.imgName==undefined){
                     응답.render('detail.ejs', {글목록 : result, 댓글목록 : result2,
-                    이미지주소: "/image/"+result.imgName,  프로필 : "", 동영상주소 : "",현재접속자 : 현재접속자})                     
+                    이미지주소: "/image/"+result.imgName,  프로필 : "", 동영상주소 : "",현재접속자 : 현재접속자, dateFormat1 : dateFormat1})                     
                 }
                 else {
                     응답.render('detail.ejs', {글목록 : result, 댓글목록 : result2,
                     이미지주소: "/image/"+result.imgName,  프로필 : result3.imgName, 동영상주소 : "",
-                    현재접속자 : 현재접속자})                     
+                    현재접속자 : 현재접속자, dateFormat1 : dateFormat1})                     
                 }
             }
         }
@@ -298,7 +299,6 @@ app.put('/edit', async (요청, 응답) => {
     else {
         응답.send("<script>alert('수정할 수 없슴다');window.location.replace(`/list/1`)</script>");
     }
-    // await db.collection('post').updateOne({ _id : 1 }, {$inc : {like : 1}})
 
 })
 
@@ -330,7 +330,6 @@ app.get('/plus', async (요청, 응답) => {
     }
     else {
         let result = await db.collection('user').findOne({ username : 요청.user.username})
-        // console.log("client IP: " +requestIp.getClientIp(요청));
         if (요청.user.username==result.username){
             응답.render('write.ejs')
         }
@@ -341,7 +340,6 @@ app.get('/plus', async (요청, 응답) => {
 })
 
 app.get('/list/:num', async (요청, 응답) => {
-    // console.log(요청.user)
     console.log("client IP: " +requestIp.getClientIp(요청));
     let result = await db.collection('post').find().sort({ _id: -1 }).skip((요청.params.num-1)*5).limit(5).toArray()
     let cnt = await db.collection('post').count();
@@ -351,7 +349,6 @@ app.get('/list/:num', async (요청, 응답) => {
         응답.render('list.ejs', { 글목록 : result , 글수 : cnt, 채팅사람 : 요청.user.username, 페이지넘버 :요청.params.num})
     }
 }) 
-
 
 app.get('/list/next/:num', async (요청, 응답) => {
     console.log("client IP: " +requestIp.getClientIp(요청));
@@ -388,14 +385,12 @@ app.get('/list/prev/:num', async (요청, 응답) => {
     }
 }) 
 
-// 첫번째 검색기능
-app.post('/search', async (요청, 응답) => {
+app.post('/search', async (요청, 응답) => { // 검색기능1
     let result = await db.collection('post').findOne({ title : 요청.body.info})
     응답.render('detail.ejs', { 글목록 : result})
 }) 
 
-// 두번째 검색기능
-app.get('/ssearch', async (요청, 응답) => {
+app.get('/search2', async (요청, 응답) => { // 검색기능2
     console.log(요청.query.value)
     try {
         var 검색조건 = [
@@ -443,7 +438,6 @@ app.post('/login', async (요청, 응답, next) => {
 
 app.get('/mypage', async (요청, 응답)=>{
     if (!요청.user){
-        // 응답.send('로그인 하삼')
         응답.send("<script>alert('로그인 요망');window.location.replace(`/login`)</script>");
     }
     else {
@@ -544,7 +538,7 @@ app.post('/message', checkLogin, async function(요청, 응답){ // 수정필요
                 parent : 요청.body.parent, // 채팅방의 id
                 content : 요청.body.content, // 채팅내용
                 userid : 요청.user._id, // 채팅 건 사람
-                date : new Date(),
+                date : dateFormat1.dateFormat(new Date()),
             }
             let result = await db.collection('message').insertOne(저장할거)
             if(result){
@@ -589,17 +583,9 @@ app.post('/deletee', async (요청, 응답)=>{
         await db.collection('chatroom').deleteOne({ _id : new ObjectId(요청.body.삭제id)})
         let result1 = await db.collection('chatroom').find({ member : 요청.user._id}).toArray()
         응답.render('chat.ejs', { data : result1, cur : 요청.user._id, arrow : 0})
-
-        // if(result){
-        //     응답.render('chat.ejs')
-        //     // 응답.send('삭제완료')
-        // } else{
-        //     응답.send('삭제실패')
-        // }
     } catch(e) {
         응답.status(500).send('서버에러')
     }
-    // 응답.redirect('chat.ejs')
 
 })
 app.post('/deletee2', async (요청, 응답)=>{
@@ -620,7 +606,7 @@ app.post('/deletee2', async (요청, 응답)=>{
     }
 })
 
-app.post('/addlike', async (요청, 응답)=>{
+app.post('/add-like', async (요청, 응답)=>{
     db.collection('post').updateOne({ _id : new ObjectId(요청.body.postid)}, {$inc : {like : 1}}).then(()=>{
         응답.send("<script>reloadLike();</script>");
     })

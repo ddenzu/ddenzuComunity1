@@ -6,39 +6,38 @@
     <title>승뮤니티</title>
     <link rel="stylesheet" href="\main.css">
 </head>
-
+<%- include('nav.ejs') %>
 <body>
-    <div style="height:60px;"></div>
-    <%- include('nav.ejs') %>
-
-    <!-- ejs 파일에선 아무데서나 자바스크립트문법 사용 가능  -->
-    <%for (let i=0; i<글목록.length; i++){ %>
-        <div class="white-bg">
-            <div class="list-box">
-            <% if(글목록[i].vidName !== undefined){ %>
-                <a href="/detail/<%= 글목록[i]._id %>">
-                    <img class="list-left" src="/image/<%= 글목록[i].imgName %>" onerror="this.src='/image/dinosaurVid.png'" />
-                </a>
-            <% } else { %>
-                <a href="/detail/<%= 글목록[i]._id %>">
-                    <img class="list-left" src="/image/<%= 글목록[i].imgName %>" onerror="this.src='/image/dinosaur.png'" />
-                </a>
-            <% } %>
-                <h4 class="list-right">
-                    <a href="/detail/<%= 글목록[i]._id %>"><%= 글목록[i].title %></a>
-                    <a href="/edit/<%= 글목록[i]._id %>">✏️</a>
-                    <span class="delete" data-id="<%= 글목록[i]._id %>">🗑️</span>
-                    <p>작성자: <%= 글목록[i].작성자 %></p>
-                    <form action="/chat" method="POST">
-                        <button type="submit" class="btn" data-id="<%= 글목록[i].작성자_id %>"
-                            data-title="<%= 글목록[i].title %>">작성자랑 채팅하기</button>
-                    </form>
-                </h4>
-            </div>
-            
-        <p style="clear: both; margin: 0px;"></p>
-        </div>      
-    <% }%>
+    <body style="position: relative;">
+        <div class="section2">
+            <div style="height:60px;"></div>
+            <%for (let i=0; i<글목록.length; i++){ %>
+                <div class="white-bg">
+                    <div class="list-box">
+                    <% if(글목록[i].vidName !== undefined){ %>
+                        <a href="/detail/<%= 글목록[i]._id %>">
+                            <img class="list-left" src="/image/<%= 글목록[i].imgName %>" onerror="this.src='/image/dinosaurVid.png'" />
+                        </a>
+                    <% } else { %>
+                        <a href="/detail/<%= 글목록[i]._id %>">
+                            <img class="list-left" src="/image/<%= 글목록[i].imgName %>" onerror="this.src='/image/dinosaur.png'" />
+                        </a>
+                    <% } %>
+                        <h4 class="list-right">
+                            <a href="/detail/<%= 글목록[i]._id %>"><%= 글목록[i].title %></a>
+                            <a href="/edit/<%= 글목록[i]._id %>">✏️</a>
+                            <span class="delete" data-id="<%= 글목록[i]._id %>">🗑️</span>
+                            <p>작성자: <%= 글목록[i].작성자 %></p>
+                            <form action="/chat" method="POST">
+                                <button type="submit" class="btn" data-id="<%= 글목록[i].작성자_id %>"
+                                    data-title="<%= 글목록[i].title %>">작성자랑 채팅하기</button>
+                            </form>
+                        </h4>
+                    </div>
+                    
+                <p style="clear: both; margin: 0px;"></p>
+                </div>      
+            <% }%>
 
     <!-- <div class="list-box">
         <a href="/plus">+✏️</a>

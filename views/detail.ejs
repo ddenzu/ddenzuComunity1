@@ -12,9 +12,12 @@
         <div style="height:60px;"></div>
         <div class="detail-bg">
             <h4 style="font-size: x-large; padding: 5px; margin: 0px; border-top: 1px solid #4a4a4a;
-            border-bottom: 1px solid #4a4a4a;"><%= 글목록.title %></h4>
+            border-bottom: 1px solid #4a4a4a;"><%= 글목록.title %>
+            <p style="float: right; font-size: 14px;padding: 5px; padding-top: 13px; margin: 0px;
+            font-weight: normal;color: #212529;"><%= 글목록.date %></p>
+            </h4>
             <p style="font-size: small; margin-top: 5px;">작성자:  
-                <img style="width: 25px; height: 25px; vertical-align: bottom;" src="/image/<%= 프로필 %>" onerror="this.src='/image/dinosaur.png'"/><%= 글목록.작성자 %></p>
+                <img style="width: 25px; height: 25px; vertical-align: bottom; margin-right: 2px;" src="/image/<%= 프로필 %>" onerror="this.src='/image/dinosaur.png'"/><%= 글목록.작성자 %></p>
             <div class="img-box">
                 <img src="<%= 이미지주소 %>">
                 <video src="<%= 동영상주소 %>" type="video/mp4" controls muted loop autoplay 
@@ -49,7 +52,6 @@
             <!-- </form> -->
             <div id="comment-box" style="margin: 0;">
                 <%for (let i=0; i<댓글목록.length; i++){ %>
-                    <p><%=  %></p>
                     <p style="text-align: left; margin-bottom: 20px; clear: both;">
                         <div class="profile">
                             <div class="profileImage" data-name="<%= 댓글목록[i].username %>" data-id="<%= 댓글목록[i].userId %>">
@@ -64,7 +66,10 @@
                             </div>
                         </div>
                         <div class="profile3"><%- 댓글목록[i].content.replace(/\n/g, '<br/>') %>
-                            <p class="commentTime"><%= 댓글목록[i].date %></p>
+                            <p class="commentTime">
+                                <% var time = dateFormat1.dateFormat(new Date(댓글목록[i].date)) %>
+                                <%= time %>
+                            </p>
                         </div>
                         <span name="add" id="commentDel" data-id="<%= 댓글목록[i]._id %>"
                             data-postId="<%= 댓글목록[i].postId %>" data-userId="<%= 댓글목록[i].userId %>">
@@ -81,6 +86,7 @@
     </div>
     <script type="module">
         import {makeSnowflake2} from '/snow.js';
+        // import {dateFormat} from '/time.js';
         window.onload = function(){
             for (let i = 0; i < 40; i++){
                 setTimeout(makeSnowflake2(), 500 * i);
@@ -98,7 +104,7 @@
         $(document).on("click","span[name='like']", function(e){
             var 보낼거 = {postid : 지금누른작성글id,
             }
-            $.post('/addlike', 보낼거).then(()=> {
+            $.post('/add-like', 보낼거).then(()=> {
                 reloadLike();
           })
         })
@@ -188,6 +194,22 @@
         function reloadLike(){
             $('#likee').load(location.href+' #likee');
         }
+
+        function dateFormat(date) {
+        let month = date.getMonth() + 1;
+        let day = date.getDate();
+        let hour = date.getHours();
+        let minute = date.getMinutes();
+        let second = date.getSeconds();
+
+        month = month >= 10 ? month : '0' + month;
+        day = day >= 10 ? day : '0' + day;
+        hour = hour >= 10 ? hour : '0' + hour;
+        minute = minute >= 10 ? minute : '0' + minute;
+        second = second >= 10 ? second : '0' + second;
+
+        return date.getFullYear() + '-' + month + '-' + day + ' ' + hour + ':' + minute + ':' + second;
+        }   
 
     </script>
 </body>

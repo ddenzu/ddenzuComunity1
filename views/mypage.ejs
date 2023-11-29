@@ -15,7 +15,7 @@
             <p> ID : <%= 아이디.username %></p>
             <img src="/image/<%= 아이디.imgName %>">
             <p>프로필사진 설정</p>
-            <form method="POST" action="/addprofile" enctype="multipart/form-data">
+            <form method="POST" action="/add-profile" enctype="multipart/form-data">
                 <input type="file" name="img1" accept="image/*" style="background-color: gray;">
                 <button type="submit">프로필사진 적용</button>
             </form>

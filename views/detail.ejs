@@ -17,9 +17,11 @@
             font-weight: normal;color: #212529;"><%= 글목록.date %></p>
             </h4>
             <p style="font-size: small; margin-top: 5px;">작성자:  
-                <img style="width: 25px; height: 25px; vertical-align: bottom; margin-right: 2px;" src="/image/<%= 프로필 %>" onerror="this.src='/image/dinosaur.png'"/><%= 글목록.작성자 %></p>
+                <img style="width: 25px; height: 25px; vertical-align: bottom; margin-right: 2px;" 
+                src="https://ddenzubucket.s3.ap-northeast-2.amazonaws.com/<%= 프로필 %>" 
+                onerror="this.src='/image/dinosaur.png'"/><%= 글목록.작성자 %></p>
             <div class="img-box">
-                <img src="<%= 이미지주소 %>">
+                <img style="max-width: 350px;" src="<%= 이미지주소 %>">
                 <video src="<%= 동영상주소 %>" type="video/mp4" controls muted loop autoplay 
                 playsinline preload="metadata" 
                 style="width: 200px" onerror="this.style.display='none';">
@@ -57,7 +59,7 @@
                             <div class="profileImage" data-name="<%= 댓글목록[i].username %>" data-id="<%= 댓글목록[i].userId %>">
                                 <button style="background: transparent; border: none;">
                                     <a class="btn-a" href="/chatroom?name=<%= 댓글목록[i].username %>&id=<%= 댓글목록[i].userId %>">
-                                        <img style="cursor: pointer;" src="/image/<%= 댓글목록[i].userprofile %>">
+                                        <img style="cursor: pointer; width: 25px;height: 25px;object-fit: cover;" src="https:/ddenzubucket.s3.ap-northeast-2.amazonaws.com/<%= 댓글목록[i].userprofile %>">
                                     </a>
                                 </button>
                             </div>

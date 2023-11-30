@@ -13,7 +13,7 @@
         <div style="margin-left: 10px; color: white;">
             <h4>마이페이지</h4>
             <p> ID : <%= 아이디.username %></p>
-            <img src="/image/<%= 아이디.imgName %>">
+            <img style="max-width: 100px;object-fit: cover;" src="https://ddenzubucket.s3.ap-northeast-2.amazonaws.com/<%= 아이디.imgName %>">
             <p>프로필사진 설정</p>
             <form method="POST" action="/add-profile" enctype="multipart/form-data">
                 <input type="file" name="img1" accept="image/*" style="background-color: gray;">

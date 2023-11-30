@@ -22,7 +22,7 @@
     align-items: center;
     min-height: 100vh;
     position: relative;
-    background: url('/image/loginbackground1.jpg')no-repeat;
+    background: url('https:/ddenzubucket.s3.ap-northeast-2.amazonaws.com/loginbackground1.jpg')no-repeat;
     background-position: center;
     background-size: cover;
     z-index: 0;
@@ -34,7 +34,7 @@
   .section2 {
     min-height: 100vh;
     position: relative;
-    background: url('/image/loginbackground1.jpg')no-repeat;
+    background: url('https:/ddenzubucket.s3.ap-northeast-2.amazonaws.com/loginbackground1.jpg')no-repeat;
     background-position: center;
     background-size: cover;
     z-index: 0;

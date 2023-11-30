@@ -97,45 +97,45 @@ app.get('/write', (요청, 응답) => {
     응답.render('write.ejs')
 })
 // multer 라이브러리 세팅
-let multer = require('multer');
-const sharp = require("sharp");
-const fs = require('fs');
-const { configDotenv } = require('dotenv')
-const path = require('path');
-var storage = multer.diskStorage({
-  destination : function(req, file, cb){
-    cb(null, './public/image') // 이미지 어디에 저장할건지
-  },
-  filename : function(req, file, cb){
-    cb(null, Date.now()+file.originalname) // 파일명 설정하기
-  },
-//   filefilter : function(req, file, cb){
+// let multer = require('multer');
+// const sharp = require("sharp");
+// const fs = require('fs');
+// const { configDotenv } = require('dotenv')
+// const path = require('path');
+// var storage = multer.diskStorage({
+//   destination : function(req, file, cb){
+//     cb(null, './public/image') // 이미지 어디에 저장할건지
+//   },
+//   filename : function(req, file, cb){
+//     cb(null, Date.now()+file.originalname) // 파일명 설정하기
+//   },
+// //   filefilter : function(req, file, cb){
 
-//   }
-});
+// //   }
+// });
 
-var upload = multer({storage : storage}); // 갖다 쓰면됨
+// var upload = multer({storage : storage}); // 갖다 쓰면됨
 
-// const { S3Client } = require('@aws-sdk/client-s3')
-// const multer = require('multer')
-// const multerS3 = require('multer-s3')
-// const s3 = new S3Client({
-//   region : 'ap-northeast-2',
-//   credentials : {
-//       accessKeyId : process.env.S3_KEY,
-//       secretAccessKey : process.env.S3_SECRET,
-//   }
-// })
+const { S3Client } = require('@aws-sdk/client-s3')
+const multer = require('multer')
+const multerS3 = require('multer-s3')
+const s3 = new S3Client({
+  region : 'ap-northeast-2',
+  credentials : {
+      accessKeyId : process.env.S3_KEY,
+      secretAccessKey : process.env.S3_SECRET,
+  }
+})
 
-// const upload = multer({
-//   storage: multerS3({
-//     s3: s3,
-//     bucket: 'ddenzubucket',
-//     key: function (요청, file, cb) {
-//       cb(null, Date.now()+file.originalname) //업로드시 파일명 변경가능 겹치면안됨
-//     }
-//   })
-// })
+const upload = multer({
+  storage: multerS3({
+    s3: s3,
+    bucket: 'ddenzubucket',
+    key: function (요청, file, cb) {
+      cb(null, Date.now()+file.originalname) //업로드시 파일명 변경가능 겹치면안됨
+    }
+  })
+})
 
 
 function checkLogin(요청, 응답, next) {
@@ -151,7 +151,6 @@ function checkLogin(요청, 응답, next) {
 //     .toFile(요청.file.filename)
 //     .then(()=> console.log('done'))
 app.post('/add', upload.single('img1'), async (요청, 응답) => { // write 페이지에서 post 요청하면 여기로 데이터 날라옴
-    console.log(요청.file)
     try {
         if (요청.body.title==""||요청.body.content==""){
             응답.send('잘못된 아이디 or 비번')
@@ -168,25 +167,25 @@ app.post('/add', upload.single('img1'), async (요청, 응답) => { // write 페
                     if(요청.file.mimetype=='video/mp4' || 요청.file.mimetype=='video/quicktime'){
                         await db.collection('post').insertOne({title : 요청.body.title , 
                         content : 요청.body.content , 작성자_id : 요청.user._id, 작성자 : 요청.user.username, like : 0
-                        ,vidName : 요청.file.filename, date : dateFormat1.dateFormat(new Date()),})
+                        ,vidName : 요청.file.key, date : dateFormat1.dateFormat(new Date()),})
                         응답.redirect('/list/1') // redirect 하면 url 로 GET 요청을 자동으로 해줌, 그래서  { 글목록 : result} 이런거 안줘도됨                        
                     }
                     else {
-                        sharp(`public/image/${요청.file.filename}`,{ failOn: 'truncated' }) // 리사이징할 파일의 경로
-                        .resize({ width: 350 }) // 원본 비율 유지하면서 width 크기만 설정
-                        .withMetadata()
-                        .toFile(`public/image/resize-${요청.file.filename}`, (err, info) => {
-                        if (err) throw err;
-                        console.log(`info : ${info}`);
-                        fs.unlink(`public/image/${요청.file.filename}`, (err) => {
-                            // 원본파일은 삭제해줍니다
-                            // 원본파일을 삭제하지 않을거면 생략해줍니다
-                            //  if (err) throw err;
-                        });
-                        });
+                        // sharp(`public/image/${요청.file.filename}`,{ failOn: 'truncated' }) // 리사이징할 파일의 경로
+                        // .resize({ width: 350 }) // 원본 비율 유지하면서 width 크기만 설정
+                        // .withMetadata()
+                        // .toFile(`public/image/resize-${요청.file.filename}`, (err, info) => {
+                        // if (err) throw err;
+                        // console.log(`info : ${info}`);
+                        // fs.unlink(`public/image/${요청.file.filename}`, (err) => {
+                        //     // 원본파일은 삭제해줍니다
+                        //     // 원본파일을 삭제하지 않을거면 생략해줍니다
+                        //     //  if (err) throw err;
+                        // });
+                        // });
                         await db.collection('post').insertOne({title : 요청.body.title , 
                         content : 요청.body.content , 작성자_id : 요청.user._id, 작성자 : 요청.user.username, like : 0
-                        ,imgName : 'resize-'+요청.file.filename, date : dateFormat1.dateFormat(new Date())})
+                        ,imgName : 요청.file.key, date : dateFormat1.dateFormat(new Date())})
                         응답.redirect('/list/1') // redirect 하면 url 로 GET 요청을 자동으로 해줌, 그래서  { 글목록 : result} 이런거 안줘도됨                         
                     }
                 }
@@ -202,20 +201,20 @@ app.post('/add', upload.single('img1'), async (요청, 응답) => { // write 페
 
 app.post('/add-profile', upload.single('img1'), async (req, res, next) => {
     try {
-        sharp(`public/image/${req.file.filename}`,{ failOn: 'truncated' }) // 리사이징할 파일의 경로
-           .resize({ width: 25}) // 원본 비율 유지하면서 width 크기만 설정
-           .withMetadata()
-           .toFile(`public/image/resize-${req.file.filename}`, (err, info) => {
-              if (err) throw err;
-            //   console.log(`info : ${info}`);
-              fs.unlink(`public/image/${req.file.filename}`, (err) => {
-                 // 원본파일은 삭제해줍니다
-                 // 원본파일을 삭제하지 않을거면 생략
-                //  if (err) throw err;
-              });
-           });
-           await db.collection('user').updateOne({ _id : new ObjectId(req.user._id)}, {$set : {imgName : 'resize-'+req.file.filename}})
-           await db.collection('comment').updateMany({userId: new ObjectId(req.user._id)}, {$set : {userprofile : 'resize-'+req.file.filename}})
+        // sharp(`public/image/${req.file.filename}`,{ failOn: 'truncated' }) // 리사이징할 파일의 경로
+        //    .resize({ width: 25}) // 원본 비율 유지하면서 width 크기만 설정
+        //    .withMetadata()
+        //    .toFile(`public/image/resize-${req.file.filename}`, (err, info) => {
+        //       if (err) throw err;
+        //     //   console.log(`info : ${info}`);
+        //       fs.unlink(`public/image/${req.file.filename}`, (err) => {
+        //          // 원본파일은 삭제해줍니다
+        //          // 원본파일을 삭제하지 않을거면 생략
+        //         //  if (err) throw err;
+        //       });
+        //    });
+           await db.collection('user').updateOne({ _id : new ObjectId(req.user._id)}, {$set : {imgName : req.file.key}})
+           await db.collection('comment').updateMany({userId: new ObjectId(req.user._id)}, {$set : {userprofile : req.file.key}})
             res.redirect('/list/1')
      } catch (err) {
         console.log(err);
@@ -250,7 +249,7 @@ app.get('/detail/:id', async (요청, 응답)=>{
                     }
                     else{
                         응답.render('detail.ejs', {글목록 : result, 댓글목록 : result2, 
-                        이미지주소 : "", 프로필 : "", 동영상주소 : "/image/"+result.vidName,현재접속자 : 현재접속자, dateFormat1 : dateFormat1})                             
+                        이미지주소 : "", 프로필 : "", 동영상주소 : "https://ddenzubucket.s3.ap-northeast-2.amazonaws.com/"+result.vidName,현재접속자 : 현재접속자, dateFormat1 : dateFormat1})                             
                     } 
                 }
                 else {
@@ -260,18 +259,18 @@ app.get('/detail/:id', async (요청, 응답)=>{
                     }
                     else {
                         응답.render('detail.ejs', {글목록 : result, 댓글목록 : result2, 
-                        이미지주소 : "", 프로필 : result3.imgName, 동영상주소 : "/image/"+result.vidName,현재접속자 : 현재접속자, dateFormat1 : dateFormat1})                        
+                        이미지주소 : "", 프로필 : result3.imgName, 동영상주소 : "https://ddenzubucket.s3.ap-northeast-2.amazonaws.com/"+result.vidName,현재접속자 : 현재접속자, dateFormat1 : dateFormat1})                        
                     }
                 }
             } 
             else {
                 if(result3.imgName==undefined){
                     응답.render('detail.ejs', {글목록 : result, 댓글목록 : result2,
-                    이미지주소: "/image/"+result.imgName,  프로필 : "", 동영상주소 : "",현재접속자 : 현재접속자, dateFormat1 : dateFormat1})                     
+                    이미지주소: "https://ddenzubucket.s3.ap-northeast-2.amazonaws.com/"+result.imgName,  프로필 : "", 동영상주소 : "",현재접속자 : 현재접속자, dateFormat1 : dateFormat1})                     
                 }
                 else {
                     응답.render('detail.ejs', {글목록 : result, 댓글목록 : result2,
-                    이미지주소: "/image/"+result.imgName,  프로필 : result3.imgName, 동영상주소 : "",
+                    이미지주소: "https://ddenzubucket.s3.ap-northeast-2.amazonaws.com/"+result.imgName,  프로필 : result3.imgName, 동영상주소 : "",
                     현재접속자 : 현재접속자, dateFormat1 : dateFormat1})                     
                 }
             }

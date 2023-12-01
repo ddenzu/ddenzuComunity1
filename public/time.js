@@ -1,4 +1,5 @@
 function dateFormat(date) {
+
     let month = date.getMonth() + 1;
     let day = date.getDate();
     let hour = date.getHours();
@@ -11,7 +12,7 @@ function dateFormat(date) {
     minute = minute >= 10 ? minute : '0' + minute;
     second = second >= 10 ? second : '0' + second;
 
-    return date.getFullYear() + '-' + month + '-' + day + ' ' + hour + ':' + minute;
+    return date.getFullYear() + '-' + month + '-' + day + ' ' + hour+':' + minute;
 }
 
 module.exports = {dateFormat};

@@ -21,7 +21,7 @@
                 src="https://ddenzubucket.s3.ap-northeast-2.amazonaws.com/<%= 프로필 %>" 
                 onerror="this.src='/image/dinosaur.png'"/><%= 글목록.작성자 %></p>
             <div class="img-box">
-                <img style="max-width: 350px;" src="<%= 이미지주소 %>">
+                <img style="max-width: 350px;" src="<%= 이미지주소 %>"/>
                 <video src="<%= 동영상주소 %>" type="video/mp4" controls muted loop autoplay 
                 playsinline preload="metadata" 
                 style="width: 200px" onerror="this.style.display='none';">
@@ -59,7 +59,8 @@
                             <div class="profileImage" data-name="<%= 댓글목록[i].username %>" data-id="<%= 댓글목록[i].userId %>">
                                 <button style="background: transparent; border: none;">
                                     <a class="btn-a" href="/chatroom?name=<%= 댓글목록[i].username %>&id=<%= 댓글목록[i].userId %>">
-                                        <img style="cursor: pointer; width: 25px;height: 25px;object-fit: cover;" src="https:/ddenzubucket.s3.ap-northeast-2.amazonaws.com/<%= 댓글목록[i].userprofile %>">
+                                        <img style="cursor: pointer; width: 25px;height: 25px;object-fit: cover;" src="https:/ddenzubucket.s3.ap-northeast-2.amazonaws.com/<%= 댓글목록[i].userprofile %>"
+                                        onerror="this.src='/image/dinosaur.png'" />
                                     </a>
                                 </button>
                             </div>
@@ -196,22 +197,6 @@
         function reloadLike(){
             $('#likee').load(location.href+' #likee');
         }
-
-        function dateFormat(date) {
-        let month = date.getMonth() + 1;
-        let day = date.getDate();
-        let hour = date.getHours();
-        let minute = date.getMinutes();
-        let second = date.getSeconds();
-
-        month = month >= 10 ? month : '0' + month;
-        day = day >= 10 ? day : '0' + day;
-        hour = hour >= 10 ? hour : '0' + hour;
-        minute = minute >= 10 ? minute : '0' + minute;
-        second = second >= 10 ? second : '0' + second;
-
-        return date.getFullYear() + '-' + month + '-' + day + ' ' + hour + ':' + minute + ':' + second;
-        }   
 
     </script>
 </body>

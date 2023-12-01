@@ -492,8 +492,8 @@
   .page-btn{
     padding-left: 4px;
     padding-right: 4px;
-    border: 2px solid #ecb4b2;
-    color: #ecb4b2;
+    border: 2px solid white;
+    color: white;
     background: transparent;
     font-size: larger;
     border-radius: 5px;
@@ -505,8 +505,11 @@
     background-color: #fff;
   }
   .nowPage {
+    color: #ecb4b2;
+    border: 2px solid #ecb4b2;
+  }
+  .page-box ion-icon {
     color: white;
-    border: 2px solid white;
   }
   .everyChat {
     margin: auto;
@@ -738,6 +741,9 @@
   }
   .register p a:hover {
       text-decoration: underline;
+  }
+  .changeNameVisible {
+    display: none;
   }
 
   @keyframes fall {

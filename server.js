@@ -101,7 +101,7 @@ app.get('/write', (요청, 응답) => {
 // const sharp = require("sharp");
 // const fs = require('fs');
 // const { configDotenv } = require('dotenv')
-// const path = require('path');
+const path = require('path');
 // var storage = multer.diskStorage({
 //   destination : function(req, file, cb){
 //     cb(null, './public/image') // 이미지 어디에 저장할건지
@@ -442,6 +442,23 @@ app.get('/mypage', async (요청, 응답)=>{
     else {
         let result = await db.collection('user').findOne({ username : 요청.user.username})
         응답.render('mypage.ejs', { 아이디 : result })      
+    }
+})
+
+app.post('/change-name', async (요청, 응답) => { ///////////////닉변
+    try {
+        let result = await db.collection('user').findOne({ username : 요청.body.name})
+        if (result){
+            응답.send("<script>alert('이미 존재하는 아이디 입니다');window.location.replace(`/mypage`);</script>");
+        }
+        else {
+            await db.collection('user').updateOne({ _id : new ObjectId(요청.user._id)}, {$set : {username : 요청.body.name}})
+            await db.collection('comment').updateMany({userId: new ObjectId(요청.user._id)}, {$set : {username : 요청.body.name}})
+            응답.send("<script>alert('닉네임이 변경되었습니다');window.location.replace(`/mypage`);</script>");
+        }
+    }
+    catch(e){
+        응답.status(500).send('서버에러')
     }
 })
 

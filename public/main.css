@@ -197,13 +197,57 @@
   .commentTime{
     font-size: 11px;
     color: #35364b;
-    margin-top: 3px;
-    /* padding-top: 5px; */
-    /* width: 50%;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis; */
+    margin-top: 2px;
+    float: left;
   }
+  .reComment {
+    font-size: 12px;
+    color: #35364b;
+    margin-top: 2px;
+    margin-left: 15px;
+    cursor: pointer;
+    float: left;
+  }
+  .reComment_click {
+    background: rgba(0, 0, 0, 0.2);
+    font-size: 11px;
+    color: white;
+    border-radius: 5px;
+    padding: 2px;
+  }
+  .reComment_input {
+    font-size: 12px;
+    width: 180px;
+    background: transparent;
+    /* color: #222222; */
+    height: 20px;
+    resize: none;
+    border: none;
+    border-bottom: 1px solid #35364b;
+  }
+  .reComment_input::placeholder {
+    color: #5c596e;
+  }
+  .reComment_cancel {
+    font-size: 12px;
+    color: #35364b;
+    margin-top: 2px;
+    margin-left: 15px;
+    cursor: pointer;
+    float: left;
+  }
+  .reComment_send {
+    color: #35364b;
+    font-size: 20px;
+  }
+  /* .reComment_arrow {
+    color: white;
+    height: 0px;
+  } */
+  .reComment_input:focus {
+    outline: none;
+  }
+
   .search-bar input {
     background: transparent;
     flex: 1;
@@ -439,7 +483,9 @@
     vertical-align: middle;
   }
   .profile3 {
+    /* width: 60%; */
     max-width: 75%;
+    width: 300px;
     float: left;
     margin-top: 5px;
     margin-left: 5px;
@@ -482,7 +528,7 @@
   }
   .profiletext{
     width: 120%;
-    font-size: 16px;
+    font-size: 14px;
     margin-top: 2px;
     text-overflow: ellipsis;
     overflow: hidden;

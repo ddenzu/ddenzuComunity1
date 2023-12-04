@@ -52,7 +52,7 @@
                     </div>
                 </div>
             <!-- </form> -->
-            <div id="comment-box" style="margin: 0;">
+            <div id="comment-box" style="margin: 0; display: block;">
                 <%for (let i=0; i<댓글목록.length; i++){ %>
                     <p style="text-align: left; margin-bottom: 20px; clear: both;">
                         <div class="profile">
@@ -68,20 +68,41 @@
                                 <div class="profiletext"><%= 댓글목록[i].username %></div>
                             </div>
                         </div>
-                        <div class="profile3"><%- 댓글목록[i].content.replace(/\n/g, '<br/>') %>
+                        <div id="profile3" class="profile3"><%- 댓글목록[i].content.replace(/\n/g, '<br/>') %>
+                            <p style="clear: both"></p>
                             <p class="commentTime">
                                 <% var time = dateFormat1.dateFormat(new Date(댓글목록[i].date)) %>
                                 <%= time %>
-                            </p>
+                                <div class="reComment" data-num="<%= i %>">답글</div>
+                                <div class="reComment_cancel changeNameVisible" data-num="<%= i %>">취소</div>
+                            </p>  
+                            <div class="reComment_box changeNameVisible">
+                                <textarea class="reComment_input" id="reComment-input" placeholder="엔터누르면 줄바꿈"></textarea>
+                                <ion-icon class="reComment_send" name="paper-plane-outline"
+                                data-id="<%= 댓글목록[i]._id %>" data-num="<%= i %>"></ion-icon>
+                            </div>
+                            <div style="clear: both"></div>
+                            <%for (let j=0; j<대댓글.length; j++){ %>
+                                <% a= JSON.stringify(대댓글[j].parentId) %>
+                                <% b= JSON.stringify(댓글목록[i]._id) %>
+                                <%if(a==b){%>
+                                    <div style="width: 230px; display: flex; margin-top: 7px;">
+                                        <img style="cursor: pointer; width: 25px;height: 25px;object-fit: cover;" src="https:/ddenzubucket.s3.ap-northeast-2.amazonaws.com/<%= 대댓글[j].userprofile %>"
+                                        onerror="this.src='/image/dinosaur.png'" />
+                                        <p style="font-size: 13px; margin: 6px 0px 0px 4px;"><%= 대댓글[j].content %></p>
+                                    </div>
+                                <%} %>
+                            <%}%>
                         </div>
                         <span name="add" id="commentDel" data-id="<%= 댓글목록[i]._id %>"
                             data-postId="<%= 댓글목록[i].postId %>" data-userId="<%= 댓글목록[i].userId %>">
                             <ion-icon style="font-size: 20px; color: #5a545c;" name="trash-outline"></ion-icon>
                         </span>
-                        <br>
                     </p>
+                    <div style="clear: both; height: 0px;"></div>
                     <p class="comment-line"></p>
                 <% }%>
+                
             </div>
         </div>
         <div class="infomation" style="background-color:rgba(0, 0, 0, 0.2);">
@@ -140,32 +161,38 @@
             }) 
         })
 
-        // document.getElementById("send-input").addEventListener("keyup", function(event) {
-        //     if (event.keyCode === 13) {
-        //         var 댓글내용 = $('#send-input').val();
-        //         var 보낼거 = {
-        //             parent : 지금누른작성글id,
-        //             content : 댓글내용,
-        //         }
-        //         fetch('/comment', {
-        //         method : 'POST',
-        //         async : false,
-        //         headers : {
-        //             'Content-Type' : 'application/json'
-        //         },
-        //         body : JSON.stringify(보낼거)
-        //         })
-        //         .then((r)=>r.text())
-        //         .then((r)=>{
-        //             location.reload();
-        //     })
-        // }});
+        $(document).on("click",".reComment_send", function(e){
+            var 댓글내용 = document.querySelectorAll('#reComment-input')[e.target.dataset.num].value;
+            document.querySelectorAll('#reComment-input')[e.target.dataset.num].value = '';
+            var 보낼거 = {
+                parent : 지금누른작성글id,
+                reparent : e.target.dataset.id,
+                content : 댓글내용,
+            }
+            fetch('/recomment', {
+            method : 'POST',
+            async : false,
+            headers : {
+                'Content-Type' : 'application/json'
+            },
+            body : JSON.stringify(보낼거)
+            })
+            .then((r)=>r.text())
+            .then((r)=>{
+                if(r=="대댓글저장"){
+                    $('#comment-box').load(location.href+' #comment-box');
+                } else {
+                    return 0
+                }
+            }) 
+        })
+
 
         $(document).on("click","span[name='add']", function(e){
             if (confirm('리얼루다가 삭제하시겠슴까나리?')==true){
                 var 지울거 = {id : this.dataset.id,
                 userId : this.dataset.userid}
-                fetch('/deletee2', {
+                fetch('/delete-comment', {
                 method : 'POST',
                 async : false,
                 headers : {
@@ -175,7 +202,6 @@
                 })
                 .then((r)=>r.text())
                 .then((r)=>{
-                    // location.reload(true);
                     $('#comment-box').load(location.href+' #comment-box');
                 }) 
             }
@@ -194,10 +220,31 @@
                 }
             }
         })
+        document.querySelector('.reComment_box').addEventListener('click', ()=>{
+            if('<%= 현재접속자 %>'=="noUser"){
+                if (confirm('댓글작성을 위해 로그인 페이지로 이동하시겠습니까탈레나')==true){
+                    window.location.replace(`/login`) 
+                }
+            }
+        })
         function reloadLike(){
             $('#likee').load(location.href+' #likee');
         }
 
+        $(document).on("click",'.reComment', function(e){
+            document.querySelectorAll('.reComment_box')[this.dataset.num].classList.remove('changeNameVisible');
+            document.querySelectorAll('.reComment')[this.dataset.num].classList.add('reComment_click');
+            document.querySelectorAll('.reComment_cancel')[this.dataset.num].classList.remove('changeNameVisible');
+        })        
+        $(document).on("click",'.reComment_cancel', function(e){
+            document.querySelectorAll('.reComment_box')[this.dataset.num].classList.add('changeNameVisible');
+            document.querySelectorAll('.reComment')[this.dataset.num].classList.remove('reComment_click');
+            document.querySelectorAll('.reComment_cancel')[this.dataset.num].classList.add('changeNameVisible');
+        })
+
+       
+
     </script>
+
 </body>
 </html>

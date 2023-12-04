@@ -145,7 +145,7 @@
           채팅방삭제id = this.dataset.id  
           var 보낼거 = {삭제id : 채팅방삭제id};
           if (confirm('리얼루다가 삭제하시겠슴까?')==true){
-            fetch('/deletee', {
+            fetch('/delete-chat', {
             method : 'POST',
             async : false,
             headers : {

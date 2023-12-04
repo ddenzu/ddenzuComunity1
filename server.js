@@ -83,19 +83,12 @@ app.get('/', (요청, 응답) => {
     응답.redirect('/list/1')
 }) 
 
-app.get('/dbadd', (요청, 응답) => { //get : url을 서버에서 주면서 서버에게 요청,밑에 함수 실행
-    응답.send('db넣기 성공')
-}) 
-
 app.get('/list', async (요청, 응답) => {
     let result = await db.collection('post').find().toArray() // await = blocking
     // ejs 파일은 sendFile 아니라 render 사용
     응답.redirect('/list/1')
 }) 
 
-app.get('/write', (요청, 응답) => {
-    응답.render('write.ejs')
-})
 // multer 라이브러리 세팅
 // let multer = require('multer');
 // const sharp = require("sharp");
@@ -150,7 +143,7 @@ function checkLogin(요청, 응답, next) {
 //     .resize( {width: 100})
 //     .toFile(요청.file.filename)
 //     .then(()=> console.log('done'))
-app.post('/add', upload.single('img1'), async (요청, 응답) => { // write 페이지에서 post 요청하면 여기로 데이터 날라옴
+app.post('/write', upload.single('img1'), async (요청, 응답) => { 
     try {
         if (요청.body.title==""||요청.body.content==""){
             응답.send('잘못된 아이디 or 비번')
@@ -199,7 +192,7 @@ app.post('/add', upload.single('img1'), async (요청, 응답) => { // write 페
     }
 })
 
-app.post('/add-profile', upload.single('img1'), async (req, res, next) => {
+app.post('/profileImg', upload.single('img1'), async (req, res, next) => {
     try {
         // sharp(`public/image/${req.file.filename}`,{ failOn: 'truncated' }) // 리사이징할 파일의 경로
         //    .resize({ width: 25}) // 원본 비율 유지하면서 width 크기만 설정
@@ -230,8 +223,10 @@ app.get('/detail/:id', async (요청, 응답)=>{
     // 요청.params 하면 유저가 url 파라미터에 입력한 데이터 가져옴(:id)
     try {
         let result = await db.collection('post').findOne({ _id : new ObjectId(요청.params.id)})
-        let result2 = await db.collection('comment').find({ postId : new ObjectId(요청.params.id)}).toArray()
+        // let result2 = await db.collection('comment').find({ postId : new ObjectId(요청.params.id)}).toArray()
+        let result2 = await db.collection('comment').find({ postId : new ObjectId(요청.params.id), parentId : null}).toArray()
         let result3 = await db.collection('user').findOne({ _id : result.작성자_id})
+        let result4 = await db.collection('comment').find({ postId : new ObjectId(요청.params.id), parentId : { $exists: true }}).toArray()
         if (요청.user==null){
             var 현재접속자 = 'noUser'
         } else {
@@ -245,33 +240,33 @@ app.get('/detail/:id', async (요청, 응답)=>{
                 if(result3.imgName==undefined){
                     if(result.vidName==undefined){
                         응답.render('detail.ejs', {글목록 : result, 댓글목록 : result2, 
-                        이미지주소 : "", 프로필 : "", 동영상주소 : "",현재접속자 : 현재접속자, dateFormat1 : dateFormat1})                        
+                        이미지주소 : "", 프로필 : "", 동영상주소 : "",현재접속자 : 현재접속자, dateFormat1 : dateFormat1, 대댓글 : result4})                        
                     }
                     else{
                         응답.render('detail.ejs', {글목록 : result, 댓글목록 : result2, 
-                        이미지주소 : "", 프로필 : "", 동영상주소 : "https://ddenzubucket.s3.ap-northeast-2.amazonaws.com/"+result.vidName,현재접속자 : 현재접속자, dateFormat1 : dateFormat1})                             
+                        이미지주소 : "", 프로필 : "", 동영상주소 : "https://ddenzubucket.s3.ap-northeast-2.amazonaws.com/"+result.vidName,현재접속자 : 현재접속자, dateFormat1 : dateFormat1, 대댓글 : result4})                             
                     } 
                 }
                 else {
                     if(result.vidName==undefined){
                         응답.render('detail.ejs', {글목록 : result, 댓글목록 : result2, 
-                        이미지주소 : "", 프로필 : result3.imgName, 동영상주소 : "",현재접속자 : 현재접속자, dateFormat1 : dateFormat1})                        
+                        이미지주소 : "", 프로필 : result3.imgName, 동영상주소 : "",현재접속자 : 현재접속자, dateFormat1 : dateFormat1, 대댓글 : result4})                        
                     }
                     else {
                         응답.render('detail.ejs', {글목록 : result, 댓글목록 : result2, 
-                        이미지주소 : "", 프로필 : result3.imgName, 동영상주소 : "https://ddenzubucket.s3.ap-northeast-2.amazonaws.com/"+result.vidName,현재접속자 : 현재접속자, dateFormat1 : dateFormat1})                        
+                        이미지주소 : "", 프로필 : result3.imgName, 동영상주소 : "https://ddenzubucket.s3.ap-northeast-2.amazonaws.com/"+result.vidName,현재접속자 : 현재접속자, dateFormat1 : dateFormat1, 대댓글 : result4})                        
                     }
                 }
             } 
             else {
                 if(result3.imgName==undefined){
                     응답.render('detail.ejs', {글목록 : result, 댓글목록 : result2,
-                    이미지주소: "https://ddenzubucket.s3.ap-northeast-2.amazonaws.com/"+result.imgName,  프로필 : "", 동영상주소 : "",현재접속자 : 현재접속자, dateFormat1 : dateFormat1})                     
+                    이미지주소: "https://ddenzubucket.s3.ap-northeast-2.amazonaws.com/"+result.imgName,  프로필 : "", 동영상주소 : "",현재접속자 : 현재접속자, dateFormat1 : dateFormat1, 대댓글 : result4})                     
                 }
                 else {
                     응답.render('detail.ejs', {글목록 : result, 댓글목록 : result2,
                     이미지주소: "https://ddenzubucket.s3.ap-northeast-2.amazonaws.com/"+result.imgName,  프로필 : result3.imgName, 동영상주소 : "",
-                    현재접속자 : 현재접속자, dateFormat1 : dateFormat1})                     
+                    현재접속자 : 현재접속자, dateFormat1 : dateFormat1, 대댓글 : result4})                     
                 }
             }
         }
@@ -323,7 +318,7 @@ app.delete('/delete', async (요청, 응답)=>{
 })
 
 
-app.get('/plus', async (요청, 응답) => {
+app.get('/write', async (요청, 응답) => {
     if (요청.user == undefined){
         응답.send("<script>alert('로그인 요망');window.location.replace(`/login`)</script>");
     }
@@ -384,10 +379,10 @@ app.get('/list/prev/:num', async (요청, 응답) => {
     }
 }) 
 
-app.post('/search', async (요청, 응답) => { // 검색기능1
-    let result = await db.collection('post').findOne({ title : 요청.body.info})
-    응답.render('detail.ejs', { 글목록 : result})
-}) 
+// app.post('/search', async (요청, 응답) => { // 검색기능1
+//     let result = await db.collection('post').findOne({ title : 요청.body.info})
+//     응답.render('detail.ejs', { 글목록 : result})
+// }) 
 
 app.get('/search2', async (요청, 응답) => { // 검색기능2
     console.log(요청.query.value)
@@ -445,7 +440,7 @@ app.get('/mypage', async (요청, 응답)=>{
     }
 })
 
-app.post('/change-name', async (요청, 응답) => { ///////////////닉변
+app.post('/change-name', async (요청, 응답) => { 
     try {
         let result = await db.collection('user').findOne({ username : 요청.body.name})
         if (result){
@@ -545,6 +540,29 @@ app.post('/comment', checkLogin, async (요청, 응답)=>{
         응답.status(500).send('서버에러')
     }
 })
+app.post('/recomment', checkLogin, async (요청, 응답)=>{
+    // console.log(요청.body)
+    try {
+        if (요청.body.content) {
+            var 저장할거 = {
+                postId : new ObjectId(요청.body.parent), // 작성글 id
+                parentId : new ObjectId(요청.body.reparent),
+                content : 요청.body.content, // 채팅내용
+                username : 요청.user.username,
+                userId : 요청.user._id,
+                userprofile : 요청.user.imgName,
+                date : new Date(),
+            }
+            await db.collection('comment').insertOne(저장할거)
+            응답.send('대댓글저장')
+        } else {
+            응답.send("<script>alert('대댓글등록실패');</script>")
+        }
+    }
+    catch(e) {
+        응답.status(500).send('서버에러')
+    }
+})
 
 app.post('/message', checkLogin, async function(요청, 응답){ // 수정필요
     // console.log(요청.body.content)
@@ -594,7 +612,7 @@ app.get('/message/:id', checkLogin, function(요청, 응답){
     });
 });
 
-app.post('/deletee', async (요청, 응답)=>{
+app.post('/delete-chat', async (요청, 응답)=>{
     try{
         await db.collection('chatroom').deleteOne({ _id : new ObjectId(요청.body.삭제id)})
         let result1 = await db.collection('chatroom').find({ member : 요청.user._id}).toArray()
@@ -604,7 +622,7 @@ app.post('/deletee', async (요청, 응답)=>{
     }
 
 })
-app.post('/deletee2', async (요청, 응답)=>{
+app.post('/delete-comment', async (요청, 응답)=>{
     try {
         var 비교1 = JSON.stringify(요청.user._id)
         var 비교2 = JSON.stringify(요청.body.userId)
@@ -613,7 +631,7 @@ app.post('/deletee2', async (요청, 응답)=>{
             응답.send()
         }
         else {
-            응답.send("지울 수 없성")
+            응답.send("cant")
         }
     }
     catch {
@@ -627,7 +645,6 @@ app.post('/add-like', async (요청, 응답)=>{
         응답.send("<script>reloadLike();</script>");
     })
 })
-
 
 io.on('connection', function(socket){
 

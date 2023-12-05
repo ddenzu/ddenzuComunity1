@@ -216,6 +216,7 @@
     padding: 2px;
   }
   .reComment_input {
+    margin-top: 5px;
     font-size: 12px;
     width: 180px;
     background: transparent;
@@ -235,6 +236,7 @@
     margin-left: 15px;
     cursor: pointer;
     float: left;
+    padding: 2px;
   }
   .reComment_send {
     color: #35364b;

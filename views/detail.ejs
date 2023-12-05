@@ -21,7 +21,7 @@
                 src="https://ddenzubucket.s3.ap-northeast-2.amazonaws.com/<%= 프로필 %>" 
                 onerror="this.src='/image/dinosaur.png'"/><%= 글목록.작성자 %></p>
             <div class="img-box">
-                <img style="max-width: 350px;" src="<%= 이미지주소 %>"/>
+                <img style="max-width: 330px;" src="<%= 이미지주소 %>"/>
                 <video src="<%= 동영상주소 %>" type="video/mp4" controls muted loop autoplay 
                 playsinline preload="metadata" 
                 style="width: 200px" onerror="this.style.display='none';">
@@ -86,10 +86,24 @@
                                 <% a= JSON.stringify(대댓글[j].parentId) %>
                                 <% b= JSON.stringify(댓글목록[i]._id) %>
                                 <%if(a==b){%>
-                                    <div style="width: 230px; display: flex; margin-top: 7px;">
-                                        <img style="cursor: pointer; width: 25px;height: 25px;object-fit: cover;" src="https:/ddenzubucket.s3.ap-northeast-2.amazonaws.com/<%= 대댓글[j].userprofile %>"
-                                        onerror="this.src='/image/dinosaur.png'" />
-                                        <p style="font-size: 13px; margin: 6px 0px 0px 4px;"><%= 대댓글[j].content %></p>
+                                    <div style="width: 230px; display: flex; margin-top: 8px;">
+                                        <div style="display: flex; flex-direction: column;">
+                                            <a class="btn-a" href="/chatroom?name=<%= 대댓글[j].username %>&id=<%= 대댓글[j].userId %>">
+                                                <img style="cursor: pointer; width: 25px;height: 25px;object-fit: cover;" src="https:/ddenzubucket.s3.ap-northeast-2.amazonaws.com/<%= 대댓글[j].userprofile %>"
+                                                onerror="this.src='/image/dinosaur.png'" />
+                                            </a>
+                                            <div style="width: 25px;text-align: center; margin-top: 0px;" class="profiletext"><%= 대댓글[j].username %></div>
+                                        </div>
+
+                                        <div style="display: flex; flex-direction: column;">
+                                            <p style="font-size: 13px; margin: 7px 0px 0px 4px; display: block;"><%= 대댓글[j].content %></p>
+                                            <% var time1 = dateFormat1.dateFormat(new Date(대댓글[j].date)) %>
+                                            <p class="commentTime" style="font-size: 11px; margin: 5px 0px 0px 4px;"><%= time1 %></p>
+                                        </div>
+                                        <span style="margin: 7px 0px 0px 7px;" name="add" id="commentDel" data-id="<%= 대댓글[j]._id %>"
+                                            data-postId="<%= 대댓글[j].postId %>" data-userId="<%= 대댓글[j].userId %>">
+                                            <ion-icon style="font-size: 20px; color: #5a545c;" name="trash-outline"></ion-icon>
+                                        </span>
                                     </div>
                                 <%} %>
                             <%}%>
@@ -156,7 +170,7 @@
                     $('#comment-box').load(location.href+' #comment-box');
                     $('.comment_2').val('');
                 } else {
-                    alert('서버오류')
+                    alert('내용을 입력해 주세요')
                 }
             }) 
         })
@@ -202,7 +216,12 @@
                 })
                 .then((r)=>r.text())
                 .then((r)=>{
-                    $('#comment-box').load(location.href+' #comment-box');
+                    if(r=='서버에러' || r=='fail'){
+                        alert('삭제할 수 없습니다')
+                    }
+                    else {
+                        $('#comment-box').load(location.href+' #comment-box');
+                    }
                 }) 
             }
             else {

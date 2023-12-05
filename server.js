@@ -628,14 +628,13 @@ app.post('/delete-comment', async (요청, 응답)=>{
         var 비교2 = JSON.stringify(요청.body.userId)
         if(비교1 == 비교2){
             await db.collection('comment').deleteOne({ _id : new ObjectId(요청.body.id)})
-            응답.send()
+            응답.send('success')
         }
         else {
-            응답.send("cant")
+            응답.send("fail")
         }
     }
     catch {
-        
         응답.status(500).send('서버에러')
     }
 })

@@ -162,6 +162,7 @@
     align-items: center;
     justify-content: center;
     margin-top: 5px;
+    margin-bottom: 15px;
   }
 
   .page-box{
@@ -213,7 +214,7 @@
     font-size: 11px;
     color: white;
     border-radius: 5px;
-    padding: 2px;
+    padding: 3px;
   }
   .reComment_input {
     margin-top: 5px;
@@ -233,10 +234,10 @@
     font-size: 12px;
     color: #35364b;
     margin-top: 2px;
-    margin-left: 15px;
+    margin-left: 12px;
     cursor: pointer;
     float: left;
-    padding: 2px;
+    padding: 3px;
   }
   .reComment_send {
     color: #35364b;
@@ -554,6 +555,7 @@
   }
   .nowPage {
     color: #ecb4b2;
+    background: rgba(236, 180, 178, 0.1);
     border: 2px solid #ecb4b2;
   }
   .page-box ion-icon {
@@ -792,6 +794,11 @@
   }
   .changeNameVisible {
     display: none;
+  }
+  .kakao-ad {
+    width: 320px;
+    height: 100px;
+    margin: 0 auto;
   }
 
   @keyframes fall {

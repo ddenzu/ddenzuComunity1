@@ -78,7 +78,7 @@
           let a = Array.from(document.querySelectorAll('.list-group-item'));
           a.forEach((i,b)=>{
             if(i.dataset.id=='<%= arrow %>'){
-              setTimeout(()=> $(i).trigger('click') ,200) //********************
+              setTimeout(()=> $(i).trigger('click') ,200) //*****
             }
           })
         } else {
@@ -135,8 +135,6 @@
             }
             $.post('/message', 보낼거).done((a) => {
             })
-            // $.post('/message', 보낼거).then((a) => {
-            // })
             $('#chat-input').val(''); 
           } 
         })

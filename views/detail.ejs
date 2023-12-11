@@ -95,8 +95,8 @@
                                             <div style="width: 25px;text-align: center; margin-top: 0px;" class="profiletext"><%= 대댓글[j].username %></div>
                                         </div>
 
-                                        <div style="display: flex; flex-direction: column;">
-                                            <p style="font-size: 13px; margin: 7px 0px 0px 4px; display: block;"><%= 대댓글[j].content %></p>
+                                        <div style="display: flex; flex-direction: column; margin-left: 5px;">
+                                            <p style="font-size: 16px; margin: 7px 0px 0px 4px; display: block;"><%= 대댓글[j].content %></p>
                                             <% var time1 = dateFormat1.dateFormat(new Date(대댓글[j].date)) %>
                                             <p class="commentTime" style="font-size: 11px; margin: 5px 0px 0px 4px;"><%= time1 %></p>
                                         </div>
@@ -196,7 +196,7 @@
                 if(r=="대댓글저장"){
                     $('#comment-box').load(location.href+' #comment-box');
                 } else {
-                    return 0
+                    alert('내용을 입력해 주세요')
                 }
             }) 
         })

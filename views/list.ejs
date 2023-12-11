@@ -15,7 +15,6 @@
 <body style="position: relative;">
     <div class="section2">
         <div style="height:60px;"></div>
-        <!-- ejs 파일에선 아무데서나 자바스크립트문법 사용 가능  -->
         <%for (let i=0; i<글목록.length; i++){ %>
             <div class="white-bg">
                 <div class="list-box">
@@ -40,22 +39,12 @@
                             data-id="<%= 글목록[i]._id %>"></ion-icon>
                         </span>
                         <p>작성자: <%= 글목록[i].작성자 %></p>
-                        <!-- <form action="/chatroom" method="POST"> -->
-                            <!-- <button type="submit" class="btn"
-                                name="당한사람name" value="<%= 글목록[i].작성자 %>"
-                                onclick="twoForm(this)" 
-                                data-id="<%= 글목록[i].작성자_id %>" data-name="<%= 글목록[i].작성자 %>">
-                                작성자랑 채팅하기
+                        <div>
+                            <button class="btn"
+                            data-id="<%= 글목록[i].작성자_id %>" data-name="<%= 글목록[i].작성자 %>">
+                            <a class="btn-a" href="/chatroom?name=<%= 글목록[i].작성자 %>&id=<%= 글목록[i].작성자_id %>">작성자랑 채팅하기</a>
                             </button>
-                            <input type="submit" name="당한사람id" 
-                            value="<%= 글목록[i].작성자_id %>" style="display: none;"> -->
-                            <div>
-                                <button class="btn"
-                                data-id="<%= 글목록[i].작성자_id %>" data-name="<%= 글목록[i].작성자 %>">
-                                <a class="btn-a" href="/chatroom?name=<%= 글목록[i].작성자 %>&id=<%= 글목록[i].작성자_id %>">작성자랑 채팅하기</a>
-                                </button>
-                            </div>
-                        <!-- </form> -->
+                        </div>
                     </h4>
                 </div>
                 
@@ -81,11 +70,6 @@
                 font-size: 14px;">글쓰기✏️</a></button>
             </div>
         </div>
-        <!-- <div style="text-align: center;">
-            <a class="list-loc" style="text-align: center;
-            text-decoration: none; color: white;" 
-            href="/list/next/<%= 글목록[글목록.length-1]._id %>">다음페이지</a>
-        </div> -->
         <div class="ccontainer">
             <div class="search-bar">
                 <input type="text" class="search_2" id="ssearch-input" placeholder="글제목으로 검색">
@@ -95,10 +79,7 @@
         </div>
 
 
-        <div class="curtain" style="position: absolute; right: 9px; top: 210px; width: 23%;">
-            <!-- <button class="curtain-btn" style="position: absolute; left: -25px; background-color: white;
-            width: 25px; height: 25px; z-index: 20;"></button> -->
-
+        <div class="curtain" id="draggableElement" style="position: absolute; right: 12px; top: 430px; width: 23%;">
             <div class="chat-Box" style="background-color: white; width: 100%; height: 130px !important;
             border: 1px solid darkgray; border-radius: 5px; overflow-y: scroll;
             background: rgba(255,255,255,0.3); position: relative;">
@@ -106,13 +87,20 @@
             </div>
             <div class="input-group mb-3" style="width: 100%; ">
                 <input type="text" id="input1" class="form-control" aria-describedby="button-addon2" 
-                style="height: 25px; font-size: .8em;" placeholder="엔터시전송">
+                style="height: 25px; font-size: .7em;" placeholder="엔터시전송">
                 <button type="button" id="button-addon2"
                 style="height: 25px; background-color: #ecb4b2; border: none; border-radius: 2px;">
                 <ion-icon style="color: white; font-size: 18px;
                 margin-top: 3px;" name="paper-plane-outline"></ion-icon>
                 </button>
             </div>
+        </div>
+        <div class="kakao-ad">
+            <ins class="kakao_ad_area" style="display:none;"
+                data-ad-unit = "DAN-fQleLoBTUdvMRXOI"
+                data-ad-width = "320"
+                data-ad-height = "100"></ins>
+            <script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js" async></script>
         </div>
     </div>
     <script type="module">
@@ -129,9 +117,39 @@
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
     <script>
+        const draggableElement = document.getElementById('draggableElement');
+        let offsetX, offsetY;
+        let isDragging = false;
+        draggableElement.addEventListener('mousedown', onDragStart);
+        draggableElement.addEventListener('touchstart', onDragStart);
+        document.addEventListener('mousemove', onDragMove);
+        document.addEventListener('touchmove', onDragMove);
+        document.addEventListener('mouseup', onDragEnd);
+        document.addEventListener('touchend', onDragEnd);
+        function onDragStart(event) {
+            isDragging = true;
+            const rect = draggableElement.getBoundingClientRect();
+            if (event.type === 'mousedown') {
+                offsetX = event.clientX - rect.left;
+                offsetY = event.clientY - rect.top;
+            } else if (event.type === 'touchstart') {
+                const touch = event.touches[0];
+                offsetX = touch.clientX - rect.left;
+                offsetY = touch.clientY - rect.top;
+            }
+        }
+        function onDragMove(event) {
+            if (isDragging) {
+                event.preventDefault();
+                const { clientX, clientY } = (event.type === 'mousemove') ? event : event.touches[0];
+                draggableElement.style.left = clientX - offsetX + 'px';
+                draggableElement.style.top = clientY - offsetY + 'px';
+            }
+        }
+        function onDragEnd() {
+            isDragging = false;
+        }
         // var 시작페이지1 = Math.ceil('<%= 페이지넘버 %>'/5)
-        // console.log(시작페이지1)
-        // console.log('<%= 글목록.length %>')
         for (let i=0; i<'<%= 글목록.length %>'; i++){ 
             document.querySelectorAll('.delete')[i].addEventListener('click', function(e){
                 if (confirm('리얼루다가 삭제하시겠슴까?')==true){
@@ -163,14 +181,12 @@
                 else {
                     return 0
                 }
-                console.log(e.target.dataset.id)
             })
         }
          
         // 두번째 검색기능
         $('#ssearch').click(function(){
             var 입력값 = $('#ssearch-input').val()
-            console.log(입력값)
             window.location.replace('/search2?value='+입력값)  // url 바꾸는 함수 (get요청변환)
         })
 
@@ -185,7 +201,6 @@
         $('.page-btn').click(function(e){
             $('.page-btn').removeClass('nowPage')
             var a = $(this)
-            console.log(e.target.dataset)
             num = e.target.dataset.num;
             // console.log(Math.ceil('<%= 글수 %>'/num))
             // if(Math.ceil('<%= 글수 %>'/num) >= 5){
@@ -223,17 +238,12 @@
         })
 
         $('.back').click(function(){
-            console.log('<%= 페이지넘버 %>'-1)
             num = '<%= 페이지넘버 %>'-1
             window.location.href=`/list/prev/<%= 글목록[글목록.length-글목록.length]._id %>?pageNum=`+num;
         })
         $('.forward').click(function(){
-            console.log(parseInt('<%= 페이지넘버 %>')+1)
             num = parseInt('<%= 페이지넘버 %>')+1
             window.location.href=`/list/next/<%= 글목록[글목록.length-1]._id %>?pageNum=`+num;
-        })
-        $('.btn').click(function(){
-
         })
     </script>
     

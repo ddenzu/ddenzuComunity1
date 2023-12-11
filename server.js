@@ -73,7 +73,7 @@ passport.deserializeUser(async(user, done) => {
     process.nextTick(() => {
       return done(null, result)
     })
-}) // 유저가 보낸 쿠키를 분석(세션데이터랑 비교)하는 로직 ..... 이제 아무 api 에서 (요청.user) 로 확인가능
+}) // 유저가 보낸 쿠키를 분석(세션데이터랑 비교)하는 로직 , 이제 api 에서 (요청.user) 사용가능
 
 // ---------------------------------------------------------------------
 
@@ -139,187 +139,9 @@ function checkLogin(요청, 응답, next) {
         응답.send("<script>alert('로그인 요망');window.location.replace(`/login`)</script>");
     }
 }
-// sharp('/image/'+요청.file.filename)
-//     .resize( {width: 100})
-//     .toFile(요청.file.filename)
-//     .then(()=> console.log('done'))
-app.post('/write', upload.single('img1'), async (요청, 응답) => { 
-    try {
-        if (요청.body.title==""||요청.body.content==""){
-            응답.send('잘못된 아이디 or 비번')
-        } 
-        else {
-            try {
-                if (요청.file==undefined){
-                    await db.collection('post').insertOne({title : 요청.body.title , 
-                    content : 요청.body.content , 작성자_id : 요청.user._id, 작성자 : 요청.user.username, like : 0,
-                    date : dateFormat1.dateFormat(new Date()),})
-                    응답.redirect('/list/1')
-                }
-                else {
-                    if(요청.file.mimetype=='video/mp4' || 요청.file.mimetype=='video/quicktime'){
-                        await db.collection('post').insertOne({title : 요청.body.title , 
-                        content : 요청.body.content , 작성자_id : 요청.user._id, 작성자 : 요청.user.username, like : 0
-                        ,vidName : 요청.file.key, date : dateFormat1.dateFormat(new Date()),})
-                        응답.redirect('/list/1') // redirect 하면 url 로 GET 요청을 자동으로 해줌, 그래서  { 글목록 : result} 이런거 안줘도됨                        
-                    }
-                    else {
-                        // sharp(`public/image/${요청.file.filename}`,{ failOn: 'truncated' }) // 리사이징할 파일의 경로
-                        // .resize({ width: 350 }) // 원본 비율 유지하면서 width 크기만 설정
-                        // .withMetadata()
-                        // .toFile(`public/image/resize-${요청.file.filename}`, (err, info) => {
-                        // if (err) throw err;
-                        // console.log(`info : ${info}`);
-                        // fs.unlink(`public/image/${요청.file.filename}`, (err) => {
-                        //     // 원본파일은 삭제해줍니다
-                        //     // 원본파일을 삭제하지 않을거면 생략해줍니다
-                        //     //  if (err) throw err;
-                        // });
-                        // });
-                        await db.collection('post').insertOne({title : 요청.body.title , 
-                        content : 요청.body.content , 작성자_id : 요청.user._id, 작성자 : 요청.user.username, like : 0
-                        ,imgName : 요청.file.key, date : dateFormat1.dateFormat(new Date())})
-                        응답.redirect('/list/1') // redirect 하면 url 로 GET 요청을 자동으로 해줌, 그래서  { 글목록 : result} 이런거 안줘도됨                         
-                    }
-                }
-             } catch (err) {
-                console.log(err);
-             }
-        }
-    } catch(e) {
-        console.log(e)
-        응답.status(500).send('서버에러')
-    }
-})
-
-app.post('/profileImg', upload.single('img1'), async (req, res, next) => {
-    try {
-        // sharp(`public/image/${req.file.filename}`,{ failOn: 'truncated' }) // 리사이징할 파일의 경로
-        //    .resize({ width: 25}) // 원본 비율 유지하면서 width 크기만 설정
-        //    .withMetadata()
-        //    .toFile(`public/image/resize-${req.file.filename}`, (err, info) => {
-        //       if (err) throw err;
-        //     //   console.log(`info : ${info}`);
-        //       fs.unlink(`public/image/${req.file.filename}`, (err) => {
-        //          // 원본파일은 삭제해줍니다
-        //          // 원본파일을 삭제하지 않을거면 생략
-        //         //  if (err) throw err;
-        //       });
-        //    });
-           await db.collection('user').updateOne({ _id : new ObjectId(req.user._id)}, {$set : {imgName : req.file.key}})
-           await db.collection('comment').updateMany({userId: new ObjectId(req.user._id)}, {$set : {userprofile : req.file.key}})
-            res.redirect('/list/1')
-     } catch (err) {
-        console.log(err);
-     }
-  });
-
-// app.get('/image/:imageName', function(요청, 응답){
-//     console.log(요청.params.imageName)
-//     응답.sendFile( __dirname + '/public/image/' + 요청.params.imageName)
-// })
-
-app.get('/detail/:id', async (요청, 응답)=>{
-    // 요청.params 하면 유저가 url 파라미터에 입력한 데이터 가져옴(:id)
-    try {
-        let result = await db.collection('post').findOne({ _id : new ObjectId(요청.params.id)})
-        // let result2 = await db.collection('comment').find({ postId : new ObjectId(요청.params.id)}).toArray()
-        let result2 = await db.collection('comment').find({ postId : new ObjectId(요청.params.id), parentId : null}).toArray()
-        let result3 = await db.collection('user').findOne({ _id : result.작성자_id})
-        let result4 = await db.collection('comment').find({ postId : new ObjectId(요청.params.id), parentId : { $exists: true }}).toArray()
-        if (요청.user==null){
-            var 현재접속자 = 'noUser'
-        } else {
-            var 현재접속자 = 요청.user.username
-        }
-        if (result == null) {
-            응답.status(400).send('이상한 url')
-        } 
-        else {
-            if(result.imgName==undefined){
-                if(result3.imgName==undefined){
-                    if(result.vidName==undefined){
-                        응답.render('detail.ejs', {글목록 : result, 댓글목록 : result2, 
-                        이미지주소 : "", 프로필 : "", 동영상주소 : "",현재접속자 : 현재접속자, dateFormat1 : dateFormat1, 대댓글 : result4})                        
-                    }
-                    else{
-                        응답.render('detail.ejs', {글목록 : result, 댓글목록 : result2, 
-                        이미지주소 : "", 프로필 : "", 동영상주소 : "https://ddenzubucket.s3.ap-northeast-2.amazonaws.com/"+result.vidName,현재접속자 : 현재접속자, dateFormat1 : dateFormat1, 대댓글 : result4})                             
-                    } 
-                }
-                else {
-                    if(result.vidName==undefined){
-                        응답.render('detail.ejs', {글목록 : result, 댓글목록 : result2, 
-                        이미지주소 : "", 프로필 : result3.imgName, 동영상주소 : "",현재접속자 : 현재접속자, dateFormat1 : dateFormat1, 대댓글 : result4})                        
-                    }
-                    else {
-                        응답.render('detail.ejs', {글목록 : result, 댓글목록 : result2, 
-                        이미지주소 : "", 프로필 : result3.imgName, 동영상주소 : "https://ddenzubucket.s3.ap-northeast-2.amazonaws.com/"+result.vidName,현재접속자 : 현재접속자, dateFormat1 : dateFormat1, 대댓글 : result4})                        
-                    }
-                }
-            } 
-            else {
-                if(result3.imgName==undefined){
-                    응답.render('detail.ejs', {글목록 : result, 댓글목록 : result2,
-                    이미지주소: "https://ddenzubucket.s3.ap-northeast-2.amazonaws.com/"+result.imgName,  프로필 : "", 동영상주소 : "",현재접속자 : 현재접속자, dateFormat1 : dateFormat1, 대댓글 : result4})                     
-                }
-                else {
-                    응답.render('detail.ejs', {글목록 : result, 댓글목록 : result2,
-                    이미지주소: "https://ddenzubucket.s3.ap-northeast-2.amazonaws.com/"+result.imgName,  프로필 : result3.imgName, 동영상주소 : "",
-                    현재접속자 : 현재접속자, dateFormat1 : dateFormat1, 대댓글 : result4})                     
-                }
-            }
-        }
-    }
-    catch(e) {
-        console.log(e)
-        응답.status(400).send('이상한 url') //500 => 서버문제 , 400 => 유저문제(이상한 요청)
-    }
-})
-
-app.get('/edit/:id',checkLogin, async (요청, 응답)=>{
-    let result = await db.collection('post').findOne({ _id : new ObjectId(요청.params.id)})
-    응답.render('edit.ejs', {result : result} )         
-})
-
-app.put('/edit', async (요청, 응답) => {
-
-    var 아이디비교용 = JSON.stringify(요청.body.userId)
-    if(아이디비교용===JSON.stringify(요청.user._id)){
-        await db.collection('post').updateOne({ _id : new ObjectId(요청.body.id)}, {$set : {title : 요청.body.title , 
-        content : 요청.body.content}})
-        응답.redirect('/list/1')
-    }
-    else {
-        응답.send("<script>alert('수정할 수 없슴다');window.location.replace(`/list/1`)</script>");
-    }
-
-})
-
-
-app.delete('/delete', async (요청, 응답)=>{
-    // console.log(요청.query) // 게시물id
-    if(요청.user){
-        try {
-            let result = await db.collection('post').deleteOne({작성자 : 요청.user.username, _id : new ObjectId(요청.query.docid)})
-            if (result.deletedCount != 0){
-                응답.send('삭제완료') // ajax 요청 뒤에 redirect render 사용 x (장점사라짐) 
-            }
-            else {
-                응답.send('cant')
-            }
-        }
-        catch(e) {
-            응답.send('serverError')
-        }
-    }else{
-        응답.send('notLogin')
-    }
-})
-
 
 app.get('/write', async (요청, 응답) => {
-    if (요청.user == undefined){
+    if (!요청.user){
         응답.send("<script>alert('로그인 요망');window.location.replace(`/login`)</script>");
     }
     else {
@@ -333,61 +155,187 @@ app.get('/write', async (요청, 응답) => {
     }
 })
 
+app.post('/write', upload.single('img1'), async (요청, 응답) => { 
+    try {
+        if (요청.body.title==""||요청.body.content==""){
+            return 응답.send('내용이 존재하지 않습니다');
+        } 
+        const postDetails = {
+            title: 요청.body.title,
+            content: 요청.body.content,
+            작성자_id: 요청.user._id,
+            작성자: 요청.user.username,
+            like: 0,
+            date: dateFormat1.dateFormat(new Date())
+        }
+        if (요청.file==undefined){ // 글만 썼을 때
+            await db.collection('post').insertOne(postDetails);
+        }
+        else { // 이미지 OR 영상 첨부 했을 때
+            if(요청.file.mimetype=='video/mp4' || 요청.file.mimetype=='video/quicktime'){
+                postDetails.vidName = 요청.file.key;
+            }
+            else {
+                postDetails.imgName = 요청.file.key;      
+            }
+            await db.collection('post').insertOne(postDetails);
+        }
+        응답.redirect('/list/1'); // redirect 하면 url 로 GET 요청을 자동으로 해줌, 그래서  { 글목록 : result} 이런거 안줘도됨   
+    } catch(e) {
+        console.log(e);
+        응답.status(500).send('서버에러');
+    }
+})
+
+app.post('/profileImg', upload.single('img1'), async (req, res, next) => {
+    try {
+        await db.collection('user').updateOne({ _id : new ObjectId(req.user._id)}, {$set : {imgName : req.file.key}})
+        await db.collection('comment').updateMany({userId: new ObjectId(req.user._id)}, {$set : {userprofile : req.file.key}})
+        res.redirect('/list/1');
+     } catch (err) {
+        console.log(err);
+        응답.status(500).sned('서버 에러');
+     }
+  });
+
+
+app.get('/detail/:id', async (요청, 응답)=>{
+    // 요청.params 하면 유저가 url 파라미터에 입력한 데이터 가져옴(:id)
+    try {
+        let result = await db.collection('post').findOne({ _id : new ObjectId(요청.params.id)})
+        if (!result) {
+            return 응답.status(400).send('이상한 url')
+        } 
+        let result2 = await db.collection('comment').find({ postId : new ObjectId(요청.params.id), parentId : null}).toArray()
+        let result3 = await db.collection('user').findOne({ _id : result.작성자_id})
+        let result4 = await db.collection('comment').find({ postId : new ObjectId(요청.params.id), parentId : { $exists: true }}).toArray()
+        var 현재접속자 = 요청.user ? 요청.user.username : 'noUser';
+        const 이미지주소 = result.imgName ? `https://ddenzubucket.s3.ap-northeast-2.amazonaws.com/${result.imgName}` : '';
+        const 동영상주소 = result.vidName ? `https://ddenzubucket.s3.ap-northeast-2.amazonaws.com/${result.vidName}` : '';
+        const 프로필 = result3.imgName ? result3.imgName : '';
+        응답.render('detail.ejs', {
+            글목록: result,
+            댓글목록: result2,
+            이미지주소,
+            프로필,
+            동영상주소,
+            현재접속자,
+            dateFormat1,
+            대댓글: result4
+        });
+    }
+    catch(e) {
+        console.log(e)
+        응답.status(400).send('이상한 url') //500 => 서버문제 , 400 => 유저문제
+    }
+})
+
+app.get('/edit/:id',checkLogin, async (요청, 응답)=>{   
+    try {
+        const result = await db.collection('post').findOne({ _id : new ObjectId(요청.params.id)})
+        if (!result) {
+            return 응답.status(404).send('게시글을 찾을 수 없음');
+        }
+        응답.render('edit.ejs', {result});
+    } catch(error) {
+        console.log(error);
+        응답.status(500).send('서버 에러');
+    }
+})
+
+app.put('/edit', async (요청, 응답) => {
+    try{
+        let 아이디비교용 = JSON.stringify(요청.body.userId)
+        if(아이디비교용===JSON.stringify(요청.user._id)){
+            const updatedPost = {
+                title: 요청.body.title,
+                content: 요청.body.content
+            };
+            await db.collection('post').updateOne({ _id : new ObjectId(요청.body.id)}, {$set : updatedPost})
+            응답.redirect('/list/1');
+        }
+        else {
+            응답.send("<script>alert('수정할 수 없슴다');window.location.replace(`/list/1`)</script>");
+        }
+    }  catch(e) {
+        console.log(e);
+        응답.status(500).send('서버 에러');
+    }
+})
+
+app.delete('/delete', async (요청, 응답)=>{
+    // console.log(요청.query) // 게시물id
+    if (!요청.user) {
+        return 응답.send('notLogin');
+    }
+    try{
+        let result = await db.collection('post').deleteOne({작성자 : 요청.user.username, _id : new ObjectId(요청.query.docid)})
+        if (result.deletedCount != 0){
+            응답.send('삭제완료'); // ajax 요청 뒤에 redirect render 사용 x (장점사라짐) 
+        }
+        else {
+            응답.send('cant');
+        }
+    } catch (e){
+        console.log(e)
+        응답.send('serverError');
+    }
+})
+
 app.get('/list/:num', async (요청, 응답) => {
     console.log("client IP: " +requestIp.getClientIp(요청));
-    let result = await db.collection('post').find().sort({ _id: -1 }).skip((요청.params.num-1)*5).limit(5).toArray()
-    let cnt = await db.collection('post').count();
-    if(요청.user==undefined){
-        응답.render('list.ejs', { 글목록 : result , 글수 : cnt, 채팅사람 : "익명", 페이지넘버 :요청.params.num})
-    } else {
-        응답.render('list.ejs', { 글목록 : result , 글수 : cnt, 채팅사람 : 요청.user.username, 페이지넘버 :요청.params.num})
+    try{
+        let result = await db.collection('post').find().sort({ _id: -1 }).skip((요청.params.num-1)*5).limit(5).toArray()
+        let cnt = await db.collection('post').count();
+        const 채팅사람 = 요청.user ? 요청.user.username : "익명";
+        응답.render('list.ejs', { 글목록: result, 글수: cnt, 채팅사람, 페이지넘버: 요청.params.num });
+    } catch(e) {
+        console.log(e);
+        응답.status(500).send('서버 에러');
     }
 }) 
 
 app.get('/list/next/:num', async (요청, 응답) => {
     console.log("client IP: " +requestIp.getClientIp(요청));
-    let result = await db.collection('post')
-    .find({_id : {$lt : new ObjectId(요청.params.num)}}).sort({ _id: -1 }).limit(5).toArray()
-    let cnt = await db.collection('post').count();
-    if(result.length<1){
-        응답.send("<script>alert('다음페이지가 존재하지 않습니다.');window.location.replace(`/list/1`)</script>");
-    }
-    else{
-        if(요청.user==undefined){
-            응답.render('list.ejs', { 글목록 : result , 글수 : cnt, 채팅사람 : "익명",페이지넘버:요청.query.pageNum})
-        } else {
-            응답.render('list.ejs', { 글목록 : result , 글수 : cnt, 채팅사람 : 요청.user.username,페이지넘버:요청.query.pageNum})
+    try{
+        let result = await db.collection('post')
+        .find({_id : {$lt : new ObjectId(요청.params.num)}}).sort({ _id: -1 }).limit(5).toArray()
+        let cnt = await db.collection('post').count();
+        if(result.length<1){
+            return 응답.send("<script>alert('다음페이지가 존재하지 않습니다.');window.location.replace(`/list/1`)</script>");
         }
+        let 채팅사람 = 요청.user ? 요청.user.username : "익명";
+        let 페이지넘버 = 요청.query.pageNum;
+        응답.render('list.ejs', { 글목록: result, 글수: cnt, 채팅사람, 페이지넘버 });
+    } catch(e){
+        console.log(e);
+        응답.status(500).send('서버 에러');
     }
 }) 
 
 app.get('/list/prev/:num', async (요청, 응답) => {
     console.log("client IP: " +requestIp.getClientIp(요청));
-    let result = await db.collection('post')
-    .find({_id : {$gt : new ObjectId(요청.params.num)}}).sort({}).limit(5).toArray()
-    result.reverse(); // 몽고디비 sort가 잘 적용되지 않아서 reverse함수로 대체함
-    let cnt = await db.collection('post').count();
-    if(result.length<1){
-        응답.send("<script>alert('이전페이지가 존재하지 않습니다.');window.location.replace(`/list/1`)</script>");
-    }
-    else{
-        if(요청.user==undefined){
-            응답.render('list.ejs', { 글목록 : result , 글수 : cnt, 채팅사람 : "익명",페이지넘버:요청.query.pageNum })
-        } else {
-            응답.render('list.ejs', { 글목록 : result , 글수 : cnt, 채팅사람 : 요청.user.username,페이지넘버:요청.query.pageNum})
+    try{
+        let result = await db.collection('post')
+        .find({_id : {$gt : new ObjectId(요청.params.num)}}).sort({}).limit(5).toArray()
+        result.reverse(); // 몽고디비 sort가 잘 적용되지 않아서 reverse함수로 대체함
+        let cnt = await db.collection('post').count();
+        if(result.length<1){
+            return 응답.send("<script>alert('이전페이지가 존재하지 않습니다.');window.location.replace(`/list/1`)</script>");
         }
+        let 채팅사람 = 요청.user ? 요청.user.username : "익명";
+        let 페이지넘버 = 요청.query.pageNum;
+        응답.render('list.ejs', { 글목록: result, 글수: cnt, 채팅사람, 페이지넘버 });
+    } catch(e) {
+        console.log(e);
+        응답.status(500).send('서버 에러');
     }
 }) 
-
-// app.post('/search', async (요청, 응답) => { // 검색기능1
-//     let result = await db.collection('post').findOne({ title : 요청.body.info})
-//     응답.render('detail.ejs', { 글목록 : result})
-// }) 
 
 app.get('/search2', async (요청, 응답) => { // 검색기능2
     console.log(요청.query.value)
     try {
-        var 검색조건 = [
+        let 검색조건 = [
             {
               $search: {
                 index: 'titleSearch',
@@ -400,14 +348,11 @@ app.get('/search2', async (요청, 응답) => { // 검색기능2
             { $sort : { _id : 1 }}, // id 순으로 정렬
             { $limit : 10 }, // 10개만 보여줘
         ] 
-        let result = await db.collection('post').aggregate(검색조건).toArray()
-        console.log(result)
+        let result = await db.collection('post').aggregate(검색조건).toArray();
         if(result.length!=0){
-            응답.render('search.ejs', { 글목록 : result})
+            return 응답.render('search.ejs', { 글목록 : result})
         }
-        else {
-            응답.send("<script>alert('존재하지 않는 글');window.location.replace(`/list/1`)</script>");
-        }
+        응답.send("<script>alert('존재하지 않는 글');window.location.replace(`/list/1`)</script>");
     } catch(e){
         응답.status(500).send('서버에러')
     }
@@ -431,12 +376,16 @@ app.post('/login', async (요청, 응답, next) => {
 }) 
 
 app.get('/mypage', async (요청, 응답)=>{
-    if (!요청.user){
-        응답.send("<script>alert('로그인 요망');window.location.replace(`/login`)</script>");
-    }
-    else {
-        let result = await db.collection('user').findOne({ username : 요청.user.username})
-        응답.render('mypage.ejs', { 아이디 : result })      
+    try{
+        if (!요청.user){
+            return 응답.send("<script>alert('로그인 요망');window.location.replace(`/login`)</script>");
+        }
+        let result = await db.collection('user').findOne({ username : 요청.user.username});
+        응답.render('mypage.ejs', { 아이디 : result });     
+        
+    } catch(e){
+        console.error(e);
+        응답.status(500).send('서버 에러');
     }
 })
 
@@ -444,16 +393,15 @@ app.post('/change-name', async (요청, 응답) => {
     try {
         let result = await db.collection('user').findOne({ username : 요청.body.name})
         if (result){
-            응답.send("<script>alert('이미 존재하는 아이디 입니다');window.location.replace(`/mypage`);</script>");
+            return 응답.send("<script>alert('이미 존재하는 아이디 입니다');window.location.replace(`/mypage`);</script>");
         }
-        else {
-            await db.collection('user').updateOne({ _id : new ObjectId(요청.user._id)}, {$set : {username : 요청.body.name}})
-            await db.collection('comment').updateMany({userId: new ObjectId(요청.user._id)}, {$set : {username : 요청.body.name}})
-            응답.send("<script>alert('닉네임이 변경되었습니다');window.location.replace(`/mypage`);</script>");
-        }
+        await db.collection('user').updateOne({ _id : new ObjectId(요청.user._id)}, {$set : {username : 요청.body.name}})
+        await db.collection('comment').updateMany({userId: new ObjectId(요청.user._id)}, {$set : {username : 요청.body.name}})
+        return 응답.send("<script>alert('닉네임이 변경되었습니다');window.location.replace(`/mypage`);</script>");
     }
     catch(e){
-        응답.status(500).send('서버에러')
+        console.log(e)
+        return 응답.status(500).send('서버에러')
     }
 })
 
@@ -463,32 +411,33 @@ app.get('/register', async (요청, 응답) => {
 
 app.post('/register', async (요청, 응답) => {
     // 회원가입시 아이디 비번 조건 필터링기능 만들기
-    let result = await db.collection('user').findOne({ username : 요청.body.username})
-    if (result){
-        응답.send("<script>alert('이미 존재하는 아이디입니다');location.replace(location.href);</script>");
-    }
-    else {
+    try{
+        let result = await db.collection('user').findOne({ username : 요청.body.username});
+        if (result){
+            return 응답.send("<script>alert('이미 존재하는 아이디입니다');location.replace(location.href);</script>");
+        }
         let 해시 = await bcrypt.hash(요청.body.password, 10) // 10 이면 적당히 꼬은거
-        await db.collection('user').insertOne({username : 요청.body.username, 
-        password : 해시})
-        응답.redirect('/list/1')
+        await db.collection('user').insertOne({username : 요청.body.username, password : 해시});
+        return 응답.redirect('/list/1')
+    } catch(e){
+        console.error(e);
+        return 응답.status(500).send('서버 에러');
     }
 })
 
 app.get('/logout',function(요청, 응답){
-    요청.session.destroy(function(err){
+    요청.session.destroy((err) => {
+        if (err) {
+            console.error(err);
+        }
         응답.redirect('/list/1');
     });
 });
 
-// app.get('/image/:imageName', function(요청, 응답){
-//     응답.sendFile( __dirname + '/public/image' + 요청.params.imageName)
-// })
-
 app.get('/chatroom', checkLogin, async function(요청, 응답){
     try{
         if(요청.query.name==요청.user.username){
-            throw(err)
+            throw new Error('잘못된 채팅창 요청');
         }
         let result = await db.collection('chatroom').findOne({ name : {$all:[요청.user.username,요청.query.name]}})
         if(result==null){
@@ -507,12 +456,11 @@ app.get('/chatroom', checkLogin, async function(요청, 응답){
             let result2 = await db.collection('chatroom').findOne({ name : {$all:[요청.user.username,요청.query.name]}})
             응답.render('chat.ejs', { data : result1, cur : 요청.user._id, arrow : result2._id})
         }
-    }
-    catch(e){
+    } catch(e){
+        console.log(e);
         응답.send("<script>window.location.replace('/chat')</script>");
     }
 })
-
 
 app.get('/chat', checkLogin, async function(요청, 응답){ // navbar에서 올 때
     let result = await db.collection('chatroom').find({ member : 요청.user._id}).toArray()
@@ -521,45 +469,44 @@ app.get('/chat', checkLogin, async function(요청, 응답){ // navbar에서 올
 
 app.post('/comment', checkLogin, async (요청, 응답)=>{
     try {
-        if (요청.body.content) {
-            var 저장할거 = {
-                postId : new ObjectId(요청.body.parent), // 작성글 id
-                content : 요청.body.content, // 채팅내용
-                username : 요청.user.username,
-                userId : 요청.user._id,
-                userprofile : 요청.user.imgName,
-                date : new Date(),
-            }
-            await db.collection('comment').insertOne(저장할거)
-            응답.send('댓글저장')
-        } else {
-            응답.send("<script>alert('댓글등록실패');</script>")
+        if (!요청.body.content) {
+            return 응답.send("댓글등록 실패");
         }
-    }
-    catch(e) {
+        var 저장할거 = {
+            postId : new ObjectId(요청.body.parent), // 작성글 id
+            content : 요청.body.content, // 채팅내용
+            username : 요청.user.username,
+            userId : 요청.user._id,
+            userprofile : 요청.user.imgName,
+            date : new Date(),
+        };
+        await db.collection('comment').insertOne(저장할거);
+        응답.send('댓글저장');
+    } catch(e) {
+        console.log(e);
         응답.status(500).send('서버에러')
     }
 })
+
 app.post('/recomment', checkLogin, async (요청, 응답)=>{
     // console.log(요청.body)
     try {
-        if (요청.body.content) {
-            var 저장할거 = {
-                postId : new ObjectId(요청.body.parent), // 작성글 id
-                parentId : new ObjectId(요청.body.reparent),
-                content : 요청.body.content, // 채팅내용
-                username : 요청.user.username,
-                userId : 요청.user._id,
-                userprofile : 요청.user.imgName,
-                date : new Date(),
-            }
-            await db.collection('comment').insertOne(저장할거)
-            응답.send('대댓글저장')
-        } else {
-            응답.send("<script>alert('대댓글등록실패');</script>")
+        if (!요청.body.content) {
+            return 응답.send("<script>alert('대댓글등록실패');</script>");
         }
-    }
-    catch(e) {
+        let 저장할거 = {
+            postId : new ObjectId(요청.body.parent), // 작성글 id
+            parentId : new ObjectId(요청.body.reparent),
+            content : 요청.body.content, // 채팅내용
+            username : 요청.user.username,
+            userId : 요청.user._id,
+            userprofile : 요청.user.imgName,
+            date : new Date(),
+        }
+        await db.collection('comment').insertOne(저장할거);
+        응답.send('대댓글저장');
+    } catch(e) {
+        console.log(e)
         응답.status(500).send('서버에러')
     }
 })
@@ -567,24 +514,25 @@ app.post('/recomment', checkLogin, async (요청, 응답)=>{
 app.post('/message', checkLogin, async function(요청, 응답){ // 수정필요
     // console.log(요청.body.content)
     try {
-        if (요청.body.content) {
-            var 저장할거 = {
-                parent : 요청.body.parent, // 채팅방의 id
-                content : 요청.body.content, // 채팅내용
-                userid : 요청.user._id, // 채팅 건 사람
-                date : dateFormat1.dateFormat(new Date()),
-            }
-            let result = await db.collection('message').insertOne(저장할거)
-            if(result){
-                응답.send('성공')
-            }
-            else {
-                응답.send('실패')
-                throw err
-            }
-        }}
-    catch (err){
-        응답.send("<script>alert('넘빨랑');window.location.replace(`/chat`)</script>");
+        if (!요청.body.content) {
+            return 응답.send("메세지 전송 실패");
+        };
+        let 저장할거 = {
+            parent : 요청.body.parent, // 채팅방의 id
+            content : 요청.body.content, // 채팅내용
+            userid : 요청.user._id, // 채팅 건 사람
+            date : dateFormat1.dateFormat(new Date()),
+        };
+        let result = await db.collection('message').insertOne(저장할거);
+        if(result){
+            return 응답.send('성공');
+        }
+        else {
+            return 응답.send("채팅 메시지를 저장하는데 문제가 발생함");
+        }
+    } catch (e){
+        console.log(e)
+        return 응답.status(500).send('서버 에러');
     }
 })
 
@@ -599,11 +547,9 @@ app.get('/message/:id', checkLogin, function(요청, 응답){
         응답.write('event: test\n');
         응답.write('data: ' + JSON.stringify(결과) +'\n\n');
     })
-
     const 찾을문서 = [
         { $match: { 'fullDocument.parent': 요청.params.id } }
     ];
-
     const changeStream = db.collection('message').watch(찾을문서);
     changeStream.on('change', result => {
         var 추가된문서 = [result.fullDocument];
@@ -614,28 +560,34 @@ app.get('/message/:id', checkLogin, function(요청, 응답){
 
 app.post('/delete-chat', async (요청, 응답)=>{
     try{
-        await db.collection('chatroom').deleteOne({ _id : new ObjectId(요청.body.삭제id)})
-        let result1 = await db.collection('chatroom').find({ member : 요청.user._id}).toArray()
-        응답.render('chat.ejs', { data : result1, cur : 요청.user._id, arrow : 0})
+        if(!요청.body.삭제id){
+            return res.status(400).send('삭제할 ID가 존재하지 않음');
+        }
+        await db.collection('chatroom').deleteOne({ _id : new ObjectId(요청.body.삭제id)});
+        let result1 = await db.collection('chatroom').find({ member : 요청.user._id}).toArray();
+        return 응답.render('chat.ejs', { data : result1, cur : 요청.user._id, arrow : 0});
     } catch(e) {
-        응답.status(500).send('서버에러')
+        console.error(e);
+        return 응답.status(500).send('서버에러')
     }
-
 })
 app.post('/delete-comment', async (요청, 응답)=>{
     try {
         var 비교1 = JSON.stringify(요청.user._id)
         var 비교2 = JSON.stringify(요청.body.userId)
         if(비교1 == 비교2){
-            await db.collection('comment').deleteOne({ _id : new ObjectId(요청.body.id)})
-            응답.send('success')
+            const deletedComment = await db.collection('comment').deleteOne({ _id : new ObjectId(요청.body.id)})
+            if(deletedComment){
+                return 응답.send('success');
+            } else {
+                return 응답.send("fail");
+            }
+        } else {
+            return 응답.send("fail");
         }
-        else {
-            응답.send("fail")
-        }
-    }
-    catch {
-        응답.status(500).send('서버에러')
+    } catch(e) {
+        console.log(e)
+        return 응답.status(500).send('서버에러')
     }
 })
 
@@ -646,10 +598,8 @@ app.post('/add-like', async (요청, 응답)=>{
 })
 
 io.on('connection', function(socket){
-
     socket.on('user-send', function(data){
         console.log(data);
         io.emit('broadcast', data); 
     });
-
 })

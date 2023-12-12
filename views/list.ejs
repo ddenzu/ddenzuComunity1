@@ -75,11 +75,10 @@
                 <input type="text" class="search_2" id="ssearch-input" placeholder="글제목으로 검색">
                 <button type="submit" id="ssearch"><ion-icon name="search-outline"></ion-icon></button>
             </div>
-
         </div>
 
 
-        <div class="curtain" id="draggableElement" style="position: absolute; right: 12px; top: 430px; width: 23%;">
+        <div class="curtain" id="draggableElement">
             <div class="chat-Box" style="background-color: white; width: 100%; height: 130px !important;
             border: 1px solid darkgray; border-radius: 5px; overflow-y: scroll;
             background: rgba(255,255,255,0.3); position: relative;">
@@ -120,33 +119,54 @@
         const draggableElement = document.getElementById('draggableElement');
         let offsetX, offsetY;
         let isDragging = false;
-        draggableElement.addEventListener('mousedown', onDragStart);
-        draggableElement.addEventListener('touchstart', onDragStart);
-        document.addEventListener('mousemove', onDragMove);
-        document.addEventListener('touchmove', onDragMove);
-        document.addEventListener('mouseup', onDragEnd);
-        document.addEventListener('touchend', onDragEnd);
-        function onDragStart(event) {
+        draggableElement.addEventListener('mousedown', onMouseDown);
+        draggableElement.addEventListener('touchstart', onTouchStart);
+        document.addEventListener('mousemove', onMouseMove);
+        document.addEventListener('touchmove', onTouchMove);
+        document.addEventListener('mouseup', onMouseUp);
+        document.addEventListener('touchend', onTouchEnd);
+        function onMouseDown(event) {
             isDragging = true;
             const rect = draggableElement.getBoundingClientRect();
-            if (event.type === 'mousedown') {
-                offsetX = event.clientX - rect.left;
-                offsetY = event.clientY - rect.top;
-            } else if (event.type === 'touchstart') {
-                const touch = event.touches[0];
-                offsetX = touch.clientX - rect.left;
-                offsetY = touch.clientY - rect.top;
-            }
+            offsetX = event.clientX - rect.left;
+            offsetY = event.clientY - rect.top;
         }
-        function onDragMove(event) {
+        function onTouchStart(event) {
+            isDragging = true;
+            const touch = event.touches[0];
+            const rect = draggableElement.getBoundingClientRect();
+            offsetX = touch.clientX - rect.left;
+            offsetY = touch.clientY - rect.top;
+        }
+        function onMouseMove(event) {
             if (isDragging) {
                 event.preventDefault();
-                const { clientX, clientY } = (event.type === 'mousemove') ? event : event.touches[0];
-                draggableElement.style.left = clientX - offsetX + 'px';
-                draggableElement.style.top = clientY - offsetY + 'px';
+                moveElement(event.clientX, event.clientY);
             }
         }
-        function onDragEnd() {
+        function onTouchMove(event) {
+            if (isDragging) {
+                event.preventDefault();
+                const touch = event.touches[0];
+                moveElement(touch.clientX, touch.clientY);
+            }
+        }
+        function moveElement(clientX, clientY) {
+            const parentRect = document.querySelector('.section2').getBoundingClientRect();
+            const maxX = parentRect.width - draggableElement.offsetWidth;
+            const maxY = parentRect.height - draggableElement.offsetHeight;
+            let x = clientX - offsetX - parentRect.left;
+            let y = clientY - offsetY - parentRect.top;
+            // 요소가 부모 요소 바깥으로 나가지 않도록 제한
+            x = Math.min(Math.max(x, 0), maxX);
+            y = Math.min(Math.max(y, 0), maxY);
+            draggableElement.style.left = x + 'px';
+            draggableElement.style.top = y + 'px';
+        }
+        function onMouseUp() {
+            isDragging = false;
+        }
+        function onTouchEnd() {
             isDragging = false;
         }
         // var 시작페이지1 = Math.ceil('<%= 페이지넘버 %>'/5)

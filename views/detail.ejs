@@ -96,9 +96,9 @@
                                         </div>
 
                                         <div style="display: flex; flex-direction: column; margin-left: 5px;">
-                                            <p style="font-size: 16px; margin: 7px 0px 0px 4px; display: block;"><%= 대댓글[j].content %></p>
+                                            <p style="font-size: 16px; margin: 5px 0px 0px 4px; display: block;"><%= 대댓글[j].content %></p>
                                             <% var time1 = dateFormat1.dateFormat(new Date(대댓글[j].date)) %>
-                                            <p class="commentTime" style="font-size: 11px; margin: 5px 0px 0px 4px;"><%= time1 %></p>
+                                            <p class="commentTime" style="font-size: 11px; margin: 6px 0px 0px 4px;"><%= time1 %></p>
                                         </div>
                                         <span style="margin: 7px 0px 0px 7px;" name="add" id="commentDel" data-id="<%= 대댓글[j]._id %>"
                                             data-postId="<%= 대댓글[j].postId %>" data-userId="<%= 대댓글[j].userId %>">
@@ -251,18 +251,30 @@
         }
 
         $(document).on("click",'.reComment', function(e){
-            document.querySelectorAll('.reComment_box')[this.dataset.num].classList.remove('changeNameVisible');
-            document.querySelectorAll('.reComment')[this.dataset.num].classList.add('reComment_click');
-            document.querySelectorAll('.reComment_cancel')[this.dataset.num].classList.remove('changeNameVisible');
+            if('<%= 현재접속자 %>'=="noUser"){
+                if (confirm('댓글작성을 위해 로그인 페이지로 이동하시겠습니까탈레나')==true){
+                    return window.location.replace(`/login`) 
+                }
+            } else {
+                document.querySelectorAll('.reComment_box')[this.dataset.num].classList.remove('changeNameVisible');
+                document.querySelectorAll('.reComment')[this.dataset.num].classList.add('reComment_click');
+                document.querySelectorAll('.reComment_cancel')[this.dataset.num].classList.remove('changeNameVisible');
+            }
+            // document.querySelectorAll('.reComment_box')[this.dataset.num].classList.remove('changeNameVisible');
+            // document.querySelectorAll('.reComment')[this.dataset.num].classList.add('reComment_click');
+            // document.querySelectorAll('.reComment_cancel')[this.dataset.num].classList.remove('changeNameVisible');
         })        
         $(document).on("click",'.reComment_cancel', function(e){
             document.querySelectorAll('.reComment_box')[this.dataset.num].classList.add('changeNameVisible');
             document.querySelectorAll('.reComment')[this.dataset.num].classList.remove('reComment_click');
             document.querySelectorAll('.reComment_cancel')[this.dataset.num].classList.add('changeNameVisible');
         })
-
-       
-
+    //    function commentCancel(event){
+    //         document.querySelectorAll('.reComment_box')[this.dataset.num].classList.add('changeNameVisible');
+    //         document.querySelectorAll('.reComment')[this.dataset.num].classList.remove('reComment_click');
+    //         document.querySelectorAll('.reComment_cancel')[this.dataset.num].classList.add('changeNameVisible');
+    //    }
+    //    $(document).on("click", '.reComment_cancel', commentCancel);
     </script>
 
 </body>

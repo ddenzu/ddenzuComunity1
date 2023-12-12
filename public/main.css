@@ -40,7 +40,6 @@
     z-index: 0;
     margin: 0 auto;
     max-width: 850px; 
-    /* min-width: 430px; */
   }
   .white-bg {
     border-radius: 10px;
@@ -546,16 +545,17 @@
     background: transparent;
     font-size: larger;
     border-radius: 5px;
+    cursor: pointer;
   }
-  .page-btn:hover {
+  /* .page-btn:hover {
     background-color: grey;
-  }
+  } */
   .page-btn:active {
-    background-color: #fff;
+    background: rgba(236, 180, 178, 0.5);
   }
   .nowPage {
-    color: #ecb4b2;
-    background: rgba(236, 180, 178, 0.1);
+    color: white;
+    background-color: #ecb4b2;
     border: 2px solid #ecb4b2;
   }
   .page-box ion-icon {
@@ -799,6 +799,13 @@
     width: 320px;
     height: 100px;
     margin: 0 auto;
+  }
+  .curtain {
+    position: absolute;
+    right: 12px;
+    top: 430px;
+    width: 25%;
+    cursor: pointer;
   }
 
   @keyframes fall {

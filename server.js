@@ -437,7 +437,7 @@ app.get('/logout',function(요청, 응답){
 app.get('/chatroom', checkLogin, async function(요청, 응답){
     try{
         if(요청.query.name==요청.user.username){
-            throw new Error('잘못된 채팅창 요청');
+            return 응답.send("<script>window.location.replace('/chat')</script>");
         }
         let result = await db.collection('chatroom').findOne({ name : {$all:[요청.user.username,요청.query.name]}})
         if(result==null){
@@ -458,7 +458,7 @@ app.get('/chatroom', checkLogin, async function(요청, 응답){
         }
     } catch(e){
         console.log(e);
-        응답.send("<script>window.location.replace('/chat')</script>");
+        응답.status(500).send('서버에러')
     }
 })
 

@@ -40,7 +40,7 @@ new MongoClient(url).connect().then((client)=>{
   console.log('DB연결성공')
   db = client.db('forum')
   http.listen(process.env.PORT,'0.0.0.0', () => {
-    console.log("http://localhost:"+process.env.PORT+"에서 서버 실행중")
+    console.log("http://localhost:"+process.env.PORT+" 에서 서버 실행중")
 })
 }).catch((err)=>{
   console.log(err)
@@ -76,7 +76,6 @@ passport.deserializeUser(async(user, done) => {
 }) // 유저가 보낸 쿠키를 분석(세션데이터랑 비교)하는 로직 , 이제 api 에서 (요청.user) 사용가능
 
 // ---------------------------------------------------------------------
-
 app.get('/', (요청, 응답) => {
     console.log("client IP: " +requestIp.getClientIp(요청));
     console.log("time : "+new Date())
@@ -333,7 +332,7 @@ app.get('/list/prev/:num', async (요청, 응답) => {
 }) 
 
 app.get('/search2', async (요청, 응답) => { // 검색기능2
-    console.log(요청.query.value)
+    // console.log(요청.query.value)
     try {
         let 검색조건 = [
             {

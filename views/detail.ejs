@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, minimum-scale=1">
     <link rel="stylesheet" href="\main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <%- include('nav.ejs') %>
 <body>
@@ -27,15 +28,26 @@
                 style="width: 200px" onerror="this.style.display='none';">
                 </video>
             </div>
-            <p><%- 글목록.content.replace(/\n/g, '<br/>') %></p>
+            <p>
+                <% 
+                // 글목록.content에 있는 텍스트에서 주소를 찾아 링크로 변환합니다.
+                // 정규 표현식을 사용하여 http:// 또는 https://로 시작하는 주소를 찾습니다.
+                var contentWithLinks = 글목록.content.replace(
+                  /((http|https):\/\/[^\s]+)/g,
+                  '<a href="$1" target="_blank">$1</a>'
+                ).replace(/\n/g, '<br/>');
+                %>
+                <%- contentWithLinks %> 
+            </p>
             <div>
                 <div class="like-box">
                     <div id="likee">
-                        <span name="like" class="like" data-postId="<%= 글목록._id %>">
-                            <ion-icon class="likeIcon" style="color: white; 
-                            font-size: 26px;" name="thumbs-up-outline"></ion-icon>
+                        <span name="like" class="like" data-postId="<%= 글목록._id %>" id="likeButton">
+                            <i class="fa-solid fa-thumbs-up like-icon"></i>
                         </span>
-                        <p class="like" style="margin: 0px;"><%= 글목록.like %></p>
+                        <span id="like-cnt" >
+                            <p class="like" style="margin: 0px;"><%= 글목록.like %></p>
+                        </span>
                     </div>
                 </div>
             </div>
@@ -46,7 +58,7 @@
                 <div class="ccontainer">
                     <div class="comment-bar">
                         <div class="comment-write" style="width:97%;">
-                            <textarea style="width: 80%; float: left;" class="comment_2" id="comment-input" placeholder="엔터누르면 줄바꿈"></textarea>
+                            <textarea style="width: 80%; float: left; padding-top: 2px;" class="comment_2" id="comment-input" placeholder=" 엔터누르면 줄바꿈"></textarea>
                             <button style="float: right;" id="comment-btn"><ion-icon name="paper-plane-outline"></ion-icon></button>
                         </div>
                     </div>
@@ -86,16 +98,17 @@
                                 <% a= JSON.stringify(대댓글[j].parentId) %>
                                 <% b= JSON.stringify(댓글목록[i]._id) %>
                                 <%if(a==b){%>
-                                    <div style="width: 230px; display: flex; margin-top: 8px;">
+                                    <div class="reComment-box">
                                         <div style="display: flex; flex-direction: column;">
                                             <a class="btn-a" href="/chatroom?name=<%= 대댓글[j].username %>&id=<%= 대댓글[j].userId %>">
-                                                <img style="cursor: pointer; width: 25px;height: 25px;object-fit: cover;" src="https:/ddenzubucket.s3.ap-northeast-2.amazonaws.com/<%= 대댓글[j].userprofile %>"
+                                                <img style="cursor: pointer; width: 25px;height: 25px;object-fit: cover;
+                                                padding-left: 8px;" src="https:/ddenzubucket.s3.ap-northeast-2.amazonaws.com/<%= 대댓글[j].userprofile %>"
                                                 onerror="this.src='/image/dinosaur.png'" />
                                             </a>
-                                            <div style="width: 25px;text-align: center; margin-top: 0px;" class="profiletext"><%= 대댓글[j].username %></div>
+                                            <div style="width: 42px; text-align: center; margin-top: 0px;" class="profiletext"><%= 대댓글[j].username %></div>
                                         </div>
 
-                                        <div style="display: flex; flex-direction: column; margin-left: 5px;">
+                                        <div style="display: flex; flex-direction: column;">
                                             <p style="font-size: 16px; margin: 5px 0px 0px 4px; display: block;"><%= 대댓글[j].content %></p>
                                             <% var time1 = dateFormat1.dateFormat(new Date(대댓글[j].date)) %>
                                             <p class="commentTime" style="font-size: 11px; margin: 6px 0px 0px 4px;"><%= time1 %></p>
@@ -247,7 +260,7 @@
             }
         })
         function reloadLike(){
-            $('#likee').load(location.href+' #likee');
+            $('#like-cnt').load(location.href+' #like-cnt');
         }
 
         $(document).on("click",'.reComment', function(e){
@@ -260,21 +273,28 @@
                 document.querySelectorAll('.reComment')[this.dataset.num].classList.add('reComment_click');
                 document.querySelectorAll('.reComment_cancel')[this.dataset.num].classList.remove('changeNameVisible');
             }
-            // document.querySelectorAll('.reComment_box')[this.dataset.num].classList.remove('changeNameVisible');
-            // document.querySelectorAll('.reComment')[this.dataset.num].classList.add('reComment_click');
-            // document.querySelectorAll('.reComment_cancel')[this.dataset.num].classList.remove('changeNameVisible');
         })        
         $(document).on("click",'.reComment_cancel', function(e){
             document.querySelectorAll('.reComment_box')[this.dataset.num].classList.add('changeNameVisible');
             document.querySelectorAll('.reComment')[this.dataset.num].classList.remove('reComment_click');
             document.querySelectorAll('.reComment_cancel')[this.dataset.num].classList.add('changeNameVisible');
         })
-    //    function commentCancel(event){
-    //         document.querySelectorAll('.reComment_box')[this.dataset.num].classList.add('changeNameVisible');
-    //         document.querySelectorAll('.reComment')[this.dataset.num].classList.remove('reComment_click');
-    //         document.querySelectorAll('.reComment_cancel')[this.dataset.num].classList.add('changeNameVisible');
-    //    }
-    //    $(document).on("click", '.reComment_cancel', commentCancel);
+
+        var likeButton = document.getElementById('likeButton');
+
+        likeButton.addEventListener('click', function() {
+            var icon = this.querySelector('.like-icon');
+            
+            icon.style.color = '#FE4D4D';
+            icon.style.transform = 'scale(1.2)';
+
+            setTimeout(function() {
+                icon.style.color = 'white';
+                icon.style.transform = 'scale(1)';
+            }, 500);
+        });
+
+
     </script>
 
 </body>

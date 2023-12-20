@@ -48,6 +48,7 @@
     margin: 0 auto;
     margin-top: 10px;
     margin-bottom: 10px;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
     /* min-width: 400px; */
     /* backdrop-filter: blur(2px);
     -webkit-backdrop-filter: blur(2px); */
@@ -146,6 +147,7 @@
     width: 90%;
     margin: 0 auto;
     margin-top: 5px;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
   }
   .search {
     height: 30px;
@@ -183,6 +185,7 @@
     padding: 10px;
     backdrop-filter: blur(4px);
     margin: 10px 0px 0px 5px;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
   }
   .comment-bar{
     width: 100%;
@@ -193,6 +196,7 @@
     border-radius: 60px;
     padding: 10px;
     backdrop-filter: blur(4px);
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
   }
   .commentTime{
     font-size: 11px;
@@ -413,11 +417,13 @@
   }
 
   .like-box {
-    height: 35px;
-    width: 25%;
+    float: right;
+    /* height: 35px; */
+    width: fit-content;
+    padding: 0px 12px 0px 0px;
     border-radius: 15px;
     background-color: #5A545C;
-    margin-left: 70%;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
   }
 
   .like {
@@ -427,12 +433,21 @@
     text-align: center;
     margin-left: 10px;
   }
-  .likeIcon:hover {
-    animation: like 0.3s linear;
+
+  .like > .like-icon {
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    transition: 0.5s;
   }
-  /* .likeIcon:active{
-    animation: like 0.3s linear;
-  } */
+
+  @media (hover: hover){
+    .like > .like-icon:hover{
+      color: #FE4D4D;
+      transform: scale(1);
+    }
+  }
 
   .comment {
     width: 90%;
@@ -444,6 +459,7 @@
     margin-top: 7px;
     background: rgba(255,255,255,0.5);
     position: relative;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
   }
 
   .commentInput {
@@ -519,6 +535,11 @@
     position: absolute;
     top:9px;
   }
+  .reComment-box{
+    width: 230px;
+    display: flex;
+    margin-top: 8px;
+  }
   .img-box {
     width: 100%;
     margin: 10px 0px 10px 0px;
@@ -529,13 +550,12 @@
     color : white;
   }
   .profiletext{
-    width: 120%;
+    width: 130%;
     font-size: 14px;
     margin-top: 2px;
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
-    
   }
   .page-btn{
     padding-left: 4px;
@@ -670,7 +690,7 @@
   }
   .logo:hover {
     transform: rotate( 15deg );
-    font-size: 1.3em;
+    font-size: 1.2em;
   }
 
   .logo a {
@@ -721,6 +741,7 @@
     z-index: 99;
     background: rgba(0,0,0,0.45); 
     min-width: 347px;
+    box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.3);
   }
   .form-box2 {
     top: -50px;
@@ -813,13 +834,5 @@
     to {
       transform: translateY(100vh);
       opacity: 0;
-    }
-  }
-  @keyframes like {
-    0% {
-      transform: rotate( 0deg );
-    }
-    100% {
-      transform: rotate( 360deg );
     }
   }

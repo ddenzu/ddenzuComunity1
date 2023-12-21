@@ -26,7 +26,7 @@ app.use(session({
   secret: '암호화에 쓸 비번',
   resave : false, // 보통 false
   saveUninitialized : false, // 보통 false
-  cookie : { maxAge : 100 * 60 * 1000  }, // 로그인 시간 유지
+  cookie : { maxAge : 30 * 60 * 1000  }, // 로그인 시간 유지
   store: MongoStore.create({
     mongoUrl : process.env.DB_URL,
     dbName: 'forum',
@@ -45,7 +45,6 @@ new MongoClient(url).connect().then((client)=>{
 }).catch((err)=>{
   console.log(err)
 })
-
 // ---------------------------------------------------------------------
 // url을 통해 드러나지 않았으면 하는 데이터를 전달할땐 post 방식 , 유저가 서버한테 데이터줄때
 passport.use(new LocalStrategy(async (입력한아이디, 입력한비번, cb) => {
@@ -74,14 +73,12 @@ passport.deserializeUser(async(user, done) => {
       return done(null, result)
     })
 }) // 유저가 보낸 쿠키를 분석(세션데이터랑 비교)하는 로직 , 이제 api 에서 (요청.user) 사용가능
-
 // ---------------------------------------------------------------------
 app.get('/', (요청, 응답) => {
     console.log("client IP: " +requestIp.getClientIp(요청));
     console.log("time : "+new Date())
     응답.redirect('/list/1')
 }) 
-
 app.get('/list', async (요청, 응답) => {
     let result = await db.collection('post').find().toArray() // await = blocking
     // ejs 파일은 sendFile 아니라 render 사용

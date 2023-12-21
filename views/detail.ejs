@@ -39,22 +39,19 @@
                 %>
                 <%- contentWithLinks %> 
             </p>
-            <div>
-                <div class="like-box">
-                    <div id="likee">
-                        <span name="like" class="like" data-postId="<%= 글목록._id %>" id="likeButton">
-                            <i class="fa-solid fa-thumbs-up like-icon"></i>
-                        </span>
-                        <span id="like-cnt" >
-                            <p class="like" style="margin: 0px;"><%= 글목록.like %></p>
-                        </span>
-                    </div>
+            <div class="like-box">
+                <div id="likee">
+                    <span name="like" class="like" data-postId="<%= 글목록._id %>" id="likeButton">
+                        <i class="fa-solid fa-thumbs-up like-icon"></i>
+                    </span>
+                    <span id="like-cnt" >
+                        <p class="like" style="margin: 0px;"><%= 글목록.like %></p>
+                    </span>
                 </div>
             </div>
         </div> 
 
         <div class="comment">
-            <!-- <form class="comment-write" action="/comment" method="POST"> -->
                 <div class="ccontainer">
                     <div class="comment-bar">
                         <div class="comment-write" style="width:97%;">
@@ -63,7 +60,6 @@
                         </div>
                     </div>
                 </div>
-            <!-- </form> -->
             <div id="comment-box" style="margin: 0; display: block;">
                 <%for (let i=0; i<댓글목록.length; i++){ %>
                     <p style="text-align: left; margin-bottom: 20px; clear: both;">
@@ -71,7 +67,8 @@
                             <div class="profileImage" data-name="<%= 댓글목록[i].username %>" data-id="<%= 댓글목록[i].userId %>">
                                 <button style="background: transparent; border: none;">
                                     <a class="btn-a" href="/chatroom?name=<%= 댓글목록[i].username %>&id=<%= 댓글목록[i].userId %>">
-                                        <img style="cursor: pointer; width: 25px;height: 25px;object-fit: cover;" src="https:/ddenzubucket.s3.ap-northeast-2.amazonaws.com/<%= 댓글목록[i].userprofile %>"
+                                        <img style="cursor: pointer; width: 25px;height: 25px;object-fit: cover;
+                                        padding-left: 5px;" src="https:/ddenzubucket.s3.ap-northeast-2.amazonaws.com/<%= 댓글목록[i].userprofile %>"
                                         onerror="this.src='/image/dinosaur.png'" />
                                     </a>
                                 </button>
@@ -109,9 +106,9 @@
                                         </div>
 
                                         <div style="display: flex; flex-direction: column;">
-                                            <p style="font-size: 16px; margin: 5px 0px 0px 4px; display: block;"><%= 대댓글[j].content %></p>
+                                            <p style="font-size: 16px; margin: 3px 0px 0px 4px; display: block;"><%= 대댓글[j].content %></p>
                                             <% var time1 = dateFormat1.dateFormat(new Date(대댓글[j].date)) %>
-                                            <p class="commentTime" style="font-size: 11px; margin: 6px 0px 0px 4px;"><%= time1 %></p>
+                                            <p class="commentTime" style="margin: 3px 0px 0px 4px;"><%= time1 %></p>
                                         </div>
                                         <span style="margin: 7px 0px 0px 7px;" name="add" id="commentDel" data-id="<%= 대댓글[j]._id %>"
                                             data-postId="<%= 대댓글[j].postId %>" data-userId="<%= 대댓글[j].userId %>">
@@ -137,7 +134,6 @@
     </div>
     <script type="module">
         import {makeSnowflake2} from '/snow.js';
-        // import {dateFormat} from '/time.js';
         window.onload = function(){
             for (let i = 0; i < 40; i++){
                 setTimeout(makeSnowflake2(), 500 * i);
@@ -214,7 +210,6 @@
             }) 
         })
 
-
         $(document).on("click","span[name='add']", function(e){
             if (confirm('리얼루다가 삭제하시겠슴까나리?')==true){
                 var 지울거 = {id : this.dataset.id,
@@ -241,24 +236,31 @@
                 return 0
             }
         }) 
-        if(document.querySelector('.profile2').innerHTML.length>2){
-            document.querySelector('.profile2').innerText.substr(0,3)
-        }
+        $(document).ready(function() {
+            const profileElement = $('.profile2');
+            if (profileElement.html() && profileElement.html().length > 2) {
+                profileElement.text().substr(0, 3);
+            }
+        });
 
-        document.querySelector('.comment-bar').addEventListener('click', ()=>{
-            if('<%= 현재접속자 %>'=="noUser"){
-                if (confirm('댓글작성을 위해 로그인 페이지로 이동하시겠습니까탈레나')==true){
-                    window.location.replace(`/login`) 
+        document.querySelector('.comment-bar').addEventListener('click', () => {
+            if ('<%= 현재접속자 %>' == "noUser") {
+                if (confirm('댓글 작성을 위해 로그인 페이지로 이동하시겠습니까탈레나') == true) {
+                    window.location.replace(`/login`);
                 }
             }
-        })
-        document.querySelector('.reComment_box').addEventListener('click', ()=>{
-            if('<%= 현재접속자 %>'=="noUser"){
-                if (confirm('댓글작성을 위해 로그인 페이지로 이동하시겠습니까탈레나')==true){
-                    window.location.replace(`/login`) 
+        });
+        const reCommentBox = document.querySelector('.reComment_box');
+        if (reCommentBox) {
+            reCommentBox.addEventListener('click', () => {
+                if ('<%= 현재접속자 %>' == "noUser") {
+                    if (confirm('댓글 작성을 위해 로그인 페이지로 이동하시겠습니까탈레나') == true) {
+                        window.location.replace(`/login`);
+                    }
                 }
-            }
-        })
+            });
+        }
+      
         function reloadLike(){
             $('#like-cnt').load(location.href+' #like-cnt');
         }
@@ -280,20 +282,16 @@
             document.querySelectorAll('.reComment_cancel')[this.dataset.num].classList.add('changeNameVisible');
         })
 
-        var likeButton = document.getElementById('likeButton');
-
+        const likeButton = document.getElementById('likeButton');
         likeButton.addEventListener('click', function() {
             var icon = this.querySelector('.like-icon');
-            
             icon.style.color = '#FE4D4D';
             icon.style.transform = 'scale(1.2)';
-
             setTimeout(function() {
                 icon.style.color = 'white';
                 icon.style.transform = 'scale(1)';
             }, 500);
         });
-
 
     </script>
 

@@ -187,10 +187,10 @@ app.post('/profileImg', upload.single('img1'), async (req, res, next) => {
     try {
         await db.collection('user').updateOne({ _id : new ObjectId(req.user._id)}, {$set : {imgName : req.file.key}})
         await db.collection('comment').updateMany({userId: new ObjectId(req.user._id)}, {$set : {userprofile : req.file.key}})
-        res.redirect('/list/1');
+        return res.send("<script>alert('프로필 사진이 변경되었습니다');window.location.replace(`/mypage`);</script>");
      } catch (err) {
         console.log(err);
-        응답.status(500).sned('서버 에러');
+        res.status(500).send('서버 에러');
      }
   });
 

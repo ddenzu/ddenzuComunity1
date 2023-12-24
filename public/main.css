@@ -684,7 +684,7 @@
     margin: 0;
   }
   .logo:hover {
-    transform: rotate( 15deg );
+    transform: rotate( 13deg );
     font-size: 1.2em;
   }
 
@@ -752,6 +752,12 @@
     justify-content: center;
     align-items: center;
   }
+  @media screen and (max-width: 430px) {
+    .nav {
+      padding: 15px;
+    }
+  }
+
   h2{
       font-size: 2em;
       color: #fff;
@@ -823,7 +829,6 @@
     width: 25%;
     cursor: pointer;
   }
-
   @keyframes fall {
     from{}
     to {

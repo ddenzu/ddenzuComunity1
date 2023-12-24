@@ -393,6 +393,7 @@ app.post('/change-name', async (요청, 응답) => {
         }
         await db.collection('user').updateOne({ _id : new ObjectId(요청.user._id)}, {$set : {username : 요청.body.name}})
         await db.collection('comment').updateMany({userId: new ObjectId(요청.user._id)}, {$set : {username : 요청.body.name}})
+        await db.collection('post').updateMany({작성자_id: new ObjectId(요청.user._id)}, {$set : {작성자 : 요청.body.name}})
         return 응답.send("<script>alert('닉네임이 변경되었습니다');window.location.replace(`/mypage`);</script>");
     }
     catch(e){

@@ -151,11 +151,43 @@ app.get('/write', async (요청, 응답) => {
     }
 })
 
-app.post('/write', upload.single('img1'), async (요청, 응답) => { 
+// app.post('/write', upload.single('img1'), async (요청, 응답) => { 
+//     try {
+//         if (요청.body.title==""||요청.body.content==""){
+//             return 응답.send('내용이 존재하지 않습니다');
+//         } 
+//         const postDetails = {
+//             title: 요청.body.title,
+//             content: 요청.body.content,
+//             작성자_id: 요청.user._id,
+//             작성자: 요청.user.username,
+//             like: 0,
+//             date: dateFormat1.dateFormat(new Date())
+//         }
+//         if (요청.file==undefined){ // 글만 썼을 때
+//             await db.collection('post').insertOne(postDetails);
+//         }
+//         else { // 이미지 OR 영상 첨부 했을 때
+//             if(요청.file.mimetype=='video/mp4' || 요청.file.mimetype=='video/quicktime'){
+//                 postDetails.vidName = 요청.file.key;
+//             }
+//             else {
+//                 postDetails.imgName = 요청.file.key;      
+//             }
+//             await db.collection('post').insertOne(postDetails);
+//         }
+//         응답.redirect('/list/1'); // redirect 하면 url 로 GET 요청을 자동으로 해줌, 그래서  { 글목록 : result} 이런거 안줘도됨   
+//     } catch(e) {
+//         console.log(e);
+//         응답.status(500).send('서버에러');
+//     }
+// })
+app.post('/write', upload.array('img1'), async (요청, 응답) => { 
     try {
-        if (요청.body.title==""||요청.body.content==""){
+        if (요청.body.title === "" || 요청.body.content === ""){
             return 응답.send('내용이 존재하지 않습니다');
         } 
+
         const postDetails = {
             title: 요청.body.title,
             content: 요청.body.content,
@@ -163,25 +195,39 @@ app.post('/write', upload.single('img1'), async (요청, 응답) => {
             작성자: 요청.user.username,
             like: 0,
             date: dateFormat1.dateFormat(new Date())
-        }
-        if (요청.file==undefined){ // 글만 썼을 때
+        };
+
+        if (요청.files.length === 0) { // 이미지 또는 동영상이 없을 때
+            await db.collection('post').insertOne(postDetails);
+        } else {
+            const imgNames = [];
+            const vidNames = [];
+
+            for (const file of 요청.files) {
+                if (file.mimetype === 'video/mp4' || file.mimetype === 'video/quicktime') {
+                    vidNames.push(file.key);
+                } else {
+                    imgNames.push(file.key);
+                }
+            }
+
+            if (imgNames.length > 0) {
+                postDetails.imgName = imgNames;
+            }
+
+            if (vidNames.length > 0) {
+                postDetails.vidName = vidNames;
+            }
+
             await db.collection('post').insertOne(postDetails);
         }
-        else { // 이미지 OR 영상 첨부 했을 때
-            if(요청.file.mimetype=='video/mp4' || 요청.file.mimetype=='video/quicktime'){
-                postDetails.vidName = 요청.file.key;
-            }
-            else {
-                postDetails.imgName = 요청.file.key;      
-            }
-            await db.collection('post').insertOne(postDetails);
-        }
-        응답.redirect('/list/1'); // redirect 하면 url 로 GET 요청을 자동으로 해줌, 그래서  { 글목록 : result} 이런거 안줘도됨   
+
+        응답.redirect('/list/1');
     } catch(e) {
-        console.log(e);
+        console.error(e);
         응답.status(500).send('서버에러');
     }
-})
+});
 
 app.post('/profileImg', upload.single('img1'), async (req, res, next) => {
     try {
@@ -206,8 +252,8 @@ app.get('/detail/:id', async (요청, 응답)=>{
         let result3 = await db.collection('user').findOne({ _id : result.작성자_id})
         let result4 = await db.collection('comment').find({ postId : new ObjectId(요청.params.id), parentId : { $exists: true }}).toArray()
         var 현재접속자 = 요청.user ? 요청.user.username : 'noUser';
-        const 이미지주소 = result.imgName ? `https://ddenzubucket.s3.ap-northeast-2.amazonaws.com/${result.imgName}` : '';
-        const 동영상주소 = result.vidName ? `https://ddenzubucket.s3.ap-northeast-2.amazonaws.com/${result.vidName}` : '';
+        const 이미지주소 = Array.isArray(result.imgName) ? result.imgName : (result.imgName ? [result.imgName] : []);
+        const 동영상주소 = Array.isArray(result.vidName) ? result.vidName : (result.vidName ? [result.vidName] : []);
         const 프로필 = result3.imgName ? result3.imgName : '';
         응답.render('detail.ejs', {
             글목록: result,

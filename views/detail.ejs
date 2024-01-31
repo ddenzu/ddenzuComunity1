@@ -20,21 +20,27 @@
             <p style="font-size: small; margin-top: 5px;">작성자:  
                 <img style="width: 25px; height: 25px; vertical-align: bottom; margin-right: 2px;" 
                 src="https://ddenzubucket.s3.ap-northeast-2.amazonaws.com/<%= 프로필 %>" 
-                onerror="this.src='/image/dinosaur.png'"/><%= 글목록.작성자 %></p>
-            <div class="img-box">
-                <img style="max-width: 330px;" src="<%= 이미지주소 %>"/>
-                <video src="<%= 동영상주소 %>" type="video/mp4" controls muted loop autoplay 
-                playsinline preload="metadata" 
-                style="width: 200px" onerror="this.style.display='none';">
-                </video>
-            </div>
+                onerror="this.src='/image/dinosaur.png'"/><%= 글목록.작성자 %>
+            </p>
+            <% for (let i = 0; i < 동영상주소.length; i++) { %>
+                <div class="img-box">
+                    <video src="https://ddenzubucket.s3.ap-northeast-2.amazonaws.com/<%= 동영상주소[i] %>" type="video/mp4" controls muted loop autoplay 
+                    playsinline preload="metadata" style="width: 200px" onerror="this.style.display='none';">
+                    </video>
+                </div>
+            <% } %>
+            <% for (let i = 0; i < 이미지주소.length; i++) { %>
+                <div class="img-box">
+                    <img style="max-width: 330px;" src="https://ddenzubucket.s3.ap-northeast-2.amazonaws.com/<%= 이미지주소[i] %>"/>
+                </div>
+            <% } %>
             <p>
                 <% 
                 // 글목록.content에 있는 텍스트에서 주소를 찾아 링크로 변환합니다.
                 // 정규 표현식을 사용하여 http:// 또는 https://로 시작하는 주소를 찾습니다.
                 var contentWithLinks = 글목록.content.replace(
-                  /((http|https):\/\/[^\s]+)/g,
-                  '<a href="$1" target="_blank">$1</a>'
+                    /((http|https):\/\/[^\s]+)/g,
+                    '<a href="$1" target="_blank">$1</a>'
                 ).replace(/\n/g, '<br/>');
                 %>
                 <%- contentWithLinks %> 

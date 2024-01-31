@@ -18,13 +18,17 @@
         <%for (let i=0; i<글목록.length; i++){ %>
             <div class="white-bg">
                 <div class="list-box">
-                <% if(글목록[i].vidName !== undefined){ %>
-                    <a href="/detail/<%= 글목록[i]._id %>">
-                        <img class="list-left" src="https:/ddenzubucket.s3.ap-northeast-2.amazonaws.com/<%= 글목록[i].imgName %>" onerror="this.src='/image/dinosaurVid.png'" />
-                    </a>
+                <% if (글목록[i].vidName) { %>
+                    <% if (글목록[i].vidName.length > 0) { %>
+                        <a href="/detail/<%= 글목록[i]._id %>">
+                            <img class="list-left" src='/image/dinosaurVid.png' onerror="this.src='/image/dinosaurVid.png'" />
+                        </a>
+                    <% } else { %>
+                        <p>No Video Available</p>
+                    <% } %>
                 <% } else { %>
                     <a href="/detail/<%= 글목록[i]._id %>">
-                        <img class="list-left" src="https:/ddenzubucket.s3.ap-northeast-2.amazonaws.com/<%= 글목록[i].imgName %>" onerror="this.src='/image/dinosaur.png'" />
+                        <img class="list-left" src="https:/ddenzubucket.s3.ap-northeast-2.amazonaws.com/<%= Array.isArray(글목록[i].imgName) ? 글목록[i].imgName[0] : 글목록[i].imgName %>" onerror="this.src='/image/dinosaur.png'" />
                     </a>
                 <% } %>
                     <h4 class="list-right">

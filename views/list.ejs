@@ -16,6 +16,7 @@
     <div class="section2">
         <div style="height:60px;"></div>
         <%for (let i=0; i<글목록.length; i++){ %>
+            <% k = 0 %>
             <div class="white-bg">
                 <div class="list-box">
                 <% if (글목록[i].vidName) { %>
@@ -28,7 +29,7 @@
                     <% } %>
                 <% } else { %>
                     <a href="/detail/<%= 글목록[i]._id %>">
-                        <img class="list-left" src="https:/ddenzubucket.s3.ap-northeast-2.amazonaws.com/<%= Array.isArray(글목록[i].imgName) ? 글목록[i].imgName[0] : 글목록[i].imgName %>" onerror="this.src='/image/dinosaur.png'" />
+                        <img class="list-left" src="<%= resizeImg[i] %>" onerror="this.src='/image/dinosaur.png'" style="max-width: 100%; max-height: 100%;" loading="lazy" />
                     </a>
                 <% } %>
                     <h4 class="list-right">

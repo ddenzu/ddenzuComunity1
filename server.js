@@ -85,6 +85,9 @@ app.get('/list', async (요청, 응답) => {
     응답.redirect('/list/1')
 }) 
 
+const sharp = require('sharp');
+const axios = require('axios');
+
 // multer 라이브러리 세팅
 // let multer = require('multer');
 // const sharp = require("sharp");
@@ -330,7 +333,27 @@ app.get('/list/:num', async (요청, 응답) => {
         let result = await db.collection('post').find().sort({ _id: -1 }).skip((요청.params.num-1)*5).limit(5).toArray()
         let cnt = await db.collection('post').count();
         const 채팅사람 = 요청.user ? 요청.user.username : "익명";
-        응답.render('list.ejs', { 글목록: result, 글수: cnt, 채팅사람, 페이지넘버: 요청.params.num });
+        let resizeImgPromises = result.map(async (item) => {
+            if (item.imgName) { 
+                const imageUrl = Array.isArray(item.imgName) ? item.imgName[0] : item.imgName;
+
+                // 이미지 URL에서 이미지 파일 받아오기
+                const imageBuffer = await axios.get(`https:/ddenzubucket.s3.ap-northeast-2.amazonaws.com/${imageUrl}`, { responseType: 'arraybuffer' }).then(response => Buffer.from(response.data));
+
+                // 이미지 최적화
+                const optimizedImageBuffer = await sharp(imageBuffer)
+                    .rotate()
+                    .resize({ width: 75, height: 85, fit: 'cover' }) // 적절한 사이즈로 조정
+                    .toBuffer();
+
+                // 최적화된 이미지를 base64로 인코딩하여 배열에 추가
+                return `data:image/jpeg;base64,${optimizedImageBuffer.toString('base64')}`;
+            } else {
+                return ''; // 빈 문자열 추가
+            }
+        });
+        let resizeImg = await Promise.all(resizeImgPromises);
+        응답.render('list.ejs', { 글목록: result, 글수: cnt, 채팅사람, 페이지넘버: 요청.params.num, resizeImg});
     } catch(e) {
         console.log(e);
         응답.status(500).send('서버 에러');
@@ -348,7 +371,27 @@ app.get('/list/next/:num', async (요청, 응답) => {
         }
         let 채팅사람 = 요청.user ? 요청.user.username : "익명";
         let 페이지넘버 = 요청.query.pageNum;
-        응답.render('list.ejs', { 글목록: result, 글수: cnt, 채팅사람, 페이지넘버 });
+        let resizeImgPromises = result.map(async (item) => {
+            if (item.imgName) { 
+                const imageUrl = Array.isArray(item.imgName) ? item.imgName[0] : item.imgName;
+
+                // 이미지 URL에서 이미지 파일 받아오기
+                const imageBuffer = await axios.get(`https:/ddenzubucket.s3.ap-northeast-2.amazonaws.com/${imageUrl}`, { responseType: 'arraybuffer' }).then(response => Buffer.from(response.data));
+
+                // 이미지 최적화
+                const optimizedImageBuffer = await sharp(imageBuffer)
+                    .rotate()
+                    .resize({ width: 75, height: 85, fit: 'cover' }) // 적절한 사이즈로 조정
+                    .toBuffer();
+
+                // 최적화된 이미지를 base64로 인코딩하여 배열에 추가
+                return `data:image/jpeg;base64,${optimizedImageBuffer.toString('base64')}`;
+            } else {
+                return ''; // 빈 문자열 추가
+            }
+        });
+        let resizeImg = await Promise.all(resizeImgPromises);
+        응답.render('list.ejs', { 글목록: result, 글수: cnt, 채팅사람, 페이지넘버, resizeImg });
     } catch(e){
         console.log(e);
         응답.status(500).send('서버 에러');
@@ -367,7 +410,27 @@ app.get('/list/prev/:num', async (요청, 응답) => {
         }
         let 채팅사람 = 요청.user ? 요청.user.username : "익명";
         let 페이지넘버 = 요청.query.pageNum;
-        응답.render('list.ejs', { 글목록: result, 글수: cnt, 채팅사람, 페이지넘버 });
+        let resizeImgPromises = result.map(async (item) => {
+            if (item.imgName) { 
+                const imageUrl = Array.isArray(item.imgName) ? item.imgName[0] : item.imgName;
+
+                // 이미지 URL에서 이미지 파일 받아오기
+                const imageBuffer = await axios.get(`https:/ddenzubucket.s3.ap-northeast-2.amazonaws.com/${imageUrl}`, { responseType: 'arraybuffer' }).then(response => Buffer.from(response.data));
+
+                // 이미지 최적화
+                const optimizedImageBuffer = await sharp(imageBuffer)
+                    .rotate()
+                    .resize({ width: 75, height: 85, fit: 'cover' }) // 적절한 사이즈로 조정
+                    .toBuffer();
+
+                // 최적화된 이미지를 base64로 인코딩하여 배열에 추가
+                return `data:image/jpeg;base64,${optimizedImageBuffer.toString('base64')}`;
+            } else {
+                return ''; // 빈 문자열 추가
+            }
+        });
+        let resizeImg = await Promise.all(resizeImgPromises);
+        응답.render('list.ejs', { 글목록: result, 글수: cnt, 채팅사람, 페이지넘버, resizeImg });
     } catch(e) {
         console.log(e);
         응답.status(500).send('서버 에러');

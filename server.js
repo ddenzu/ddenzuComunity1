@@ -243,9 +243,12 @@ app.post('/profileImg', upload.single('img1'), async (req, res, next) => {
      }
   });
 
-
 app.get('/detail/:id', async (요청, 응답)=>{
     // 요청.params 하면 유저가 url 파라미터에 입력한 데이터 가져옴(:id)
+    응답.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    응답.setHeader('Pragma', 'no-cache');
+    응답.setHeader('Expires', '0');
+    let isRead = 요청.user ? 요청.user.isRead : true;
     try {
         let result = await db.collection('post').findOne({ _id : new ObjectId(요청.params.id)})
         if (!result) {
@@ -258,6 +261,12 @@ app.get('/detail/:id', async (요청, 응답)=>{
         const 이미지주소 = Array.isArray(result.imgName) ? result.imgName : (result.imgName ? [result.imgName] : []);
         const 동영상주소 = Array.isArray(result.vidName) ? result.vidName : (result.vidName ? [result.vidName] : []);
         const 프로필 = result3.imgName ? result3.imgName : '';
+        if (요청.user) {
+            await db.collection('user').updateOne(
+                { _id: 요청.user._id },
+                { $set: { location: 'detail' } }
+            );
+        }
         응답.render('detail.ejs', {
             글목록: result,
             댓글목록: result2,
@@ -266,7 +275,8 @@ app.get('/detail/:id', async (요청, 응답)=>{
             동영상주소,
             현재접속자,
             dateFormat1,
-            대댓글: result4
+            대댓글: result4,
+            isRead
         });
     }
     catch(e) {
@@ -329,6 +339,7 @@ app.delete('/delete', async (요청, 응답)=>{
 
 app.get('/list/:num', async (요청, 응답) => {
     console.log("client IP: " +requestIp.getClientIp(요청));
+    let isRead = 요청.user ? 요청.user.isRead : true;
     try{
         let result = await db.collection('post').find().sort({ _id: -1 }).skip((요청.params.num-1)*5).limit(5).toArray()
         let cnt = await db.collection('post').count();
@@ -353,7 +364,13 @@ app.get('/list/:num', async (요청, 응답) => {
             }
         });
         let resizeImg = await Promise.all(resizeImgPromises);
-        응답.render('list.ejs', { 글목록: result, 글수: cnt, 채팅사람, 페이지넘버: 요청.params.num, resizeImg});
+        if (요청.user) {
+            await db.collection('user').updateOne(
+                { _id: 요청.user._id },
+                { $set: { location: 'list' } }
+            );
+        }
+        응답.render('list.ejs', { 글목록: result, 글수: cnt, 채팅사람, 페이지넘버: 요청.params.num, resizeImg, isRead});
     } catch(e) {
         console.log(e);
         응답.status(500).send('서버 에러');
@@ -362,6 +379,7 @@ app.get('/list/:num', async (요청, 응답) => {
 
 app.get('/list/next/:num', async (요청, 응답) => {
     console.log("client IP: " +requestIp.getClientIp(요청));
+    let isRead = 요청.user ? 요청.user.isRead : true;
     try{
         let result = await db.collection('post')
         .find({_id : {$lt : new ObjectId(요청.params.num)}}).sort({ _id: -1 }).limit(5).toArray()
@@ -391,7 +409,13 @@ app.get('/list/next/:num', async (요청, 응답) => {
             }
         });
         let resizeImg = await Promise.all(resizeImgPromises);
-        응답.render('list.ejs', { 글목록: result, 글수: cnt, 채팅사람, 페이지넘버, resizeImg });
+        if (요청.user) {
+            await db.collection('user').updateOne(
+                { _id: 요청.user._id },
+                { $set: { location: 'list' } }
+            );
+        }
+        응답.render('list.ejs', { 글목록: result, 글수: cnt, 채팅사람, 페이지넘버, resizeImg, isRead});
     } catch(e){
         console.log(e);
         응답.status(500).send('서버 에러');
@@ -400,6 +424,7 @@ app.get('/list/next/:num', async (요청, 응답) => {
 
 app.get('/list/prev/:num', async (요청, 응답) => {
     console.log("client IP: " +requestIp.getClientIp(요청));
+    let isRead = 요청.user ? 요청.user.isRead : true;
     try{
         let result = await db.collection('post')
         .find({_id : {$gt : new ObjectId(요청.params.num)}}).sort({}).limit(5).toArray()
@@ -430,7 +455,13 @@ app.get('/list/prev/:num', async (요청, 응답) => {
             }
         });
         let resizeImg = await Promise.all(resizeImgPromises);
-        응답.render('list.ejs', { 글목록: result, 글수: cnt, 채팅사람, 페이지넘버, resizeImg });
+        if (요청.user) {
+            await db.collection('user').updateOne(
+                { _id: 요청.user._id },
+                { $set: { location: 'list' } }
+            );
+        }
+        응답.render('list.ejs', { 글목록: result, 글수: cnt, 채팅사람, 페이지넘버, resizeImg, isRead});
     } catch(e) {
         console.log(e);
         응답.status(500).send('서버 에러');
@@ -481,13 +512,20 @@ app.post('/login', async (요청, 응답, next) => {
 }) 
 
 app.get('/mypage', async (요청, 응답)=>{
+    응답.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    응답.setHeader('Pragma', 'no-cache');
+    응답.setHeader('Expires', '0');
     try{
         if (!요청.user){
             return 응답.send("<script>alert('로그인 요망');window.location.replace(`/login`)</script>");
         }
+        await db.collection('user').updateOne(
+            { _id: 요청.user._id },
+            { $set: { location: 'mypage' } }
+        );
         let result = await db.collection('user').findOne({ username : 요청.user.username});
-        응답.render('mypage.ejs', { 아이디 : result });     
-        
+        let isRead = 요청.user ? 요청.user.isRead : true;
+        응답.render('mypage.ejs', { 아이디 : result, isRead });     
     } catch(e){
         console.error(e);
         응답.status(500).send('서버 에러');
@@ -542,6 +580,10 @@ app.get('/logout',function(요청, 응답){
 
 app.get('/chatroom', checkLogin, async function(요청, 응답){
     try{
+        await db.collection('user').updateOne(
+            { _id: 요청.user._id },
+            { $set: { isRead: true, location: 'chatroom' } }
+        );
         if(요청.query.name==요청.user.username){
             return 응답.send("<script>window.location.replace('/chat')</script>");
         }
@@ -569,9 +611,18 @@ app.get('/chatroom', checkLogin, async function(요청, 응답){
 })
 
 app.get('/chat', checkLogin, async function(요청, 응답){ // navbar에서 올 때
-    let result = await db.collection('chatroom').find({ member : 요청.user._id}).toArray()
-    응답.render('chat.ejs', { data : result, cur : 요청.user._id, arrow : 0})
-})
+    try {
+        await db.collection('user').updateOne(
+            { _id: 요청.user._id },
+            { $set: { isRead: true, location: 'chatroom' } }
+        );
+        let result = await db.collection('chatroom').find({ member: 요청.user._id }).toArray();
+        응답.render('chat.ejs', { data: result, cur: 요청.user._id, arrow: 0 });
+    } catch (error) {
+        console.error(error);
+        응답.status(500).send('서버 에러');
+    }
+});
 
 app.post('/comment', checkLogin, async (요청, 응답)=>{
     try {
@@ -631,6 +682,16 @@ app.post('/message', checkLogin, async function(요청, 응답){ // 수정필요
         };
         let result = await db.collection('message').insertOne(저장할거);
         if(result){
+            let receiver = await db.collection('chatroom').findOne({ _id: new ObjectId(요청.body.parent) }).
+            then(data => data.name.filter(name => name !== 요청.user.username));
+
+            // 수신자가 chatroom 에 없다면 isRead: false 실행
+            if(await db.collection('user').findOne({ username: receiver[0], location: { $ne: "chatroom" } })){
+                await db.collection('user').updateOne(
+                    { username: receiver[0] }, // username이 receiver[0]와 일치하는 문서를 찾음
+                    { $set: { isRead: false } } // 해당 문서에 isRead 컬럼을 추가하고 false로 설정
+                );
+            }
             return 응답.send('성공');
         }
         else {

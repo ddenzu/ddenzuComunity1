@@ -6,7 +6,28 @@
     <title>승뮤니티</title>
     <link rel="stylesheet" href="\main.css">
 </head>
-<%- include('nav.ejs') %>
+<div style="color: white">
+    <div class="wrap">
+        <div class="nav">
+            <h2 class="logo"><a style="text-decoration: none;" href="/list/1">홈🎄</a></h2>
+            <nav id="nav" class="navigation">
+                <a href="/mypage">MYPAGE</a>
+                <% if (!isRead) { %>
+                    <a id="chatAlert" href="/chat" style="color: greenyellow !important;">CHATROOM ✔</a>
+                <% } else { %>
+                    <a href="/chat">CHATROOM</a>
+                <% } %>
+                <a href="/login">LOGIN</a>
+                <a href="/register">REGISTER</a>
+            </nav>
+        </div> 
+    </div>
+    <script>
+        document.querySelector('#chatAlert').addEventListener('click', () => {
+            $('#chatAlert').load(location.href + ' #chatAlert');
+        });
+    </script>
+</div>
 <body>
     <div class="section2">
         <div style="height:60px;"></div>
@@ -48,6 +69,7 @@
             }
         }       
       </script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script>
         // document.querySelectorAll('.delete')[i].addEventListener('click', function(e){
         //     e.target.parentElement.parentElement.style.display = 'none'

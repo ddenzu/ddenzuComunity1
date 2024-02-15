@@ -13,7 +13,7 @@
             <nav class="navigation">
                 <a href="/mypage">MYPAGE</a>
                 <% if (!isRead) { %>
-                    <a id="chatAlert" href="/chat" style="color: greenyellow !important;">CHATROOM ✔</a>
+                    <a id="chatAlert" href="/chat" style="color: greenyellow !important;">CHATROOM</a>
                 <% } else { %>
                     <a href="/chat">CHATROOM</a>
                 <% } %>
@@ -23,8 +23,22 @@
         </div> 
     </div>
     <script>
-        document.querySelector('#chatAlert').addEventListener('click', () => {
-            $('#chatAlert').load(location.href + ' #chatAlert');
+        window.addEventListener('pageshow', (event) => {
+            let what = {
+                    content : "detail",
+                }
+                fetch('/location-update', {
+                method : 'POST',
+                async : false,
+                headers : {
+                    'Content-Type' : 'application/json'
+                },
+                body : JSON.stringify(what)
+                })
+                .then((r)=>r.text())
+                .then((r)=>{
+                    $('.navigation').load(location.href+' .navigation');
+                })
         });
     </script>
 </div>

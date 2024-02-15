@@ -245,9 +245,7 @@ app.post('/profileImg', upload.single('img1'), async (req, res, next) => {
 
 app.get('/detail/:id', async (요청, 응답)=>{
     // 요청.params 하면 유저가 url 파라미터에 입력한 데이터 가져옴(:id)
-    응답.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-    응답.setHeader('Pragma', 'no-cache');
-    응답.setHeader('Expires', '0');
+    console.log("client IP: " +requestIp.getClientIp(요청));
     let isRead = 요청.user ? 요청.user.isRead : true;
     try {
         let result = await db.collection('post').findOne({ _id : new ObjectId(요청.params.id)})
@@ -350,7 +348,7 @@ app.get('/list/:num', async (요청, 응답) => {
 
                 // 이미지 URL에서 이미지 파일 받아오기
                 const imageBuffer = await axios.get(`https:/ddenzubucket.s3.ap-northeast-2.amazonaws.com/${imageUrl}`, { responseType: 'arraybuffer' }).then(response => Buffer.from(response.data));
-
+                
                 // 이미지 최적화
                 const optimizedImageBuffer = await sharp(imageBuffer)
                     .rotate()
@@ -512,9 +510,6 @@ app.post('/login', async (요청, 응답, next) => {
 }) 
 
 app.get('/mypage', async (요청, 응답)=>{
-    응답.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-    응답.setHeader('Pragma', 'no-cache');
-    응답.setHeader('Expires', '0');
     try{
         if (!요청.user){
             return 응답.send("<script>alert('로그인 요망');window.location.replace(`/login`)</script>");
@@ -623,6 +618,22 @@ app.get('/chat', checkLogin, async function(요청, 응답){ // navbar에서 올
         응답.status(500).send('서버 에러');
     }
 });
+
+app.post('/location-update', checkLogin, async (요청, 응답)=>{ // 메세지 읽음처리 api
+    try {
+        if (!요청.body) {
+            return 응답.send("위치정보 없음");
+        }
+        await db.collection('user').updateOne(
+            { _id: 요청.user._id },
+            { $set: { location: 요청.body.content} }
+        );
+        응답.send('위치 업데이트');
+    } catch(e) {
+        console.log(e);
+        응답.status(500).send('서버에러')
+    }
+})
 
 app.post('/comment', checkLogin, async (요청, 응답)=>{
     try {

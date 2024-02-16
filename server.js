@@ -742,6 +742,7 @@ app.post('/delete-chat', async (요청, 응답)=>{
             return res.status(400).send('삭제할 ID가 존재하지 않음');
         }
         await db.collection('chatroom').deleteOne({ _id : new ObjectId(요청.body.삭제id)});
+        await db.collection('message').deleteMany({ parent: 요청.body.삭제id });
         let result1 = await db.collection('chatroom').find({ member : 요청.user._id}).toArray();
         return 응답.render('chat.ejs', { data : result1, cur : 요청.user._id, arrow : 0});
     } catch(e) {

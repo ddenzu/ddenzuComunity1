@@ -51,10 +51,13 @@
             <p style="float: right; font-size: 14px;padding: 5px; padding-top: 13px; margin: 0px;
             font-weight: normal;color: #212529;"><%= 글목록.date %></p>
             </h4>
-            <p style="font-size: small; margin-top: 5px;">작성자:  
-                <img style="width: 25px; height: 25px; vertical-align: bottom; margin-right: 2px;" 
-                src="https://ddenzubucket.s3.ap-northeast-2.amazonaws.com/<%= 프로필 %>" 
-                onerror="this.src='/image/dinosaur.png'"/><%= 글목록.작성자 %>
+            <p style="font-size: small; margin-top: 5px;">작성자:
+                <a class="btn-a" style="text-decoration: none; color: black;" 
+                href="/chatroom?name=<%= 글목록.작성자 %>&id=<%= 글목록.작성자_id %>">
+                    <img style="cursor: pointer; width: 25px; height: 25px; vertical-align: bottom; margin-right: 2px;" 
+                    src="https://ddenzubucket.s3.ap-northeast-2.amazonaws.com/<%= 프로필 %>" 
+                    onerror="this.src='/image/dinosaur.png'"/><%= 글목록.작성자 %>
+                </a> 
             </p>
             <% for (let i = 0; i < 동영상주소.length; i++) { %>
                 <div class="img-box">

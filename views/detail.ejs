@@ -6,14 +6,14 @@
     <link rel="stylesheet" href="\main.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
-<div style="color: white">
+<body style="background-color: #131931;">
     <div class="wrap">
         <div class="nav">
             <h2 class="logo"><a style="text-decoration: none;" href="/list/1">홈🎄</a></h2>
             <nav class="navigation">
                 <a href="/mypage">MYPAGE</a>
                 <% if (!isRead) { %>
-                    <a id="chatAlert" href="/chat" style="color: greenyellow !important;">CHATROOM</a>
+                    <a id="chatAlert" href="/chat">CHATROOM</a>
                 <% } else { %>
                     <a href="/chat">CHATROOM</a>
                 <% } %>
@@ -22,27 +22,6 @@
             </nav>
         </div> 
     </div>
-    <script>
-        window.addEventListener('pageshow', (event) => {
-            let what = {
-                    content : "detail",
-                }
-                fetch('/location-update', {
-                method : 'POST',
-                async : false,
-                headers : {
-                    'Content-Type' : 'application/json'
-                },
-                body : JSON.stringify(what)
-                })
-                .then((r)=>r.text())
-                .then((r)=>{
-                    $('.navigation').load(location.href+' .navigation');
-                })
-        });
-    </script>
-</div>
-<body>
     <div class="section2">
         <div style="height:60px;"></div>
         <div class="detail-bg">
@@ -56,19 +35,20 @@
                 href="/chatroom?name=<%= 글목록.작성자 %>&id=<%= 글목록.작성자_id %>">
                     <img style="cursor: pointer; width: 25px; height: 25px; vertical-align: bottom; margin-right: 2px;" 
                     src="https://ddenzubucket.s3.ap-northeast-2.amazonaws.com/<%= 프로필 %>" 
-                    onerror="this.src='/image/dinosaur.png'"/><%= 글목록.작성자 %>
+                    loading="lazy" onerror="this.src='/image/dinosaur.png'"/><%= 글목록.작성자 %>
                 </a> 
             </p>
             <% for (let i = 0; i < 동영상주소.length; i++) { %>
                 <div class="img-box">
                     <video src="https://ddenzubucket.s3.ap-northeast-2.amazonaws.com/<%= 동영상주소[i] %>" type="video/mp4" controls muted loop autoplay 
-                    playsinline preload="metadata" style="width: 200px" onerror="this.style.display='none';">
+                    playsinline preload="metadata" style="width: 200px" loading="lazy" onerror="this.style.display='none';">
                     </video>
                 </div>
             <% } %>
             <% for (let i = 0; i < 이미지주소.length; i++) { %>
                 <div class="img-box">
-                    <img style="max-width: 330px;" src="https://ddenzubucket.s3.ap-northeast-2.amazonaws.com/<%= 이미지주소[i] %>"/>
+                    <img style="max-width: 330px;" loading="lazy" 
+                    src="https://ddenzubucket.s3.ap-northeast-2.amazonaws.com/<%= 이미지주소[i] %>"/>
                 </div>
             <% } %>
             <p>
@@ -83,7 +63,7 @@
                 <%- contentWithLinks %> 
             </p>
             <div class="like-box">
-                <div id="likee">
+                <div id="likee" style="display: flex; align-items: center;">
                     <span name="like" class="like" data-postId="<%= 글목록._id %>" id="likeButton">
                         <i class="fa-solid fa-thumbs-up like-icon"></i>
                     </span>
@@ -111,7 +91,8 @@
                                 <button style="background: transparent; border: none;">
                                     <a class="btn-a" href="/chatroom?name=<%= 댓글목록[i].username %>&id=<%= 댓글목록[i].userId %>">
                                         <img style="cursor: pointer; width: 25px;height: 25px;object-fit: cover;
-                                        padding-left: 5px;" src="https:/ddenzubucket.s3.ap-northeast-2.amazonaws.com/<%= 댓글목록[i].userprofile %>"
+                                        padding-left: 5px;" loading="lazy" 
+                                        src="https:/ddenzubucket.s3.ap-northeast-2.amazonaws.com/<%= 댓글목록[i].userprofile %>"
                                         onerror="this.src='/image/dinosaur.png'" />
                                     </a>
                                 </button>
@@ -142,7 +123,8 @@
                                         <div style="display: flex; flex-direction: column;">
                                             <a class="btn-a" href="/chatroom?name=<%= 대댓글[j].username %>&id=<%= 대댓글[j].userId %>">
                                                 <img style="cursor: pointer; width: 25px;height: 25px;object-fit: cover;
-                                                padding-left: 8px;" src="https:/ddenzubucket.s3.ap-northeast-2.amazonaws.com/<%= 대댓글[j].userprofile %>"
+                                                padding-left: 8px;" loading="lazy" 
+                                                src="https:/ddenzubucket.s3.ap-northeast-2.amazonaws.com/<%= 대댓글[j].userprofile %>"
                                                 onerror="this.src='/image/dinosaur.png'" />
                                             </a>
                                             <div style="width: 42px; text-align: center; margin-top: 0px;" class="profiletext"><%= 대댓글[j].username %></div>
@@ -335,7 +317,23 @@
                 icon.style.transform = 'scale(1)';
             }, 500);
         });
-
+        window.addEventListener('pageshow', (event) => {
+            let what = {
+                content : "detail",
+            }
+            fetch('/location-update', {
+            method : 'POST',
+            async : false,
+            headers : {
+                'Content-Type' : 'application/json'
+            },
+            body : JSON.stringify(what)
+            })
+            .then((r)=>r.text())
+            .then((r)=>{
+                $('.navigation').load(location.href+' .navigation');
+            })
+        });
     </script>
 
 </body>

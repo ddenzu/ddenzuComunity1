@@ -6,14 +6,14 @@
     <title>승뮤니티</title>
     <link rel="stylesheet" href="\main.css">
 </head>
-<div style="color: white">
+<body style="position: relative; background-color: #131931;">
     <div class="wrap">
         <div class="nav">
             <h2 class="logo"><a style="text-decoration: none;" href="/list/1">홈🎄</a></h2>
-            <nav id="nav" class="navigation">
+            <nav class="navigation">
                 <a href="/mypage">MYPAGE</a>
                 <% if (!isRead) { %>
-                    <a id="chatAlert" href="/chat" style="color: greenyellow !important;">CHATROOM</a>
+                    <a id="chatAlert" href="/chat">CHATROOM</a>
                 <% } else { %>
                     <a href="/chat">CHATROOM</a>
                 <% } %>
@@ -22,27 +22,6 @@
             </nav>
         </div> 
     </div>
-    <script>
-        window.addEventListener('pageshow', (event) => {
-            let what = {
-                    content : "mypage",
-                }
-                fetch('/location-update', {
-                method : 'POST',
-                async : false,
-                headers : {
-                    'Content-Type' : 'application/json'
-                },
-                body : JSON.stringify(what)
-                })
-                .then((r)=>r.text())
-                .then((r)=>{
-                    $('.navigation').load(location.href+' .navigation');
-                })
-        });
-    </script>
-</div>
-<body>
     <div class="section2">
         <div style="height:60px;"></div>
         <div class="form-box" style="display: flex; flex-direction: column; align-items: center;">
@@ -101,6 +80,23 @@
                 event.preventDefault(); // 폼 전송 막기
                 alert('닉네임을 작성해주세요.'); // 경고창 표시
             }
+        });
+        window.addEventListener('pageshow', (event) => {
+            let what = {
+                content : "mypage",
+            }
+            fetch('/location-update', {
+            method : 'POST',
+            async : false,
+            headers : {
+                'Content-Type' : 'application/json'
+            },
+            body : JSON.stringify(what)
+            })
+            .then((r)=>r.text())
+            .then((r)=>{
+                $('.navigation').load(location.href+' .navigation');
+            })
         });
     </script>
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>

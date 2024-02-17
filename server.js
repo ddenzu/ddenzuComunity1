@@ -283,7 +283,7 @@ app.get('/detail/:id', async (요청, 응답)=>{
     }
 })
 
-app.get('/edit/:id',checkLogin, async (요청, 응답)=>{   
+app.get('/edit/:id',checkLogin, async (요청, 응답)=>{
     try {
         const result = await db.collection('post').findOne({ _id : new ObjectId(요청.params.id)})
         if (!result) {

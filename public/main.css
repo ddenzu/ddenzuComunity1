@@ -415,6 +415,8 @@
   }
 
   .like-box {
+    display: flex;
+    align-items: center;
     float: right;
     width: fit-content;
     padding: 0px 12px 0px 0px;
@@ -740,17 +742,16 @@
   }
   @keyframes colorChange {
     0% {
-      background-color: rgba(255, 255, 255, 0); /* 투명한 흰색 */
+      background-color: rgba(255, 255, 255, 0);
     }
     50% {
-      background-color: rgba(173, 255, 47, 0.3); /* 반투명한 녹색노랑 */
+      background-color: rgba(173, 255, 47, 0.3); 
     }
     100% {
-      background-color: rgba(255, 255, 255, 0); /* 투명한 흰색 */
+      background-color: rgba(255, 255, 255, 0); 
     }
   }
   
-  /* 링크의 스타일을 설정합니다. */
   #chatAlert {
     padding: 0px 1px 0px 1px;
     border-radius: 5px;
@@ -758,9 +759,8 @@
     text-decoration: none;
   }
   
-  /* 애니메이션을 적용합니다. */
   #chatAlert {
-    animation: colorChange 3.5s infinite; /* 5초 간격으로 반복 */
+    animation: colorChange 3.5s infinite; 
   }
   .form-box2 {
     top: -50px;

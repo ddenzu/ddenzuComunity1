@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="\main.css">
     <link rel="icon" href="/public/favicon.ico">
 </head>
-<div style="color: white">
+<body style="position: relative; background-color: #131931;">
     <div class="wrap">
         <div class="nav">
             <h2 class="logo"><a style="text-decoration: none;" href="/list/1">홈🎄</a></h2>
@@ -25,27 +25,6 @@
             </nav>
         </div> 
     </div>
-    <script>
-        window.addEventListener('pageshow', (event) => {
-            let what = {
-                    content : "list",
-                }
-                fetch('/location-update', {
-                method : 'POST',
-                async : false,
-                headers : {
-                    'Content-Type' : 'application/json'
-                },
-                body : JSON.stringify(what)
-                })
-                .then((r)=>r.text())
-                .then((r)=>{
-                    $('.navigation').load(location.href+' .navigation');
-                })
-        });
-    </script>
-</div>
-<body style="position: relative;">
     <div class="section2">
         <div style="height:60px;"></div>
         <%for (let i=0; i<글목록.length; i++){ %>
@@ -297,6 +276,23 @@
             num = parseInt('<%= 페이지넘버 %>')+1
             window.location.href=`/list/next/<%= 글목록[글목록.length-1]._id %>?pageNum=`+num;
         })
+        window.addEventListener('pageshow', (event) => {
+            let what = {
+                content : "list",
+            }
+            fetch('/location-update', {
+            method : 'POST',
+            async : false,
+            headers : {
+                'Content-Type' : 'application/json'
+            },
+            body : JSON.stringify(what)
+            })
+            .then((r)=>r.text())
+            .then((r)=>{
+                $('.navigation').load(location.href+' .navigation');
+            })
+        });
     </script>
     
 

@@ -23,7 +23,7 @@
                 <% for (let i = 0; i < data.length; i++ ){%>
                     <li class="list-group-item" data-id="<%= data[i]._id %>" data-i="<%= i %>" 
                       data-cnt=0>
-                        <h6 style="font-size: 15px;"><%= data[i].title %></h6>
+                        <h6 style="font-size: 15px;"><%= counterpart[i] %></h6>
                         <button style="margin: auto; display: block;" class="dele" data-id="<%= data[i]._id %>">
                           <ion-icon style="font-size: 20px; color: white;"
                           name="trash-outline"></ion-icon>

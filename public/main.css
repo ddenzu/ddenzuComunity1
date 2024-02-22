@@ -705,7 +705,14 @@
       font-weight: 400;
       margin: 3px;
   }
-
+  @media (max-width: 380px) {
+    .navigation a {
+      margin: 2px;
+    }
+    .logo a {
+      margin: 2px;
+    }
+  }
   .navigation a::after {
       content: '';
       position: absolute;
@@ -742,13 +749,13 @@
   }
   @keyframes colorChange {
     0% {
-      background-color: rgba(255, 255, 255, 0);
+      background-color: rgba(255, 255, 255, 0.1);
     }
     50% {
-      background-color: rgba(173, 255, 47, 0.3); 
+      background-color: rgba(173, 255, 47, 0.35); 
     }
     100% {
-      background-color: rgba(255, 255, 255, 0); 
+      background-color: rgba(255, 255, 255, 0.1); 
     }
   }
   
@@ -758,9 +765,8 @@
     color: greenyellow !important;
     text-decoration: none;
   }
-  
   #chatAlert {
-    animation: colorChange 3.5s infinite; 
+    animation: colorChange 1.3s infinite; 
   }
   .form-box2 {
     top: -50px;

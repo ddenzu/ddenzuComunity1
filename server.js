@@ -585,7 +585,8 @@ app.get('/chatroom', checkLogin, async function(요청, 응답){
         let result = await db.collection('chatroom').findOne({ name : {$all:[요청.user.username,요청.query.name]}})
         if(result==null){
             var 저장할거 = {
-                title : 요청.user.username+" 🤝 "+요청.query.name,
+                receiver : 요청.query.name,
+                sender : 요청.user.username,
                 member : [new ObjectId(요청.query.id), 요청.user._id],
                 name : [요청.query.name, 요청.user.username],
                 date : new Date()
@@ -593,11 +594,27 @@ app.get('/chatroom', checkLogin, async function(요청, 응답){
             await db.collection('chatroom').insertOne(저장할거)
             let result1 = await db.collection('chatroom').find({ member : 요청.user._id}).toArray()
             let result2 = await db.collection('chatroom').findOne({ name : {$all:[요청.user.username,요청.query.name]}})
-            응답.render('chat.ejs', { data : result1, cur : 요청.user._id, arrow : result2._id})
+            let counterpart = [];
+            result1.forEach(obj => {
+                obj.name.forEach(nameElement => {
+                    if (nameElement !== 요청.user.username) {
+                        counterpart.push(nameElement);
+                    }
+                });
+            });
+            응답.render('chat.ejs', { data : result1, cur : 요청.user._id, arrow : result2._id, counterpart:counterpart})
         } else {
             let result1 = await db.collection('chatroom').find({ member : 요청.user._id}).toArray()
             let result2 = await db.collection('chatroom').findOne({ name : {$all:[요청.user.username,요청.query.name]}})
-            응답.render('chat.ejs', { data : result1, cur : 요청.user._id, arrow : result2._id})
+            let counterpart = [];
+            result1.forEach(obj => {
+                obj.name.forEach(nameElement => {
+                    if (nameElement !== 요청.user.username) {
+                        counterpart.push(nameElement);
+                    }
+                });
+            });
+            응답.render('chat.ejs', { data : result1, cur : 요청.user._id, arrow : result2._id, counterpart:counterpart})
         }
     } catch(e){
         console.log(e);
@@ -612,7 +629,15 @@ app.get('/chat', checkLogin, async function(요청, 응답){ // navbar에서 올
             { $set: { isRead: true, location: 'chatroom' } }
         );
         let result = await db.collection('chatroom').find({ member: 요청.user._id }).toArray();
-        응답.render('chat.ejs', { data: result, cur: 요청.user._id, arrow: 0 });
+        let counterpart = [];
+        result.forEach(obj => {
+            obj.name.forEach(nameElement => {
+                if (nameElement !== 요청.user.username) {
+                    counterpart.push(nameElement);
+                }
+            });
+        });
+        응답.render('chat.ejs', { data: result, cur: 요청.user._id, arrow: 0, counterpart: counterpart});
     } catch (error) {
         console.error(error);
         응답.status(500).send('서버 에러');
@@ -744,7 +769,15 @@ app.post('/delete-chat', async (요청, 응답)=>{
         await db.collection('chatroom').deleteOne({ _id : new ObjectId(요청.body.삭제id)});
         await db.collection('message').deleteMany({ parent: 요청.body.삭제id });
         let result1 = await db.collection('chatroom').find({ member : 요청.user._id}).toArray();
-        return 응답.render('chat.ejs', { data : result1, cur : 요청.user._id, arrow : 0});
+        let counterpart = [];
+        result1.forEach(obj => {
+            obj.name.forEach(nameElement => {
+                if (nameElement !== 요청.user.username) {
+                    counterpart.push(nameElement);
+                }
+            });
+        });
+        return 응답.render('chat.ejs', { data : result1, cur : 요청.user._id, arrow : 0, counterpart});
     } catch(e) {
         console.error(e);
         return 응답.status(500).send('서버에러')

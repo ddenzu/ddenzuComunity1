@@ -132,65 +132,31 @@ const upload = multer({
 
 function checkLogin(요청, 응답, next) {
     if (요청.user) {
-        next()
-    }
-    else {
+        next();
+    } else {
         응답.send("<script>alert('로그인 요망');window.location.replace(`/login`)</script>");
     }
 }
 
-app.get('/write', async (요청, 응답) => {
-    if (!요청.user){
-        응답.send("<script>alert('로그인 요망');window.location.replace(`/login`)</script>");
-    }
-    else {
-        let result = await db.collection('user').findOne({ username : 요청.user.username})
-        if (요청.user.username==result.username){
-            응답.render('write.ejs')
-        }
-        else {
+app.get('/write', checkLogin, async (요청, 응답) => {
+    try {
+        let result = await db.collection('user').findOne({ username: 요청.user.username });
+        if (요청.user.username == result.username) {
+            응답.render('write.ejs');
+        } else {
             응답.send("<script>alert('로그인 요망');window.location.replace(`/login`)</script>");
         }
+    } catch (error) {
+        console.error(error);
+        응답.status(500).send('서버 에러');
     }
-})
+});
 
-// app.post('/write', upload.single('img1'), async (요청, 응답) => { 
-//     try {
-//         if (요청.body.title==""||요청.body.content==""){
-//             return 응답.send('내용이 존재하지 않습니다');
-//         } 
-//         const postDetails = {
-//             title: 요청.body.title,
-//             content: 요청.body.content,
-//             작성자_id: 요청.user._id,
-//             작성자: 요청.user.username,
-//             like: 0,
-//             date: dateFormat1.dateFormat(new Date())
-//         }
-//         if (요청.file==undefined){ // 글만 썼을 때
-//             await db.collection('post').insertOne(postDetails);
-//         }
-//         else { // 이미지 OR 영상 첨부 했을 때
-//             if(요청.file.mimetype=='video/mp4' || 요청.file.mimetype=='video/quicktime'){
-//                 postDetails.vidName = 요청.file.key;
-//             }
-//             else {
-//                 postDetails.imgName = 요청.file.key;      
-//             }
-//             await db.collection('post').insertOne(postDetails);
-//         }
-//         응답.redirect('/list/1'); // redirect 하면 url 로 GET 요청을 자동으로 해줌, 그래서  { 글목록 : result} 이런거 안줘도됨   
-//     } catch(e) {
-//         console.log(e);
-//         응답.status(500).send('서버에러');
-//     }
-// })
 app.post('/write', upload.array('img1'), async (요청, 응답) => { 
     try {
         if (요청.body.title === "" || 요청.body.content === ""){
             return 응답.send('내용이 존재하지 않습니다');
-        } 
-
+        }
         const postDetails = {
             title: 요청.body.title,
             content: 요청.body.content,
@@ -199,13 +165,11 @@ app.post('/write', upload.array('img1'), async (요청, 응답) => {
             like: 0,
             date: dateFormat1.dateFormat(new Date())
         };
-
         if (요청.files.length === 0) { // 이미지 또는 동영상이 없을 때
             await db.collection('post').insertOne(postDetails);
         } else {
             const imgNames = [];
             const vidNames = [];
-
             for (const file of 요청.files) {
                 if (file.mimetype === 'video/mp4' || file.mimetype === 'video/quicktime') {
                     vidNames.push(file.key);
@@ -213,15 +177,12 @@ app.post('/write', upload.array('img1'), async (요청, 응답) => {
                     imgNames.push(file.key);
                 }
             }
-
             if (imgNames.length > 0) {
                 postDetails.imgName = imgNames;
             }
-
             if (vidNames.length > 0) {
                 postDetails.vidName = vidNames;
             }
-
             await db.collection('post').insertOne(postDetails);
         }
 
@@ -335,6 +296,18 @@ app.delete('/delete', async (요청, 응답)=>{
     }
 })
 
+async function optimizeImage(imageUrl, w, h) {
+    const imageBuffer = await axios.get(`https:/ddenzubucket.s3.ap-northeast-2.amazonaws.com/${imageUrl}`, { responseType: 'arraybuffer' }).then(response => Buffer.from(response.data));
+    // 이미지 최적화
+    const optimizedImageBuffer = await sharp(imageBuffer)
+        .rotate()
+        .resize({ width: w, height: h, fit: 'cover' }) // 적절한 사이즈로 조정
+        .toBuffer();
+
+    // 최적화된 이미지를 base64로 인코딩하여 반환
+    return `data:image/jpeg;base64,${optimizedImageBuffer.toString('base64')}`;
+}
+
 app.get('/list/:num', async (요청, 응답) => {
     console.log("client IP: " +requestIp.getClientIp(요청));
     let isRead = 요청.user ? 요청.user.isRead : true;
@@ -344,19 +317,7 @@ app.get('/list/:num', async (요청, 응답) => {
         const 채팅사람 = 요청.user ? 요청.user.username : "익명";
         let resizeImgPromises = result.map(async (item) => {
             if (item.imgName) { 
-                const imageUrl = Array.isArray(item.imgName) ? item.imgName[0] : item.imgName;
-
-                // 이미지 URL에서 이미지 파일 받아오기
-                const imageBuffer = await axios.get(`https:/ddenzubucket.s3.ap-northeast-2.amazonaws.com/${imageUrl}`, { responseType: 'arraybuffer' }).then(response => Buffer.from(response.data));
-                
-                // 이미지 최적화
-                const optimizedImageBuffer = await sharp(imageBuffer)
-                    .rotate()
-                    .resize({ width: 75, height: 85, fit: 'cover' }) // 적절한 사이즈로 조정
-                    .toBuffer();
-
-                // 최적화된 이미지를 base64로 인코딩하여 배열에 추가
-                return `data:image/jpeg;base64,${optimizedImageBuffer.toString('base64')}`;
+                return await optimizeImage(Array.isArray(item.imgName) ? item.imgName[0] : item.imgName,75,80);
             } else {
                 return ''; // 빈 문자열 추가
             }
@@ -389,19 +350,7 @@ app.get('/list/next/:num', async (요청, 응답) => {
         let 페이지넘버 = 요청.query.pageNum;
         let resizeImgPromises = result.map(async (item) => {
             if (item.imgName) { 
-                const imageUrl = Array.isArray(item.imgName) ? item.imgName[0] : item.imgName;
-
-                // 이미지 URL에서 이미지 파일 받아오기
-                const imageBuffer = await axios.get(`https:/ddenzubucket.s3.ap-northeast-2.amazonaws.com/${imageUrl}`, { responseType: 'arraybuffer' }).then(response => Buffer.from(response.data));
-
-                // 이미지 최적화
-                const optimizedImageBuffer = await sharp(imageBuffer)
-                    .rotate()
-                    .resize({ width: 75, height: 85, fit: 'cover' }) // 적절한 사이즈로 조정
-                    .toBuffer();
-
-                // 최적화된 이미지를 base64로 인코딩하여 배열에 추가
-                return `data:image/jpeg;base64,${optimizedImageBuffer.toString('base64')}`;
+                return await optimizeImage(Array.isArray(item.imgName) ? item.imgName[0] : item.imgName,75,80);
             } else {
                 return ''; // 빈 문자열 추가
             }
@@ -435,19 +384,7 @@ app.get('/list/prev/:num', async (요청, 응답) => {
         let 페이지넘버 = 요청.query.pageNum;
         let resizeImgPromises = result.map(async (item) => {
             if (item.imgName) { 
-                const imageUrl = Array.isArray(item.imgName) ? item.imgName[0] : item.imgName;
-
-                // 이미지 URL에서 이미지 파일 받아오기
-                const imageBuffer = await axios.get(`https:/ddenzubucket.s3.ap-northeast-2.amazonaws.com/${imageUrl}`, { responseType: 'arraybuffer' }).then(response => Buffer.from(response.data));
-
-                // 이미지 최적화
-                const optimizedImageBuffer = await sharp(imageBuffer)
-                    .rotate()
-                    .resize({ width: 75, height: 85, fit: 'cover' }) // 적절한 사이즈로 조정
-                    .toBuffer();
-
-                // 최적화된 이미지를 base64로 인코딩하여 배열에 추가
-                return `data:image/jpeg;base64,${optimizedImageBuffer.toString('base64')}`;
+                return await optimizeImage(Array.isArray(item.imgName) ? item.imgName[0] : item.imgName,75,80);
             } else {
                 return ''; // 빈 문자열 추가
             }
@@ -592,30 +529,18 @@ app.get('/chatroom', checkLogin, async function(요청, 응답){
                 date : new Date()
             }
             await db.collection('chatroom').insertOne(저장할거)
-            let result1 = await db.collection('chatroom').find({ member : 요청.user._id}).toArray()
-            let result2 = await db.collection('chatroom').findOne({ name : {$all:[요청.user.username,요청.query.name]}})
-            let counterpart = [];
-            result1.forEach(obj => {
-                obj.name.forEach(nameElement => {
-                    if (nameElement !== 요청.user.username) {
-                        counterpart.push(nameElement);
-                    }
-                });
+        } 
+        let result1 = await db.collection('chatroom').find({ member : 요청.user._id}).toArray()
+        let result2 = await db.collection('chatroom').findOne({ name : {$all:[요청.user.username,요청.query.name]}})
+        let counterpart = [];
+        result1.forEach(obj => {
+            obj.name.forEach(nameElement => {
+                if (nameElement !== 요청.user.username) {
+                    counterpart.push(nameElement);
+                }
             });
-            응답.render('chat.ejs', { data : result1, cur : 요청.user._id, arrow : result2._id, counterpart:counterpart})
-        } else {
-            let result1 = await db.collection('chatroom').find({ member : 요청.user._id}).toArray()
-            let result2 = await db.collection('chatroom').findOne({ name : {$all:[요청.user.username,요청.query.name]}})
-            let counterpart = [];
-            result1.forEach(obj => {
-                obj.name.forEach(nameElement => {
-                    if (nameElement !== 요청.user.username) {
-                        counterpart.push(nameElement);
-                    }
-                });
-            });
-            응답.render('chat.ejs', { data : result1, cur : 요청.user._id, arrow : result2._id, counterpart:counterpart})
-        }
+        });
+        응답.render('chat.ejs', { data : result1, cur : 요청.user._id, arrow : result2._id, counterpart:counterpart})
     } catch(e){
         console.log(e);
         응답.status(500).send('서버에러')

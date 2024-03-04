@@ -12,7 +12,13 @@
 <body style="position: relative; background-color: #131931;">
     <div class="wrap">
         <div class="nav">
-            <h2 class="logo"><a style="text-decoration: none;" href="/list/1">홈🎄</a></h2>
+            <h2 class="logo">
+                <a style="text-decoration: none;" href="/list/1">
+                    <img class="home-img"
+                    src='/image/home.png' 
+                    loading="lazy" onerror="this.src='/image/dinosaur.png'"/>
+                </a>
+            </h2>
             <nav class="navigation">
                 <a href="/mypage">MYPAGE</a>
                 <% if (!isRead) { %>
@@ -26,7 +32,7 @@
         </div> 
     </div>
     <div class="section2">
-        <div style="height:60px;"></div>
+        <div class="section2-1"></div>
         <%for (let i=0; i<글목록.length; i++){ %>
             <% k = 0 %>
             <div class="white-bg">
@@ -59,7 +65,7 @@
                         <div>
                             <button class="btn"
                             data-id="<%= 글목록[i].작성자_id %>" data-name="<%= 글목록[i].작성자 %>">
-                            <a class="btn-a" href="/chatroom?name=<%= 글목록[i].작성자 %>&id=<%= 글목록[i].작성자_id %>">작성자랑 채팅하기</a>
+                            <a class="btn-a" href="/chatroom?name=<%= 글목록[i].작성자 %>&id=<%= 글목록[i].작성자_id %>">채팅하기</a>
                             </button>
                         </div>
                     </h4>
@@ -112,6 +118,7 @@
                 </button>
             </div>
         </div>
+        <div style="clear: both;"></div>
     </div>
     <script type="module">
         import {makeSnowflake2} from '/snow.js';

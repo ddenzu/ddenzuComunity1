@@ -39,6 +39,9 @@
     margin: 0 auto;
     max-width: 850px; 
   }
+  .section2-1{
+    height: 55px;
+  }
   .white-bg {
     border-radius: 10px;
     background: rgba(0,0,0,0.2);
@@ -328,6 +331,9 @@
       height: 300px;
       overflow-y: scroll;
       padding: 10px;
+    }
+    .section2-1{
+      height: 48px;
     }
   }
 
@@ -680,7 +686,7 @@
   }
 
   .logo{
-    font-size: 1.2em;
+    font-size: 1.1em;
     color: #fff;
     user-select: none;
     margin: 0;
@@ -703,11 +709,14 @@
       color: #fff !important;
       text-decoration: none;
       font-weight: 400;
-      margin: 3px;
+      padding-left: 7px;
+      border-left: 1px solid white;
+      margin-left: 3px !important;
   }
   @media (max-width: 380px) {
     .navigation a {
       margin: 2px;
+      font-size: .8em;
     }
     .logo a {
       margin: 2px;
@@ -737,13 +746,13 @@
     position: fixed;
     width: 100%;
     max-width: 850px;
-    /* min-width: 430px; */
     padding: 15px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    align-items: baseline;
     z-index: 99;
-    background: rgba(0,0,0,0.45); 
+    background: rgba(0, 0, 0, 0.6); 
     min-width: 347px;
     box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.3);
   }
@@ -782,9 +791,22 @@
     justify-content: center;
     align-items: center;
   }
+  .home-img {
+    cursor: pointer; 
+    width: 23px; 
+    height: 23px;         
+    filter: brightness(0) invert(1); 
+  }
   @media screen and (max-width: 430px) {
     .nav {
-      padding: 15px;
+      padding: 13px;
+    }
+    .nav a {
+      margin-left: 4px;
+    }
+    .logo img {
+      width: 20px;
+      height: 20px;
     }
   }
 

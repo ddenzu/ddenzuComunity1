@@ -23,6 +23,7 @@
     min-height: 100vh;
     position: relative;
     background: url('https:/ddenzubucket.s3.ap-northeast-2.amazonaws.com/loginbackground1.jpg')no-repeat;
+    
     background-position: center;
     background-size: cover;
     z-index: 0;
@@ -78,6 +79,11 @@
     font-weight: 600;
   }
 
+  .list-right span {
+    vertical-align: middle;
+    margin-left: 3px;
+  }
+
   .list-left {
     float: left;
     margin-top: 6px;
@@ -108,6 +114,9 @@
     box-sizing: border-box;
   }
   .form-box {
+    display: flex; 
+    flex-direction: column; 
+    align-items: center;
     top: -50px;
     padding: 20px 20px 10px 20px;
     margin: 40px;
@@ -147,8 +156,24 @@
     overflow: auto;
     width: 90%;
     margin: 0 auto;
-    margin-top: 5px;
+    margin-top: 10px;
     box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  }
+  .detail-bg > h4 {
+    font-size: x-large; 
+    padding: 5px; 
+    margin: 0px; 
+    border-top: 2px #494a51 solid;
+    border-bottom: 2px #494a51 solid;
+  }
+  .detail-bg .date-p {
+    float: right; 
+    font-size: 14px;
+    padding: 5px; 
+    padding-top: 13px; 
+    margin: 0px;
+    font-weight: normal;
+    color: #212529;
   }
   .search {
     height: 30px;
@@ -175,6 +200,21 @@
     margin: 0 auto;
     margin-bottom: 5px;
     width: 65%;
+  }
+  .newPost {
+    position: absolute; 
+    right: 5px; 
+    background: rgba(0, 0, 0, 0.3);       
+    padding: 3px; 
+    padding-left: 5px; 
+    border-radius: 5px; 
+    top: 0px;    
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  }
+  .newPost a {
+    text-decoration-line: none; 
+    color: #fff;
+    font-size: 14px;
   }
   .search-bar{
     width: 55%;
@@ -333,7 +373,7 @@
       padding: 10px;
     }
     .section2-1{
-      height: 48px;
+      height: 50px;
     }
   }
 
@@ -416,7 +456,7 @@
     margin: 40px auto;
     width: 80%;
     text-align: center;
-    background-color:rgba(0, 0, 0, 0.3);
+    background-color:rgba(0, 0, 0, 0.2);
     border-radius: 5px;
   }
 
@@ -430,6 +470,11 @@
     background-color: #5A545C;
     box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
   }
+
+  .like-box .likee {
+    display: flex; 
+    align-items: center;
+  } 
 
   .like {
     color: white;
@@ -702,6 +747,9 @@
       font-weight: 400;
       margin: 3px;
   }
+  .logo a > img {
+    vertical-align: middle;
+  }
 
   .navigation a {
       position: relative;
@@ -744,12 +792,12 @@
   }
   .nav {
     position: fixed;
+    height: 55px;
     width: 100%;
     max-width: 850px;
     padding: 15px 20px;
     display: flex;
     justify-content: space-between;
-    align-items: center;
     align-items: baseline;
     z-index: 99;
     background: rgba(0, 0, 0, 0.6); 
@@ -880,6 +928,16 @@
     top: 430px;
     width: 25%;
     cursor: pointer;
+  }
+  .draggableChatbox {
+    background-color: white; 
+    width: 100%; 
+    height: 130px !important;
+    border: 1px solid darkgray; 
+    border-radius: 5px; 
+    overflow-y: scroll;   
+    background: rgba(255,255,255,0.3); 
+    position: relative;
   }
   @keyframes fall {
     from{}

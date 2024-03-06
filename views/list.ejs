@@ -13,9 +13,8 @@
     <div class="wrap">
         <div class="nav">
             <h2 class="logo">
-                <a style="text-decoration: none;" href="/list/1">
-                    <img class="home-img"
-                    src='/image/home.png' 
+                <a href="/list/1">
+                    <img class="home-img" src='/image/home.png' 
                     loading="lazy" onerror="this.src='/image/dinosaur.png'"/>
                 </a>
             </h2>
@@ -56,16 +55,15 @@
                         margin-left: 3px;" href="/edit/<%= 글목록[i]._id %>">
                             <ion-icon style="font-size: 20px;" name="create-outline"></ion-icon>
                         </a>
-                        <span style="vertical-align: middle;
-                        margin-left: 3px;" class="delete" data-id="<%= 글목록[i]._id %>">
+                        <span class="delete" data-id="<%= 글목록[i]._id %>">
                             <ion-icon style="font-size: 20px;" name="trash-outline"
                             data-id="<%= 글목록[i]._id %>"></ion-icon>
                         </span>
                         <p>작성자: <%= 글목록[i].작성자 %></p>
                         <div>
-                            <button class="btn"
-                            data-id="<%= 글목록[i].작성자_id %>" data-name="<%= 글목록[i].작성자 %>">
-                            <a class="btn-a" href="/chatroom?name=<%= 글목록[i].작성자 %>&id=<%= 글목록[i].작성자_id %>">채팅하기</a>
+                            <button class="btn" data-id="<%= 글목록[i].작성자_id %>" 
+                                data-name="<%= 글목록[i].작성자 %>">
+                                <a class="btn-a" href="/chatroom?name=<%= 글목록[i].작성자 %>&id=<%= 글목록[i].작성자_id %>">작성자와 채팅하기</a>
                             </button>
                         </div>
                     </h4>
@@ -87,25 +85,20 @@
                 <ion-icon class="forward" name="caret-forward-outline"></ion-icon>
                 <ion-icon style="font-size: 24px;" class="last" name="ellipsis-horizontal-outline"></ion-icon>
             </div>
-            <div style="position: absolute; right: 5px; background: rgba(0, 0, 0, 0.3);
-            padding: 3px; padding-left: 5px; border-radius: 5px; top: 0px;
-            box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);">
-                <a href="/write" style="text-decoration-line: none; color: #fff;
-                font-size: 14px;">글쓰기✏️</a></button>
+            <div class="newPost">
+                <a href="/write">글쓰기✏️</a>
             </div>
         </div>
         <div class="ccontainer">
             <div class="search-bar">
                 <input type="text" class="search_2" id="ssearch-input" placeholder=" 글제목으로 검색">
-                <button type="submit" id="ssearch"><ion-icon name="search-outline"></ion-icon></button>
+                <button type="submit" id="ssearch">
+                    <ion-icon name="search-outline"></ion-icon>
+                </button>
             </div>
         </div>
-
-
         <div class="curtain" id="draggableElement">
-            <div class="chat-Box" style="background-color: white; width: 100%; height: 130px !important;
-            border: 1px solid darkgray; border-radius: 5px; overflow-y: scroll;
-            background: rgba(255,255,255,0.3); position: relative;">
+            <div class="draggableChatbox">
                 <div id="chatBox"></div>
             </div>
             <div class="input-group mb-3" style="width: 100%; ">
@@ -214,7 +207,7 @@
                             alert('삭제완료')
                             location.reload();
                         }
-                    }) // 삭제버튼 누르면 부모요소 통채로 숨김
+                    }) 
                 }
                 else {
                     return 0
@@ -233,7 +226,6 @@
             var 입력값 = $('#ssearch-input').val()
             window.location.replace('/search2?value='+입력값) 
           }})
-
 
         document.getElementsByClassName('page-btn')[('<%= 페이지넘버 %>'-1)%5].classList.add('nowPage');
         $('.page-btn').click(function(e){
@@ -271,8 +263,8 @@
             var chat = `<div class="chatOne"> 🐵${data}<br/><div>`
             // var chat = `<div class="chatOne"><%= 채팅사람 %>: ${data}<div>`
             $('#chatBox').append(chat)
-            var 실제높이 = document.querySelector('.chat-Box').scrollHeight;
-            $('.chat-Box').scrollTop(실제높이+100); // 여기서 스크롤맨밑으로 (데이터를 수신했을때)
+            var 실제높이 = document.querySelector('.draggableChatbox').scrollHeight;
+            $('.draggableChatbox').scrollTop(실제높이+100); // 여기서 스크롤맨밑으로 (데이터를 수신했을때)
         })
 
         $('.back').click(function(){

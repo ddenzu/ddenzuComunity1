@@ -2,14 +2,18 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, minimum-scale=1">
-    <link rel="stylesheet" href="\main.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, minimum-scale=1">    <link rel="stylesheet" href="\main.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
-<body style="background-color: #131931;">
+<body style="position: relative; background-color: #131931;">
     <div class="wrap">
         <div class="nav">
-            <h2 class="logo"><a style="text-decoration: none;" href="/list/1">홈</a></h2>
+            <h2 class="logo">
+                <a href="/list/1">
+                    <img class="home-img" src='/image/home.png' 
+                    loading="lazy" onerror="this.src='/image/dinosaur.png'"/>
+                </a>
+            </h2>
             <nav class="navigation">
                 <a href="/mypage">MYPAGE</a>
                 <% if (!isRead) { %>
@@ -25,10 +29,8 @@
     <div class="section2">
         <div style="height:55px;"></div>
         <div class="detail-bg">
-            <h4 style="font-size: x-large; padding: 5px; margin: 0px; border-top: 2px #494a51 solid;
-            border-bottom: 2px #494a51 solid;"><%= 글목록.title %>
-            <p style="float: right; font-size: 14px;padding: 5px; padding-top: 13px; margin: 0px;
-            font-weight: normal;color: #212529;"><%= 글목록.date %></p>
+            <h4 ><%= 글목록.title %>
+            <p class="date-p"><%= 글목록.date %></p>
             </h4>
             <p style="font-size: small; margin-top: 5px;">작성자:
                 <a class="btn-a" style="text-decoration: none; color: black;" 
@@ -63,7 +65,7 @@
                 <%- contentWithLinks %> 
             </p>
             <div class="like-box">
-                <div id="likee" style="display: flex; align-items: center;">
+                <div id="likee">
                     <span name="like" class="like" data-postId="<%= 글목록._id %>" id="likeButton">
                         <i class="fa-solid fa-thumbs-up like-icon"></i>
                     </span>
@@ -78,8 +80,11 @@
                 <div class="ccontainer">
                     <div class="comment-bar">
                         <div class="comment-write" style="width:97%;">
-                            <textarea style="width: 80%; float: left; padding-top: 2px;" class="comment_2" id="comment-input" placeholder=" 엔터누르면 줄바꿈"></textarea>
-                            <button style="float: right;" id="comment-btn"><ion-icon name="paper-plane-outline"></ion-icon></button>
+                            <textarea style="width: 80%; float: left; padding-top: 2px;" 
+                            class="comment_2" id="comment-input" placeholder=" 엔터누르면 줄바꿈"></textarea>
+                            <button style="float: right;" id="comment-btn">
+                                <ion-icon name="paper-plane-outline"></ion-icon>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -154,7 +159,7 @@
                 
             </div>
         </div>
-        <div class="infomation" style="background-color:rgba(0, 0, 0, 0.2);">
+        <div class="infomation">
         </div>
     </div>
     <script type="module">

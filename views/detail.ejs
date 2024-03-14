@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, minimum-scale=1">    <link rel="stylesheet" href="\main.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
-<body style="position: relative; background-color: #131931;">
+<body style="position: relative; background-color: #1c1c1c;">
     <div class="wrap">
         <div class="nav">
             <h2 class="logo">
@@ -32,8 +32,8 @@
             <h4 ><%= 글목록.title %>
             <p class="date-p"><%= 글목록.date %></p>
             </h4>
-            <p style="font-size: small; margin-top: 5px;">작성자:
-                <a class="btn-a" style="text-decoration: none; color: black;" 
+            <p>
+                <a class="btn-a" style="text-decoration: none; color: #EFEFEF; margin-left: 3px;" 
                 href="/chatroom?name=<%= 글목록.작성자 %>&id=<%= 글목록.작성자_id %>">
                     <img style="cursor: pointer; width: 25px; height: 25px; vertical-align: bottom; margin-right: 2px;" 
                     src="https://ddenzubucket.s3.ap-northeast-2.amazonaws.com/<%= 프로필 %>" 
@@ -53,7 +53,7 @@
                     src="https://ddenzubucket.s3.ap-northeast-2.amazonaws.com/<%= 이미지주소[i] %>"/>
                 </div>
             <% } %>
-            <p>
+            <p style="font-size: 15px;">
                 <% 
                 // 글목록.content에 있는 텍스트에서 주소를 찾아 링크로 변환합니다.
                 // 정규 표현식을 사용하여 http:// 또는 https://로 시작하는 주소를 찾습니다.
@@ -142,7 +142,7 @@
                                         </div>
                                         <span style="margin: 7px 0px 0px 7px;" name="add" id="commentDel" data-id="<%= 대댓글[j]._id %>"
                                             data-postId="<%= 대댓글[j].postId %>" data-userId="<%= 대댓글[j].userId %>">
-                                            <ion-icon style="font-size: 20px; color: #5a545c;" name="trash-outline"></ion-icon>
+                                            <ion-icon style="font-size: 20px; color: #87FCC4" name="trash-outline"></ion-icon>
                                         </span>
                                     </div>
                                 <%} %>
@@ -150,7 +150,7 @@
                         </div>
                         <span name="add" id="commentDel" data-id="<%= 댓글목록[i]._id %>"
                             data-postId="<%= 댓글목록[i].postId %>" data-userId="<%= 댓글목록[i].userId %>">
-                            <ion-icon style="font-size: 20px; color: #5a545c;" name="trash-outline"></ion-icon>
+                            <ion-icon style="font-size: 20px; color: #87FCC4;" name="trash-outline"></ion-icon>
                         </span>
                     </p>
                     <div style="clear: both; height: 0px;"></div>

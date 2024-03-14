@@ -6,7 +6,7 @@
     <title>승뮤니티</title>
     <link rel="stylesheet" href="\main.css">
 </head>
-<body style="position: relative; background-color: #131931;">
+<body style="position: relative; background-color: #1c1c1c;">
     <div class="wrap">
         <div class="nav">
             <h2 class="logo">
@@ -29,32 +29,38 @@
     </div>
     <div class="section2">
         <div style="height:60px;"></div>
-        <div class="form-box">
-            <div style="width: 100px; height: 100px; border-radius: 50%; overflow: hidden; margin-bottom: 10px;">
-                <img style="width: 100%; height: 100%; object-fit: cover;" src="https://ddenzubucket.s3.ap-northeast-2.amazonaws.com/<%= 아이디.imgName %>">
+        <div class="form-box form-box3">
+            <div style="width:100%; background: linear-gradient(135deg, rgba(251, 204, 154, 1) 0%, rgba(121, 179, 151, 1) 46%, rgba(121, 179, 151, 1) 100%); display: flex;
+            justify-content: center; border-top-left-radius: 20px; border-top-right-radius: 20px;">
+                <div style="width: 100px; height: 100px; border-radius: 50%; overflow: hidden; 
+                margin-bottom: 35px;margin-top: 35px; border: 2px solid #EFEFEF;">
+                    <img style="width: 100%; height: 100%; object-fit: cover;" src="https://ddenzubucket.s3.ap-northeast-2.amazonaws.com/<%= 아이디.imgName %>">
+                </div>
             </div>
+            
+            <p style="margin-bottom: 5px;margin-top: 20px;">프로필 사진 설정</p>
+            <ion-icon id="beforeChange1" style="font-size: 25px; color: #EFEFEF;" name="create-outline"></ion-icon>
 
-            <p style="margin-bottom: 5px;">프로필 사진 설정</p>
-            <ion-icon id="beforeChange1" style="font-size: 25px; color: white;" name="create-outline"></ion-icon>
-
-            <form class="changeProfile changeNameVisible" method="POST" action="/profileImg" enctype="multipart/form-data" style="margin-bottom: 10px;">
-                <input type="file" name="img1" accept="image/*" required>
-                <button type="submit" style="color: white;background-color: #4CAF50; padding: 10px; border-radius: 20px; border: none; cursor: pointer;">프로필사진 적용</button>
+            <form class="changeProfile changeNameVisible" method="POST" action="/profileImg" enctype="multipart/form-data" style="margin-bottom: 10px;text-align: center;">
+                <input style="border: 1px #494a51 solid; color: #fff;" type="file" name="img1" accept="image/*" required>
+                <button type="submit" style="color: #fff; background-color: #4CAF50; padding: 10px; border-radius: 20px; 
+                border: none; cursor: pointer;">프로필사진 적용</button>
             </form>
 
-            <div style="border-top: 1px solid white; width: 70%; margin: 10px;"></div>
+            <div style="border-top: 1px #494a51 solid; width: 70%; margin: 20px;"></div>
 
-            <p style="margin-bottom: 10px;">닉네임: <%= 아이디.username %></p>
-            <ion-icon id="beforeChange2" style="font-size: 25px; color: white; margin-bottom: 5px;" name="create-outline"></ion-icon>
-            <form class="changeName changeNameVisible" id="changeNameForm" method="POST" action="/change-name" style="margin-bottom: 10px;">
-                <input id="newNameInput" style="color: white;" type="text" name="name" placeholder="새로운 닉네임을 작성해주세요.">
-                <button type="submit" style="color: white;background-color: #4CAF50; padding: 10px; border-radius: 20px; border: none; cursor: pointer;">변경사항 적용</button>
+            <p style="margin-bottom: 10px; font-weight: 600;"><%= 아이디.username %></p>
+            <ion-icon id="beforeChange2" style="font-size: 25px; color: #EFEFEF; margin-bottom: 5px;" name="create-outline"></ion-icon>
+            <form class="changeName changeNameVisible" id="changeNameForm" method="POST" action="/change-name" style="margin-bottom: 10px;text-align: center;">
+                <input id="newNameInput" style="color: #EFEFEF; border: 1px #494a51 solid;" type="text" name="name" placeholder="새로운 닉네임을 작성해주세요.">
+                <button type="submit" style="color: #fff; background-color: #4CAF50; padding: 10px; border-radius: 20px; 
+                border: none; cursor: pointer;">변경사항 적용</button>
             </form>
 
-            <div style="border-top: 1px solid white; width: 70%; margin: 10px;"></div>
+            <div style="border-top: 1px #494a51 solid; width: 70%; margin: 10px;"></div>
 
-            <form style="margin-bottom: 10px; margin-top: 5px;">
-                <a href="/logout" style="color: white;">로그아웃</a>
+            <form style="margin-bottom: 25px; margin-top: 10px;">
+                <a href="/logout" style="color: #EFEFEF;">로그아웃</a>
             </form>
         </div>
         

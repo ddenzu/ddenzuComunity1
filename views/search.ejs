@@ -28,10 +28,12 @@
                             <a href="/edit/<%= 글목록[i]._id %>">✏️</a>
                             <span class="delete" data-id="<%= 글목록[i]._id %>">🗑️</span>
                             <p>작성자: <%= 글목록[i].작성자 %></p>
-                            <form action="/chat" method="POST">
-                                <button type="submit" class="btn" data-id="<%= 글목록[i].작성자_id %>"
-                                    data-title="<%= 글목록[i].title %>">작성자랑 채팅하기</button>
-                            </form>
+                            <div>
+                                <button class="btn" data-id="<%= 글목록[i].작성자_id %>" 
+                                    data-name="<%= 글목록[i].작성자 %>">
+                                    <a class="btn-a" href="/chatroom?name=<%= 글목록[i].작성자 %>&id=<%= 글목록[i].작성자_id %>">채팅하기</a>
+                                </button>
+                            </div>
                         </h4>
                     </div>
                     

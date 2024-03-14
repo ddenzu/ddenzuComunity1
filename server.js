@@ -50,12 +50,12 @@ new MongoClient(url).connect().then((client) => {
 passport.use(new LocalStrategy(async (입력한아이디, 입력한비번, cb) => {
     let result = await db.collection('user').findOne({ username: 입력한아이디 })
     if (!result) {
-        return cb(null, false, { message: '아이디 DB에 없음' })
+        return cb(null, false, { message: '존재하지 않는 아이디 입니다.' })
     }
     if (await bcrypt.compare(입력한비번, result.password)) { // 해싱한 비번 확인
         return cb(null, result) // 여기 result 가 serializeUser (user) 로 들어감
     } else {
-        return cb(null, false, { message: '비번불일치' });
+        return cb(null, false, { message: '비밀번호가 일치하지 않습니다.' });
     }
 })) // 유저가 제출한 id,password가 db랑 일치하는지 확인하는 로직
 

@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="\main.css">
     <link rel="icon" href="/public/favicon.ico">
 </head>
-<body style="position: relative; background-color: #131931;">
+<body style="position: relative; background-color: #1c1c1c;">
     <div class="wrap">
         <div class="nav">
             <h2 class="logo">
@@ -63,7 +63,7 @@
                         <div>
                             <button class="btn" data-id="<%= 글목록[i].작성자_id %>" 
                                 data-name="<%= 글목록[i].작성자 %>">
-                                <a class="btn-a" href="/chatroom?name=<%= 글목록[i].작성자 %>&id=<%= 글목록[i].작성자_id %>">작성자와 채팅하기</a>
+                                <a class="btn-a" href="/chatroom?name=<%= 글목록[i].작성자 %>&id=<%= 글목록[i].작성자_id %>">채팅하기</a>
                             </button>
                         </div>
                     </h4>
@@ -102,10 +102,10 @@
                 <div id="chatBox"></div>
             </div>
             <div class="input-group mb-3" style="width: 100%; ">
-                <input type="text" id="input1" class="form-control" aria-describedby="button-addon2" 
-                style="height: 25px; font-size: .7em;" placeholder="엔터시전송">
+                <input type="text" id="input1" class="form-control" aria-describedby="button-addon2"  
+                placeholder="엔터시전송">
                 <button type="button" id="button-addon2"
-                style="height: 25px; background-color: #ecb4b2; border: none; border-radius: 2px;">
+                style="height: 25px; background-color: #1fd39a; border: none; border-radius: 2px;">
                 <ion-icon style="color: white; font-size: 18px;
                 margin-top: 3px;" name="paper-plane-outline"></ion-icon>
                 </button>

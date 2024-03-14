@@ -10,16 +10,17 @@
 <body class="grey-bg">
     <div class="section2">
         <div style="height:60px;"></div>
-        <form class="form-box" action="/write" method="POST" enctype="multipart/form-data">
+        <form class="form-box form-box4" action="/write" method="POST" enctype="multipart/form-data">
             <h4>글쓰기</h4>
-            <input style=" color: white;" name="title" placeholder="제목" required>
+            <input name="title" placeholder="제목" required>
             <!-- <input style="height: 150px;" name="content" placeholder="본문" required> -->
-            <textarea style="white-space: pre-line; resize: none; width: 100%;
-            height: 150px; background: transparent; border: 2px solid rgba(255,255,255,0.5);
-            padding: 5px 0px 0px 5px; border-radius: 5px; color: white;" name="content"  placeholder="본문, 엔터눌러서 줄바꿈" required></textarea>
-            <input style="margin-bottom: 5px;" type="file" name="img1" accept="image/* video/*" multiple>
-            <button style="background: transparent;  padding: 10px 5px 0px 0px; float: right;" 
-            type="submit"><ion-icon style="color: white;" name="paper-plane-outline"></ion-icon></button>
+            <textarea name="content"  placeholder="본문, 엔터눌러서 줄바꿈" required></textarea>
+            <input style="margin-bottom: 5px; background: transparent;
+            border: 1px #494a51 solid; color: #494a51; color: rgba(255,255,255,0.4); " 
+            type="file" name="img1" accept="image/* video/*" multiple>
+            <button type="submit">
+                <ion-icon style="color: #87FCC4;" name="paper-plane-outline"></ion-icon>
+            </button>
             <p style="clear: both;"></p>
         </form> 
     </div>  

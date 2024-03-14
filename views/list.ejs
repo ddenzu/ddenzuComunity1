@@ -51,10 +51,6 @@
                 <% } %>
                     <h4 class="list-right">
                         <a href="/detail/<%= 글목록[i]._id %>"><%= 글목록[i].title %></a>
-                        <a style="vertical-align: middle;
-                        margin-left: 3px;" href="/edit/<%= 글목록[i]._id %>">
-                            <ion-icon style="font-size: 20px;" name="create-outline"></ion-icon>
-                        </a>
                         <span class="delete" data-id="<%= 글목록[i]._id %>">
                             <ion-icon style="font-size: 20px;" name="trash-outline"
                             data-id="<%= 글목록[i]._id %>"></ion-icon>

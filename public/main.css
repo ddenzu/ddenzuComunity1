@@ -51,8 +51,7 @@
     margin-top: 10px;
     margin-bottom: 10px;
     box-shadow: 3px 3px 3px 0 rgba(0, 0, 0, 0.3);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(5px);
   }
 
   .list-box {
@@ -172,6 +171,8 @@
     border-radius: 5px;
     background: transparent;  
     padding: 10px 5px 0px 0px; 
+  }
+  .form-box4 button {
     float: right;
   }
   .detail-bg {
@@ -183,6 +184,7 @@
     margin: 0 auto;
     margin-top: 10px;
     box-shadow: 3px 3px 3px 0 rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(5px);
   }
   .detail-bg > h4 {
     font-size: x-large; 
@@ -209,6 +211,10 @@
     margin: 0px;
     font-weight: normal;
     color: #B8B8B3
+  }
+  .detail-bg .postEdit {
+    float: right;
+    margin: 3px 15px 0px 0px;
   }
   .search {
     height: 30px;
@@ -434,9 +440,10 @@
   .chat-box {
     margin-top: 10px;
     background-color: #EFEFEF;
+    max-width: 80%;
   }
   .time-box {
-    font-size: 10px;
+    font-size: 11px;
     margin-top: 4px !important;
     background: transparent !important;
     color: #B8B8B3 !important;
@@ -543,6 +550,8 @@
     background: RGBA(255, 255, 255, 0.09);
     position: relative;
     box-shadow: 3px 3px 3px 0 rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
   }
 
   .commentInput {

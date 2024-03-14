@@ -39,6 +39,9 @@
                     src="https://ddenzubucket.s3.ap-northeast-2.amazonaws.com/<%= 프로필 %>" 
                     loading="lazy" onerror="this.src='/image/dinosaur.png'"/><%= 글목록.작성자 %>
                 </a> 
+                <a class="postEdit" href="/edit/<%= 글목록._id %>">
+                    <ion-icon style="font-size: 20px;" name="create-outline"></ion-icon>
+                </a>
             </p>
             <% for (let i = 0; i < 동영상주소.length; i++) { %>
                 <div class="img-box">

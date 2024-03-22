@@ -41,7 +41,7 @@
             <p style="margin-bottom: 5px;margin-top: 20px;">프로필 사진 설정</p>
             <ion-icon id="beforeChange1" style="font-size: 25px; color: #87FCC4;" name="create-outline"></ion-icon>
 
-            <form class="changeProfile changeNameVisible" method="POST" action="/profileImg" enctype="multipart/form-data" style="margin-bottom: 10px;text-align: center;">
+            <form class="changeProfile changeNameVisible" method="POST" action="/mypage/profileImg?_method=PUT" enctype="multipart/form-data" style="margin-bottom: 10px;text-align: center;">
                 <input style="border: 1px #494a51 solid; color: #fff; width: 70%;
                 display: block; margin: 0 auto; margin-top: 15px; margin-bottom: 15px;
                 color: rgba(255, 255, 255, 0.5)" 
@@ -54,7 +54,7 @@
 
             <p style="margin-bottom: 10px; font-weight: 600;"><%= 아이디.username %></p>
             <ion-icon id="beforeChange2" style="font-size: 25px; color: #87FCC4; margin-bottom: 5px;" name="create-outline"></ion-icon>
-            <form class="changeName changeNameVisible" id="changeNameForm" method="POST" action="/change-name" style="margin-bottom: 10px;text-align: center;">
+            <form class="changeName changeNameVisible" id="changeNameForm" method="POST" action="/mypage/name?_method=PUT" style="margin-bottom: 10px;text-align: center;">
                 <input id="newNameInput" style="color: #EFEFEF; border: 1px #494a51 solid; width: 80%;
                 " type="text" name="name" placeholder="새로운 닉네임을 작성해주세요.">
                 <button type="submit" style="color: #fff; background: #79B397; padding: 10px; border-radius: 20px; 
@@ -100,8 +100,8 @@
             let what = {
                 content : "mypage",
             }
-            fetch('/location-update', {
-            method : 'POST',
+            fetch('/locations', {
+            method : 'PUT',
             async : false,
             headers : {
                 'Content-Type' : 'application/json'

@@ -91,7 +91,7 @@
             eventSource.close()
           }
           var 현재사람 = '<%= cur %>';
-          eventSource = new EventSource('/message/' + 지금누른채팅방id); // get요청
+          eventSource = new EventSource('/chat/message/' + 지금누른채팅방id); // get요청
           eventSource.addEventListener('test', function(e){
             
             var 가져온거 = JSON.parse(e.data);
@@ -122,7 +122,7 @@
                 parent : 지금누른채팅방id,
                 content : 채팅내용,
             }
-            $.post('/message', 보낼거).done((a) => {
+            $.post('/chat/message', 보낼거).done((a) => {
             })
             $('#chat-input').val('');
         })
@@ -133,7 +133,7 @@
                 parent : 지금누른채팅방id,
                 content : 채팅내용,
             }
-            $.post('/message', 보낼거).done((a) => {
+            $.post('/chat/message', 보낼거).done((a) => {
             })
             $('#chat-input').val(''); 
           } 
@@ -143,8 +143,8 @@
           채팅방삭제id = this.dataset.id  
           var 보낼거 = {삭제id : 채팅방삭제id};
           if (confirm('리얼루다가 삭제하시겠슴까?')==true){
-            fetch('/delete-chat', {
-            method : 'POST',
+            fetch('/chat', {
+            method : 'DELETE',
             async : false,
             headers : {
                 'Content-Type' : 'application/json'

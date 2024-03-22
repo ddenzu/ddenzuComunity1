@@ -10,6 +10,7 @@ const { Server } = require("socket.io");
 const io = new Server(http);
 require('dotenv').config()
 const dateFormat1 = require("./public/time.js");
+const { swaggerUi, specs } = require("./swagger/swagger")
 
 app.use(methodOverride('_method'))
 app.use(express.static(__dirname + '/public')) //(css.js,jpg...= static파일)은 public 폴더 사용
@@ -84,29 +85,10 @@ app.get('/list', async (요청, 응답) => {
     // ejs 파일은 sendFile 아니라 render 사용
     응답.redirect('/list/1')
 })
-
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs))
 const sharp = require('sharp');
 const axios = require('axios');
 const path = require('path');
-
-// multer 라이브러리 세팅
-// let multer = require('multer');
-// const sharp = require("sharp");
-// const fs = require('fs');
-// const { configDotenv } = require('dotenv')
-// var storage = multer.diskStorage({
-//   destination : function(req, file, cb){
-//     cb(null, './public/image') // 이미지 어디에 저장할건지
-//   },
-//   filename : function(req, file, cb){
-//     cb(null, Date.now()+file.originalname) // 파일명 설정하기
-//   },
-// //   filefilter : function(req, file, cb){
-
-// //   }
-// });
-
-// var upload = multer({storage : storage}); // 갖다 쓰면됨
 
 const { S3Client } = require('@aws-sdk/client-s3')
 const multer = require('multer')
@@ -193,7 +175,7 @@ app.post('/write', upload.array('img1'), async (요청, 응답) => {
     }
 });
 
-app.post('/profileImg', upload.single('img1'), async (req, res, next) => {
+app.put('/mypage/profileImg', upload.single('img1'), async (req, res, next) => {
     try {
         await db.collection('user').updateOne({ _id: new ObjectId(req.user._id) }, { $set: { imgName: req.file.key } })
         await db.collection('comment').updateMany({ userId: new ObjectId(req.user._id) }, { $set: { userprofile: req.file.key } })
@@ -277,7 +259,7 @@ app.put('/edit', async (요청, 응답) => {
     }
 })
 
-app.delete('/delete', async (요청, 응답) => {
+app.delete('/list', async (요청, 응답) => {
     // console.log(요청.query) // 게시물id
     if (!요청.user) {
         return 응답.send('notLogin');
@@ -464,7 +446,7 @@ app.get('/mypage', async (요청, 응답) => {
     }
 })
 
-app.post('/change-name', async (요청, 응답) => {
+app.put('/mypage/name', async (요청, 응답) => {
     try {
         let result = await db.collection('user').findOne({ username: 요청.body.name })
         if (result) {
@@ -569,7 +551,7 @@ app.get('/chat', checkLogin, async function (요청, 응답) { // navbar에서 �
     }
 });
 
-app.post('/location-update', checkLogin, async (요청, 응답) => { // 메세지 읽음처리 api
+app.put('/locations', checkLogin, async (요청, 응답) => { // 메세지 읽음처리 api , 이름 변경해야됨 /locations
     try {
         if (!요청.body) {
             return 응답.send("위치정보 없음");
@@ -585,7 +567,7 @@ app.post('/location-update', checkLogin, async (요청, 응답) => { // 메세�
     }
 })
 
-app.post('/comment', checkLogin, async (요청, 응답) => {
+app.post('/detail/comment', checkLogin, async (요청, 응답) => {
     try {
         if (!요청.body.content) {
             return 응답.send("댓글등록 실패");
@@ -606,7 +588,7 @@ app.post('/comment', checkLogin, async (요청, 응답) => {
     }
 })
 
-app.post('/recomment', checkLogin, async (요청, 응답) => {
+app.post('/detail/recomment', checkLogin, async (요청, 응답) => {
     // console.log(요청.body)
     try {
         if (!요청.body.content) {
@@ -629,7 +611,7 @@ app.post('/recomment', checkLogin, async (요청, 응답) => {
     }
 })
 
-app.post('/message', checkLogin, async function (요청, 응답) { // 수정필요
+app.post('/chat/message', checkLogin, async function (요청, 응답) { // 수정필요
     // console.log(요청.body.content)
     try {
         if (!요청.body.content) {
@@ -664,7 +646,7 @@ app.post('/message', checkLogin, async function (요청, 응답) { // 수정필�
     }
 })
 
-app.get('/message/:id', checkLogin, function (요청, 응답) {
+app.get('/chat/message/:id', checkLogin, function (요청, 응답) {
     응답.writeHead(200, {
         "Connection": "keep-alive",
         "Content-Type": "text/event-stream",
@@ -686,7 +668,7 @@ app.get('/message/:id', checkLogin, function (요청, 응답) {
     });
 });
 
-app.post('/delete-chat', async (요청, 응답) => {
+app.delete('/chat', async (요청, 응답) => {
     try {
         if (!요청.body.삭제id) {
             return res.status(400).send('삭제할 ID가 존재하지 않음');
@@ -708,7 +690,7 @@ app.post('/delete-chat', async (요청, 응답) => {
         return 응답.status(500).send('서버에러')
     }
 })
-app.post('/delete-comment', async (요청, 응답) => {
+app.delete('/detail/comment', async (요청, 응답) => {
     try {
         var 비교1 = JSON.stringify(요청.user._id)
         var 비교2 = JSON.stringify(요청.body.userId)
@@ -728,9 +710,9 @@ app.post('/delete-comment', async (요청, 응답) => {
     }
 })
 
-app.post('/add-like', async (요청, 응답) => {
+app.put('/detail/like', async (요청, 응답) => {
     db.collection('post').updateOne({ _id: new ObjectId(요청.body.postid) }, { $inc: { like: 1 } }).then(() => {
-        응답.send("<script>reloadLike();</script>");
+        응답.send('success');
     })
 })
 

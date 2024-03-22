@@ -184,9 +184,16 @@
         $(document).on("click","span[name='like']", function(e){
             var 보낼거 = {postid : 지금누른작성글id,
             }
-            $.post('/add-like', 보낼거).then(()=> {
+            fetch('/detail/like', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json' 
+                },
+                body: JSON.stringify(보낼거) 
+                })
+            .then(data => {
                 reloadLike();
-          })
+            })
         })
         var box = $(".profile2");
         $('.profile2').change(function(){
@@ -198,7 +205,7 @@
                 parent : 지금누른작성글id,
                 content : 댓글내용,
             }
-            fetch('/comment', {
+            fetch('/detail/comment', {
             method : 'POST',
             async : false,
             headers : {
@@ -225,7 +232,7 @@
                 reparent : e.target.dataset.id,
                 content : 댓글내용,
             }
-            fetch('/recomment', {
+            fetch('/detail/recomment', {
             method : 'POST',
             async : false,
             headers : {
@@ -247,8 +254,8 @@
             if (confirm('리얼루다가 삭제하시겠슴까나리?')==true){
                 var 지울거 = {id : this.dataset.id,
                 userId : this.dataset.userid}
-                fetch('/delete-comment', {
-                method : 'POST',
+                fetch('/detail/comment', {
+                method : 'DELETE',
                 async : false,
                 headers : {
                     'Content-Type' : 'application/json'
@@ -329,8 +336,8 @@
             let what = {
                 content : "detail",
             }
-            fetch('/location-update', {
-            method : 'POST',
+            fetch('/locations', {
+            method : 'PUT',
             async : false,
             headers : {
                 'Content-Type' : 'application/json'

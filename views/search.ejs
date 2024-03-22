@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>승뮤니티</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="\main.css">
 </head>
 <%- include('nav.ejs') %>
@@ -16,17 +17,19 @@
                     <div class="list-box">
                     <% if(글목록[i].vidName !== undefined){ %>
                         <a href="/detail/<%= 글목록[i]._id %>">
-                            <img class="list-left" src="/image/<%= 글목록[i].imgName %>" onerror="this.src='/image/dinosaurVid.png'" />
+                            <img class="list-left" src="/image/<%= 글목록[i].imgName %>" onerror="this.src='/image/dinosaurVid.png'" loading="lazy" />
                         </a>
                     <% } else { %>
                         <a href="/detail/<%= 글목록[i]._id %>">
-                            <img class="list-left" src="/image/<%= 글목록[i].imgName %>" onerror="this.src='/image/dinosaur.png'" />
+                            <img class="list-left" src="/image/<%= 글목록[i].imgName %>" onerror="this.src='/image/dinosaur.png'" style="max-width: 100%; max-height: 100%; margin-bottom: 4px;" loading="lazy" />
                         </a>
                     <% } %>
                         <h4 class="list-right">
                             <a href="/detail/<%= 글목록[i]._id %>"><%= 글목록[i].title %></a>
-                            <a href="/edit/<%= 글목록[i]._id %>">✏️</a>
-                            <span class="delete" data-id="<%= 글목록[i]._id %>">🗑️</span>
+                            <span class="delete" data-id="<%= 글목록[i]._id %>">
+                                <ion-icon style="font-size: 20px;" name="trash-outline"
+                                data-id="<%= 글목록[i]._id %>"></ion-icon>
+                            </span>
                             <p>작성자: <%= 글목록[i].작성자 %></p>
                             <div>
                                 <button class="btn" data-id="<%= 글목록[i].작성자_id %>" 
@@ -48,6 +51,8 @@
     <!-- <a href="/list/next/<%= 글목록[글목록.length-1]._id %>">다음</a> -->
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
     <script>
         
     </script>

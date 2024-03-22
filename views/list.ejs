@@ -39,7 +39,7 @@
                 <% if (글목록[i].vidName) { %>
                     <% if (글목록[i].vidName.length > 0) { %>
                         <a href="/detail/<%= 글목록[i]._id %>">
-                            <img class="list-left" src='/image/dinosaurVid.png' onerror="this.src='/image/dinosaurVid.png'" />
+                            <img class="list-left" src='/image/dinosaurVid.png' onerror="this.src='/image/dinosaurVid.png'" loading="lazy" />
                         </a>
                     <% } else { %>
                         <p>No Video Available</p>
@@ -180,7 +180,7 @@
         for (let i=0; i<'<%= 글목록.length %>'; i++){ 
             document.querySelectorAll('.delete')[i].addEventListener('click', function(e){
                 if (confirm('리얼루다가 삭제하시겠슴까?')==true){
-                    fetch('/delete/?docid=' + e.target.dataset.id, {
+                    fetch('/list/?docid=' + e.target.dataset.id, {
                     method : 'DELETE',
                     })
                     .then((r)=>r.text())
@@ -275,8 +275,8 @@
             let what = {
                 content : "list",
             }
-            fetch('/location-update', {
-            method : 'POST',
+            fetch('/locations', {
+            method : 'PUT',
             async : false,
             headers : {
                 'Content-Type' : 'application/json'

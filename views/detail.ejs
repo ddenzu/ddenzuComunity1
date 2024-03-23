@@ -34,7 +34,7 @@
             </h4>
             <p>
                 <a class="btn-a" style="text-decoration: none; color: #EFEFEF; margin-left: 3px;" 
-                href="/chatroom?name=<%= 글목록.작성자 %>&id=<%= 글목록.작성자_id %>">
+                href="/chat/matches?name=<%= 글목록.작성자 %>&id=<%= 글목록.작성자_id %>">
                     <img style="cursor: pointer; width: 25px; height: 25px; vertical-align: bottom; margin-right: 2px;" 
                     src="https://ddenzubucket.s3.ap-northeast-2.amazonaws.com/<%= 프로필 %>" 
                     loading="lazy" onerror="this.src='/image/dinosaur.png'"/><%= 글목록.작성자 %>
@@ -97,7 +97,7 @@
                         <div class="profile">
                             <div class="profileImage" data-name="<%= 댓글목록[i].username %>" data-id="<%= 댓글목록[i].userId %>">
                                 <button style="background: transparent; border: none;">
-                                    <a class="btn-a" href="/chatroom?name=<%= 댓글목록[i].username %>&id=<%= 댓글목록[i].userId %>">
+                                    <a class="btn-a" href="/chat/matches?name=<%= 댓글목록[i].username %>&id=<%= 댓글목록[i].userId %>">
                                         <img style="cursor: pointer; width: 25px;height: 25px;object-fit: cover;
                                         padding-left: 5px;" loading="lazy" 
                                         src="https:/ddenzubucket.s3.ap-northeast-2.amazonaws.com/<%= 댓글목록[i].userprofile %>"
@@ -129,7 +129,7 @@
                                 <%if(a==b){%>
                                     <div class="reComment-box">
                                         <div style="display: flex; flex-direction: column;">
-                                            <a class="btn-a" href="/chatroom?name=<%= 대댓글[j].username %>&id=<%= 대댓글[j].userId %>">
+                                            <a class="btn-a" href="/chat/matches?name=<%= 대댓글[j].username %>&id=<%= 대댓글[j].userId %>">
                                                 <img style="cursor: pointer; width: 25px;height: 25px;object-fit: cover;
                                                 padding-left: 8px;" loading="lazy" 
                                                 src="https:/ddenzubucket.s3.ap-northeast-2.amazonaws.com/<%= 대댓글[j].userprofile %>"
@@ -251,7 +251,7 @@
         })
 
         $(document).on("click","span[name='add']", function(e){
-            if (confirm('리얼루다가 삭제하시겠슴까나리?')==true){
+            if (confirm('정말로 삭제하시겠습니까?')==true){
                 var 지울거 = {id : this.dataset.id,
                 userId : this.dataset.userid}
                 fetch('/detail/comment', {
@@ -285,7 +285,7 @@
 
         document.querySelector('.comment-bar').addEventListener('click', () => {
             if ('<%= 현재접속자 %>' == "noUser") {
-                if (confirm('댓글 작성을 위해 로그인 페이지로 이동하시겠습니까탈레나') == true) {
+                if (confirm('댓글 작성을 위해 로그인 페이지로 이동하시겠습니까?') == true) {
                     window.location.replace(`/login`);
                 }
             }
@@ -294,7 +294,7 @@
         if (reCommentBox) {
             reCommentBox.addEventListener('click', () => {
                 if ('<%= 현재접속자 %>' == "noUser") {
-                    if (confirm('댓글 작성을 위해 로그인 페이지로 이동하시겠습니까탈레나') == true) {
+                    if (confirm('댓글 작성을 위해 로그인 페이지로 이동하시겠습니까?') == true) {
                         window.location.replace(`/login`);
                     }
                 }
@@ -307,7 +307,7 @@
 
         $(document).on("click",'.reComment', function(e){
             if('<%= 현재접속자 %>'=="noUser"){
-                if (confirm('댓글작성을 위해 로그인 페이지로 이동하시겠습니까탈레나')==true){
+                if (confirm('댓글작성을 위해 로그인 페이지로 이동하시겠습니까?')==true){
                     return window.location.replace(`/login`) 
                 }
             } else {

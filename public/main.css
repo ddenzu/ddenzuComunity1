@@ -199,7 +199,7 @@
   .detail-bg > p {
     font-size: small;
     margin-top: 7px;
-    margin-bottom: 5px;
+    margin-bottom: 10px;
     color: #EFEFEF;
   }
   .detail-bg > p a {
@@ -688,6 +688,7 @@
     margin-right: 5px;
     white-space: pre-line;
     color: #f2efef;
+    letter-spacing: 0.5px;
   }
 
   .snowFlake {

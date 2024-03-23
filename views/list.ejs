@@ -59,7 +59,7 @@
                         <div>
                             <button class="btn" data-id="<%= 글목록[i].작성자_id %>" 
                                 data-name="<%= 글목록[i].작성자 %>">
-                                <a class="btn-a" href="/chatroom?name=<%= 글목록[i].작성자 %>&id=<%= 글목록[i].작성자_id %>">채팅하기</a>
+                                <a class="btn-a" href="/chat/matches?name=<%= 글목록[i].작성자 %>&id=<%= 글목록[i].작성자_id %>">채팅하기</a>
                             </button>
                         </div>
                     </h4>
@@ -211,16 +211,16 @@
             })
         }
          
-        // 두번째 검색기능
+        // 검색기능
         $('#ssearch').click(function(){
             var 입력값 = $('#ssearch-input').val()
-            window.location.replace('/search2?value='+입력값)  // url 바꾸는 함수 (get요청변환)
+            window.location.replace('/list/search?value='+입력값)  // url 바꾸는 함수 (get요청변환)
         })
 
         $('.search_2').keypress(function(e){
           if (e.keyCode===13){
             var 입력값 = $('#ssearch-input').val()
-            window.location.replace('/search2?value='+입력값) 
+            window.location.replace('/list/search?value='+입력값) 
           }})
 
         document.getElementsByClassName('page-btn')[('<%= 페이지넘버 %>'-1)%5].classList.add('nowPage');

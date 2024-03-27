@@ -15,7 +15,7 @@ router.post('/message', verify, async function (req, res) {
     // console.log(req.body.content)
     try {
         if (!req.body.content) {
-            return res.send("메세지 전송 실패");
+            return res.status(400).send("메세지 전송 실패");
         };
         let 저장할거 = {
             parent: req.body.parent, // 채팅방의 id

@@ -39,7 +39,7 @@ router.get('/search', async (req, res) => {
             let resizeImg = await Promise.all(resizeImgPromises);
             return res.render('search.ejs', { 글목록: result, resizeImg })
         }
-        res.send("<script>alert('존재하지 않는 글');window.location.replace(`/list/1`)</script>");
+        res.status(404).send("<script>alert('존재하지 않는 글');window.location.replace(`/list/1`)</script>");
     } catch (e) {
         res.status(500).send('서버에러')
     }
@@ -54,7 +54,7 @@ router.get('', async (req, res) => {
 router.delete('', async (req, res) => {
     // console.log(req.query) // 게시물id
     if (!req.user) {
-        return res.send('notLogin');
+        return res.status(401).send('notLogin'); // 401 엑세스 권한 x
     }
     try {
         let result = await db.collection('post').deleteOne({ 작성자: req.user.username, _id: new ObjectId(req.query.docid) })
@@ -62,11 +62,11 @@ router.delete('', async (req, res) => {
             res.send('삭제완료'); // ajax 요청 뒤에 redirect render 사용 x (장점사라짐) 
         }
         else {
-            res.send('cant');
+            res.status(403).send('cant'); // 403 엑세스 금지됨
         }
     } catch (e) {
         console.log(e)
-        res.send('serverError');
+        res.status(500).send('serverError');
     }
 })
 
@@ -75,6 +75,9 @@ router.get('/:num', async (req, res) => {
     let isRead = req.user ? req.user.isRead : true;
     try {
         let result = await db.collection('post').find().sort({ _id: -1 }).skip((req.params.num - 1) * 5).limit(5).toArray()
+        if (!result || result.length === 0) {
+            return res.status(404).send("<script>alert('게시글이 존재하지 않습니다.');window.location.replace(`/list/1`)</script>");
+        }
         let cnt = await db.collection('post').count();
         const 채팅사람 = req.user ? req.user.username : "익명";
         let resizeImgPromises = result.map(async (item) => {
@@ -106,7 +109,7 @@ router.get('/next/:num', async (req, res) => {
             .find({ _id: { $lt: new ObjectId(req.params.num) } }).sort({ _id: -1 }).limit(5).toArray()
         let cnt = await db.collection('post').count();
         if (result.length < 1) {
-            return res.send("<script>alert('다음페이지가 존재하지 않습니다.');window.location.replace(`/list/1`)</script>");
+            return res.status(404).send("<script>alert('다음페이지가 존재하지 않습니다.');window.location.replace(`/list/1`)</script>");
         }
         let 채팅사람 = req.user ? req.user.username : "익명";
         let 페이지넘버 = req.query.pageNum;
@@ -140,7 +143,7 @@ router.get('/prev/:num', async (req, res) => {
         result.reverse(); // 몽고디비 sort가 잘 적용되지 않아서 reverse함수로 대체함
         let cnt = await db.collection('post').count();
         if (result.length < 1) {
-            return res.send("<script>alert('이전페이지가 존재하지 않습니다.');window.location.replace(`/list/1`)</script>");
+            return res.status(404).send("<script>alert('이전페이지가 존재하지 않습니다.');window.location.replace(`/list/1`)</script>");
         }
         let 채팅사람 = req.user ? req.user.username : "익명";
         let 페이지넘버 = req.query.pageNum;

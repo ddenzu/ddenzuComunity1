@@ -5,7 +5,7 @@
     "title": "REST API",
     "description": ""
   },
-  "host": "localhost:3000",
+  "host": "localhost:8080",
   "basePath": "/",
   "schemes": [
     "http"
@@ -57,64 +57,54 @@
           }
         }
       }
-    },
-    "/list/search": {
-      "get": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "value",
-            "in": "query",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "성공"
-          },
-          "500": {
-            "description": "내부 서버 오류"
-          }
-        }
-      }
-    },
+    },    
     "/list/{num}": {
       "get": {
-        "description": "",
+        "tags": ["List"],
+        "summary": "게시글 조회",
+        "description": "게시글을 페이지별로 조회합니다.",
         "parameters": [
           {
             "name": "num",
             "in": "path",
+            "description": "페이지 번호",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
           }
         ],
         "responses": {
+          "200": {
+            "description": "게시글 페이지 조회 성공"
+          },
+          "404": {
+            "description": "게시글이 존재하지 않음"
+          },
           "500": {
-            "description": "내부 서버 오류"
+            "description": "서버 에러"
           }
         }
       }
     },
     "/list/next/{num}": {
       "get": {
-        "description": "",
+        "tags": ["List"],
+        "summary": "게시글 다음 페이지 조회",
+        "description": "게시글의 다음 페이지를 조회합니다.",
         "parameters": [
           {
             "name": "num",
             "in": "path",
             "required": true,
             "type": "string"
-          },
-          {
-            "name": "pageNum",
-            "in": "query",
-            "type": "string"
           }
         ],
         "responses": {
           "200": {
-            "description": "성공"
+            "description": "페이지 이동 성공"
           },
           "500": {
             "description": "내부 서버 오류"
@@ -124,23 +114,87 @@
     },
     "/list/prev/{num}": {
       "get": {
-        "description": "",
+        "tags": ["List"],
+        "summary": "게시글 이전 페이지 조회",
+        "description": "게시글의 이전 페이지를 조회합니다.",
         "parameters": [
           {
             "name": "num",
             "in": "path",
             "required": true,
             "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "페이지 이동 성공"
           },
+          "500": {
+            "description": "내부 서버 오류"
+          }
+        }
+      }
+    },
+    "/list/search": {
+      "get": {
+        "tags": ["List"],
+        "summary": "특정 게시글 검색",
+        "description": "특정 게시글을 검색합니다.",
+        "parameters": [
           {
-            "name": "pageNum",
+            "name": "value",
             "in": "query",
             "type": "string"
           }
         ],
         "responses": {
           "200": {
-            "description": "성공"
+            "description": "게시글 검색 성공"
+          },
+          "404": {
+            "description": "존재하지 않는 글"
+          },
+          "500": {
+            "description": "내부 서버 오류"
+          }
+        }
+      }
+    },
+    "/list": {
+      "get": {
+        "tags": ["List"],
+        "summary": "게시글 1페이지 조회",
+        "description": "게시글의 1페이지를 조회합니다.",
+        "responses": {
+          "200": {
+            "description": "게시글 1페이지 조회 성공"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["List"],
+        "summary": "게시글 삭제",
+        "description": "ID 값을 사용하여 게시글을 삭제합니다.",
+        "parameters": [
+          {
+            "name": "docid",
+            "in": "query",
+            "description": "삭제할 게시글의 ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "게시글 삭제 완료"
+          },
+          "401": {
+            "description": "로그인 하지 않음"
+          },
+          "403": {
+            "description": "본인의 게시물이 아님"
           },
           "500": {
             "description": "내부 서버 오류"
@@ -150,7 +204,9 @@
     },
     "/detail/{id}": {
       "get": {
-        "description": "",
+        "tags": ["Detail"],
+        "summary": "게시글 내부 조회",
+        "description": "게시글의 세부 내용을 조회합니다.",
         "parameters": [
           {
             "name": "id",
@@ -160,15 +216,23 @@
           }
         ],
         "responses": {
-          "400": {
-            "description": "잘못된 요청"
+          "200": {
+            "description": "게시글 내부 조회 성공"
+          },
+          "404": {
+            "description": "존재하지 않는 게시물 ID"
+          },
+          "500": {
+            "description": "서버 에러"
           }
         }
       }
     },
     "/detail/comment": {
       "post": {
-        "description": "",
+        "tags": ["Detail"],
+        "summary": "게시글 댓글 등록",
+        "description": "게시글의 댓글을 등록합니다.",
         "parameters": [
           {
             "name": "body",
@@ -188,7 +252,10 @@
         ],
         "responses": {
           "200": {
-            "description": "성공"
+            "description": "댓글 등록 성공"
+          },
+          "400": {
+            "description": "등록할 댓글이 존재하지 않음"
           },
           "500": {
             "description": "내부 서버 오류"
@@ -196,7 +263,9 @@
         }
       },
       "delete": {
-        "description": "",
+        "tags": ["Detail"],
+        "summary": "게시글 댓글 삭제",
+        "description": "게시글의 댓글 또는 대댓글을 삭제합니다.",
         "parameters": [
           {
             "name": "body",
@@ -218,6 +287,9 @@
           "200": {
             "description": "성공"
           },
+          "403": {
+            "description": "본인의 댓글이 아님"
+          },
           "500": {
             "description": "내부 서버 오류"
           }
@@ -226,7 +298,9 @@
     },
     "/detail/recomment": {
       "post": {
-        "description": "",
+        "tags": ["Detail"],
+        "summary": "게시글 대댓글 등록",
+        "description": "게시글의 대댓글을 등록합니다.",
         "parameters": [
           {
             "name": "body",
@@ -251,6 +325,9 @@
           "200": {
             "description": "성공"
           },
+          "400": {
+            "description": "등록할 대댓글이 존재하지 않음"
+          },
           "500": {
             "description": "내부 서버 오류"
           }
@@ -259,7 +336,9 @@
     },
     "/detail/like": {
       "put": {
-        "description": "",
+        "tags": ["Detail"],
+        "summary": "게시글 좋아요",
+        "description": "게시글의 좋아요를 1 증가시킵니다.",
         "parameters": [
           {
             "name": "body",
@@ -345,9 +424,56 @@
         }
       }
     },
+    "/chat": {
+      "get": {
+        "tags": ["Chat"],
+        "summary": "채팅방 조회",
+        "description": "사용자가 속한 모든 채팅방을 조회합니다.",
+        "responses": {
+          "200": {
+            "description": "채팅방 조회 성공"
+          },
+          "500": {
+            "description": "내부 서버 오류"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Chat"],
+        "summary": "채팅방 삭제",
+        "description": "채팅방의 ID로 특정 채팅방을 삭제합니다.",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "채팅방 삭제 성공"
+          },
+          "400": {
+            "description": "삭제할 채팅방이 존재하지 않음"
+          },
+          "500": {
+            "description": "내부 서버 오류"
+          }
+        }
+      }
+    },
     "/chat/message": {
       "post": {
-        "description": "",
+        "tags": ["Chat"],
+        "summary": "채팅 메세지 저장",
+        "description": "채팅 메세지를 저장합니다.",
         "parameters": [
           {
             "name": "body",
@@ -367,7 +493,10 @@
         ],
         "responses": {
           "200": {
-            "description": "성공"
+            "description": "메세지 저장 성공"
+          },
+          "400": {
+            "description": "전송할 메세지가 존재하지 않음"
           },
           "500": {
             "description": "내부 서버 오류"
@@ -377,25 +506,47 @@
     },
     "/chat/message/{id}": {
       "get": {
-        "description": "",
+        "tags": ["Chat"],
+        "summary": "채팅 메세지 전송",
+        "description": "채팅 메세지를 실시간으로 전송합니다.",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "성공"
+            "description": "메세지 전송 성공",
+            "content":{
+              "text/event-stream":{
+                "schema":{
+                  "type":"string"
+                },
+                "examples": {
+                  "example1": {
+                    "summary": "Example response",
+                    "value": "event: test\ndata: [{\"_id\": \"60ef26299e8f9e001c40f735\", \"parent\": \"chatroom1\", \"content\": \"Hello!\", \"userid\": \"user1\", \"date\": \"2022-07-14T12:00:00Z\"}]\n"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "내부 서버 오류"
           }
         }
       }
     },
     "/chat/matches": {
       "get": {
-        "description": "",
+        "tags": ["Chat"],
+        "summary": "채팅 상대방과 매칭",
+        "description": "채팅 상대와 1:1로 매칭시킵니다.",
         "parameters": [
           {
             "name": "name",
@@ -410,7 +561,7 @@
         ],
         "responses": {
           "200": {
-            "description": "성공"
+            "description": "채팅 매칭 성공"
           },
           "500": {
             "description": "내부 서버 오류"

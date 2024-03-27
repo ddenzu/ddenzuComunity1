@@ -4,8 +4,7 @@ const doc = {
   swaggerDefinition: {
     openapi: '3.0.0', 
     info: {
-      
-      title: 'pillnuts', 
+      title: 'API', 
       version: '1.0.0', 
       description: 'a REST API using swagger and express.', 
     },

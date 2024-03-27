@@ -20,7 +20,7 @@ router.get('/:id', async (req, res) => {
     try {
         let result = await db.collection('post').findOne({ _id: new ObjectId(req.params.id) })
         if (!result) {
-            return res.status(400).send('이상한 url')
+            return res.status(404).send("<script>alert('게시글이 존재하지 않습니다.');window.location.replace(`/list/1`)</script>")
         }
         let result2 = await db.collection('comment').find({ postId: new ObjectId(req.params.id), parentId: null }).toArray()
         let result3 = await db.collection('user').findOne({ _id: result.작성자_id })
@@ -49,14 +49,14 @@ router.get('/:id', async (req, res) => {
     }
     catch (e) {
         console.log(e)
-        res.status(400).send('이상한 url') //500 => 서버문제 , 400 => 유저문제
+        res.status(500).send('서버 에러') 
     }
 })
 
 router.post('/comment', verify, async (req, res) => {
     try {
         if (!req.body.content) {
-            return res.send("댓글등록 실패");
+            return res.status(400).send("댓글등록 실패"); // 잘못된 요청
         }
         var 저장할거 = {
             postId: new ObjectId(req.body.parent), // 작성글 id
@@ -83,10 +83,10 @@ router.delete('/comment', async (req, res) => {
             if (deletedComment) {
                 return res.send('success');
             } else {
-                return res.send("fail");
+                return res.status(404).send("fail");
             }
         } else {
-            return res.send("fail");
+            return res.status(403).send("fail");
         }
     } catch (e) {
         console.log(e)
@@ -98,7 +98,7 @@ router.post('/recomment', verify, async (req, res) => {
     // console.log(req.body)
     try {
         if (!req.body.content) {
-            return res.send("<script>alert('대댓글등록실패');</script>");
+            return res.status(400).send("<script>alert('대댓글등록실패');</script>");
         }
         let 저장할거 = {
             postId: new ObjectId(req.body.parent), // 작성글 id

@@ -13,6 +13,9 @@ connectDB.then((client) => {
 
 router.get('/search', async (req, res) => {
     // console.log(req.query.value)
+    if (!req.query.value) {
+        return res.status(400).send("<script>alert('검색어를 입력해주세요.');;window.location.replace(`/list/1`)</script>");
+    }
     try {
         let 검색조건 = [
             {
@@ -109,7 +112,7 @@ router.get('/next/:num', async (req, res) => {
             .find({ _id: { $lt: new ObjectId(req.params.num) } }).sort({ _id: -1 }).limit(5).toArray()
         let cnt = await db.collection('post').count();
         if (result.length < 1) {
-            return res.status(404).send("<script>alert('다음페이지가 존재하지 않습니다.');window.location.replace(`/list/1`)</script>");
+            return res.status(404).send("<script>alert('다음페이지가 존재하지 않습니다.');history.go(-1);</script>");
         }
         let 채팅사람 = req.user ? req.user.username : "익명";
         let 페이지넘버 = req.query.pageNum;
@@ -143,7 +146,7 @@ router.get('/prev/:num', async (req, res) => {
         result.reverse(); // 몽고디비 sort가 잘 적용되지 않아서 reverse함수로 대체함
         let cnt = await db.collection('post').count();
         if (result.length < 1) {
-            return res.status(404).send("<script>alert('이전페이지가 존재하지 않습니다.');window.location.replace(`/list/1`)</script>");
+            return res.status(404).send("<script>alert('이전페이지가 존재하지 않습니다.');history.go(-1);</script>");
         }
         let 채팅사람 = req.user ? req.user.username : "익명";
         let 페이지넘버 = req.query.pageNum;

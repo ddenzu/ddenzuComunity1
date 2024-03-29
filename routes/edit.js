@@ -25,6 +25,9 @@ router.get('/:id', verify, async (req, res) => {
 
 router.put('', async (req, res) => {
     try {
+        if (req.body.title.length > 20){
+            return res.status(400).send("<script>alert('제목을 20글자 이하로 지정해주세요.');history.go(-1);</script>");
+        }
         let 아이디비교용 = JSON.stringify(req.body.userId)
         if (아이디비교용 === JSON.stringify(req.user._id)) {
             const updatedPost = {
@@ -35,7 +38,7 @@ router.put('', async (req, res) => {
             res.redirect('/list/1');
         }
         else {
-            res.send("<script>alert('수정할 수 없슴다');window.location.replace(`/list/1`)</script>");
+            res.status(403).send("<script>alert('수정할 수 없슴다');window.location.replace(`/list/1`)</script>");
         }
     } catch (e) {
         console.log(e);

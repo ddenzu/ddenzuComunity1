@@ -15,12 +15,12 @@ router.get('', async (req, res) => {
 
 router.post('', async (req, res) => {
     try {
-        if (req.body.username.length > 20) {
-            return res.send("<script>alert('아이디는 20글자 이하로 지정해주세요.');window.location.replace(location.href);</script>");
+        if (req.body.username.length > 20 || req.body.password.length > 20) {
+            return res.status(400).send("<script>alert('아이디 또는 비밀번호는 20글자 이하로 지정해주세요.');window.location.replace(location.href);</script>");
         }
         let result = await db.collection('user').findOne({ username: req.body.username });
         if (result) {
-            return res.send("<script>alert('이미 존재하는 아이디입니다');location.replace(location.href);</script>");
+            return res.status(409).send("<script>alert('이미 존재하는 아이디입니다');location.replace(location.href);</script>");
         }
         let 해시 = await bcrypt.hash(req.body.password, 10) // 10 이면 적당히 꼬은거
         await db.collection('user').insertOne({ username: req.body.username, password: 해시 });

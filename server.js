@@ -67,6 +67,7 @@ app.get('/logout', function (req, res) {
     req.session.destroy((err) => {
         if (err) {
             console.error(err);
+            return res.status(500).send('서버 에러');
         }
         res.redirect('/list/1');
     });
@@ -75,7 +76,7 @@ app.get('/logout', function (req, res) {
 app.put('/locations',verify, async (req, res) => { // 사용자 위치정보 업데이트
     try {
         if (!req.body) {
-            return res.send("위치정보 없음");
+            return res.status(400).send("위치정보 없음");
         }
         await db.collection('user').updateOne(
             { _id: req.user._id },

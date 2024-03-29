@@ -13,7 +13,7 @@ connectDB.then((client) => {
 router.get('', async (req, res) => {
     try {
         if (!req.user) {
-            return res.send("<script>alert('로그인 요망');window.location.replace(`/login`)</script>");
+            return res.status(401).send("<script>alert('로그인 요망');window.location.replace(`/login`)</script>");
         }
         await db.collection('user').updateOne(
             { _id: req.user._id },
@@ -30,9 +30,12 @@ router.get('', async (req, res) => {
 
 router.put('/name', async (req, res) => {
     try {
+        if (req.body.name.length > 20) {
+            return res.status(400).send("<script>alert('아이디는 20글자 이하로 지정해주세요.');window.location.replace(`/mypage`);</script>");
+        }
         let result = await db.collection('user').findOne({ username: req.body.name })
         if (result) {
-            return res.send("<script>alert('이미 존재하는 아이디 입니다');window.location.replace(`/mypage`);</script>");
+            return res.status(409).send("<script>alert('이미 존재하는 아이디 입니다');window.location.replace(`/mypage`);</script>");
         }
         await db.collection('user').updateOne({ _id: new ObjectId(req.user._id) }, { $set: { username: req.body.name } })
         await db.collection('comment').updateMany({ userId: new ObjectId(req.user._id) }, { $set: { username: req.body.name } })

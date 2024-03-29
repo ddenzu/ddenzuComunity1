@@ -9,7 +9,7 @@ router.post('', async (req, res, next) => {
     try{
         passport.authenticate('local', (error, user, info) => { // auth 의 검사함수 사용
             if (error) return res.status(500).json(error) // 에러날때
-            if (!user) return res.status(401).json(info.message) // db에 없을때
+            if (!user) return res.status(401).send(`<script>alert("${info.message}");history.go(-1)</script>`); // db에 없을때
             req.logIn(user, (err) => { // 세션만들기 실행
                 if (err) return next(err)
                 res.redirect('/list/1') // 성공했을때

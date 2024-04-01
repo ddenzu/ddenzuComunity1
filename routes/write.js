@@ -3,6 +3,7 @@ let connectDB = require('../utils/database.js')
 let verify = require('../utils/verify.js')
 let upload = require('../utils/upload.js')
 const dateFormat1 = require("./../public/time.js");
+const serverError = require('../utils/error.js')
 
 let db
 connectDB.then((client) => {
@@ -19,9 +20,8 @@ router.get('', verify, async (req, res) => {
         } else {
             res.status(401).send("<script>alert('로그인 요망');window.location.replace(`/login`)</script>");
         }
-    } catch (error) {
-        console.error(error);
-        res.status(500).send('서버 에러');
+    } catch (err) {
+        serverError(err, res)
     }
 });
 
@@ -62,9 +62,8 @@ router.post('', upload.array('img1'), async (req, res) => {
             await db.collection('post').insertOne(postDetails);
         }
         res.redirect('/list/1');
-    } catch (e) {
-        console.error(e);
-        res.status(500).send('서버에러');
+    } catch (err) {
+        serverError(err, res)
     }
 });
 

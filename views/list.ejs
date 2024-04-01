@@ -228,10 +228,6 @@
             $('.page-btn').removeClass('nowPage')
             var a = $(this)
             num = e.target.dataset.num;
-            // console.log(Math.ceil('<%= 글수 %>'/num))
-            // if(Math.ceil('<%= 글수 %>'/num) >= 5){
-            //     window.location.href=`/list/${num}?페이지넘버=`+num;
-            // }
             window.location.href=`/list/${num}?페이지넘버=`+num;
         });
 

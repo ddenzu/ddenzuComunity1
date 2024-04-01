@@ -1,6 +1,7 @@
 const router = require('express').Router()
 const { ObjectId } = require('mongodb')
 const requestIp = require('request-ip')
+const serverError = require('../utils/error.js')
 let optimizeImage = require('../utils/optimizeImg.js');
 let connectDB = require('../utils/database.js')
 
@@ -43,8 +44,8 @@ router.get('/search', async (req, res) => {
             return res.render('search.ejs', { 글목록: result, resizeImg })
         }
         res.status(404).send("<script>alert('존재하지 않는 글');window.location.replace(`/list/1`)</script>");
-    } catch (e) {
-        res.status(500).send('서버에러')
+    } catch (err) {
+        serverError(err, res)
     }
 })
 
@@ -67,9 +68,8 @@ router.delete('', async (req, res) => {
         else {
             res.status(403).send('cant'); // 403 엑세스 금지됨
         }
-    } catch (e) {
-        console.log(e)
-        res.status(500).send('serverError');
+    } catch (err) {
+        serverError(err, res)
     }
 })
 
@@ -98,9 +98,8 @@ router.get('/:num', async (req, res) => {
             );
         }
         res.render('list.ejs', { 글목록: result, 글수: cnt, 채팅사람, 페이지넘버: req.params.num, resizeImg, isRead });
-    } catch (e) {
-        console.log(e);
-        res.status(500).send('서버 에러');
+    } catch (err) {
+        serverError(err, res)
     }
 })
 
@@ -131,9 +130,8 @@ router.get('/next/:num', async (req, res) => {
             );
         }
         res.render('list.ejs', { 글목록: result, 글수: cnt, 채팅사람, 페이지넘버, resizeImg, isRead });
-    } catch (e) {
-        console.log(e);
-        res.status(500).send('서버 에러');
+    } catch (err) {
+        serverError(err, res)
     }
 })
 
@@ -165,9 +163,8 @@ router.get('/prev/:num', async (req, res) => {
             );
         }
         res.render('list.ejs', { 글목록: result, 글수: cnt, 채팅사람, 페이지넘버, resizeImg, isRead });
-    } catch (e) {
-        console.log(e);
-        res.status(500).send('서버 에러');
+    } catch (err) {
+        serverError(err, res)
     }
 })
 

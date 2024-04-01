@@ -1,5 +1,6 @@
 const router = require('express').Router()
 const passport = require('../utils/auth.js');
+const serverError = require('../utils/error.js')
 
 router.get('', async (req, res) => {
     res.render('login.ejs')
@@ -16,8 +17,7 @@ router.post('', async (req, res, next) => {
             })
         })(req, res, next)
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: '서버 에러' });
+        serverError(err, res)
     }
 })
 

@@ -2,6 +2,7 @@ const router = require('express').Router()
 const { ObjectId } = require('mongodb')
 let connectDB = require('../utils/database.js')
 let verify = require('../utils/verify.js')
+const serverError = require('../utils/error.js')
 const dateFormat1 = require("./../public/time.js");
 
 let db
@@ -40,9 +41,8 @@ router.post('/message', verify, async function (req, res) {
         else {
             return res.send("채팅 메시지를 저장하는데 문제가 발생함");
         }
-    } catch (e) {
-        console.log(e)
-        return res.status(500).send('서버 에러');
+    } catch (err) {
+        serverError(err, res)
     }
 })
 
@@ -85,9 +85,8 @@ router.delete('',verify, async (req, res) => {
             });
         });
         return res.render('chat.ejs', { data: result1, cur: req.user._id, arrow: 0, counterpart });
-    } catch (e) {
-        console.error(e);
-        return res.status(500).send('서버에러')
+    } catch (err) {
+        serverError(err, res)
     }
 })
 
@@ -122,9 +121,8 @@ router.get('/matches', verify, async function (req, res) { // 매칭시
             });
         });
         res.render('chat.ejs', { data: result1, cur: req.user._id, arrow: result2._id, counterpart: counterpart })
-    } catch (e) {
-        console.log(e);
-        res.status(500).send('서버에러')
+    } catch (err) {
+        serverError(err, res)
     }
 })
 
@@ -144,9 +142,8 @@ router.get('', verify, async function (req, res) { // navbar에서 올 때
             });
         });
         res.render('chat.ejs', { data: result, cur: req.user._id, arrow: 0, counterpart: counterpart });
-    } catch (error) {
-        console.error(error);
-        res.status(500).send('서버 에러');
+    } catch (err) {
+        serverError(err, res)
     }
 });
 

@@ -21,6 +21,7 @@ app.use(express.urlencoded({ extended: true }))
 const verify = require('./utils/verify.js')
 const passport = require('./utils/auth.js');
 const connectDB = require('./utils/database.js')
+const { serverError } = require('./utils/error.js');
 
 app.use(passport.initialize())
 app.use(session({
@@ -66,8 +67,7 @@ app.get('/', (req, res) => {
 app.get('/logout', function (req, res) {
     req.session.destroy((err) => {
         if (err) {
-            console.error(err);
-            return res.status(500).send('서버 에러');
+            serverError(err, res)
         }
         res.redirect('/list/1');
     });
@@ -83,9 +83,8 @@ app.put('/locations',verify, async (req, res) => { // 사용자 위치정보 업
             { $set: { location: req.body.content } }
         );
         res.send('위치 업데이트');
-    } catch (e) {
-        console.log(e);
-        res.status(500).send('서버에러')
+    } catch (err) {
+        serverError(err, res)
     }
 })
 

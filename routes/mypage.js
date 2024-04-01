@@ -2,6 +2,7 @@ const router = require('express').Router()
 let connectDB = require('../utils/database.js')
 let upload = require('../utils/upload.js')
 const { ObjectId } = require('mongodb')
+const serverError = require('../utils/error.js')
 
 let db
 connectDB.then((client) => {
@@ -22,9 +23,8 @@ router.get('', async (req, res) => {
         let result = await db.collection('user').findOne({ username: req.user.username });
         let isRead = req.user ? req.user.isRead : true;
         res.render('mypage.ejs', { 아이디: result, isRead });
-    } catch (e) {
-        console.error(e);
-        res.status(500).send('서버 에러');
+    } catch (err) {
+        serverError(err, res)
     }
 })
 
@@ -41,10 +41,8 @@ router.put('/name', async (req, res) => {
         await db.collection('comment').updateMany({ userId: new ObjectId(req.user._id) }, { $set: { username: req.body.name } })
         await db.collection('post').updateMany({ 작성자_id: new ObjectId(req.user._id) }, { $set: { 작성자: req.body.name } })
         return res.send("<script>alert('닉네임이 변경되었습니다');window.location.replace(`/mypage`);</script>");
-    }
-    catch (e) {
-        console.log(e)
-        return res.status(500).send('서버에러')
+    } catch (err) {
+        serverError(err, res)
     }
 })
 
@@ -54,8 +52,7 @@ router.put('/profileImg', upload.single('img1'), async (req, res, next) => {
         await db.collection('comment').updateMany({ userId: new ObjectId(req.user._id) }, { $set: { userprofile: req.file.key } })
         return res.send("<script>alert('프로필 사진이 변경되었습니다');window.location.replace(`/mypage`);</script>");
     } catch (err) {
-        console.log(err);
-        res.status(500).send('서버 에러');
+        serverError(err, res)
     }
 });
 

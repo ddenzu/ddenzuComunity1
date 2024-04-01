@@ -1,6 +1,7 @@
 const router = require('express').Router()
 const { ObjectId } = require('mongodb')
 const requestIp = require('request-ip')
+const serverError = require('../utils/error.js')
 let optimizeImage = require('../utils/optimizeImg.js');
 let connectDB = require('../utils/database.js')
 let verify = require('../utils/verify.js')
@@ -47,9 +48,8 @@ router.get('/:id', async (req, res) => {
             isRead
         });
     }
-    catch (e) {
-        console.log(e)
-        res.status(500).send('서버 에러') 
+    catch (err) {
+        serverError(err, res)
     }
 })
 
@@ -68,9 +68,8 @@ router.post('/comment', verify, async (req, res) => {
         };
         await db.collection('comment').insertOne(저장할거);
         res.send('댓글저장');
-    } catch (e) {
-        console.log(e);
-        res.status(500).send('서버에러')
+    } catch (err) {
+        serverError(err, res)
     }
 })
 
@@ -88,9 +87,8 @@ router.delete('/comment', async (req, res) => {
         } else {
             return res.status(403).send("fail");
         }
-    } catch (e) {
-        console.log(e)
-        return res.status(500).send('서버에러')
+    } catch (err) {
+        serverError(err, res)
     }
 })
 
@@ -111,9 +109,8 @@ router.post('/recomment', verify, async (req, res) => {
         }
         await db.collection('comment').insertOne(저장할거);
         res.send('대댓글저장');
-    } catch (e) {
-        console.log(e)
-        res.status(500).send('서버에러')
+    } catch (err) {
+        serverError(err, res)
     }
 })
 

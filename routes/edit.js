@@ -2,6 +2,7 @@ const router = require('express').Router()
 const { ObjectId } = require('mongodb')
 let connectDB = require('../utils/database.js')
 let verify = require('../utils/verify.js')
+const serverError = require('../utils/error.js')
 
 let db
 connectDB.then((client) => {
@@ -17,9 +18,8 @@ router.get('/:id', verify, async (req, res) => {
             return res.status(404).send('게시글을 찾을 수 없음');
         }
         res.render('edit.ejs', { result });
-    } catch (error) {
-        console.log(error);
-        res.status(500).send('서버 에러');
+    } catch (err) {
+        serverError(err, res)
     }
 })
 
@@ -40,9 +40,8 @@ router.put('', async (req, res) => {
         else {
             res.status(403).send("<script>alert('수정할 수 없슴다');window.location.replace(`/list/1`)</script>");
         }
-    } catch (e) {
-        console.log(e);
-        res.status(500).send('서버 에러');
+    } catch (err) {
+        serverError(err, res)
     }
 })
 

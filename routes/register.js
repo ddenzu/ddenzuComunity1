@@ -1,6 +1,7 @@
 const router = require('express').Router()
 let connectDB = require('../utils/database.js')
 const bcrypt = require('bcrypt')
+const serverError = require('../utils/error.js')
 
 let db
 connectDB.then((client) => {
@@ -25,9 +26,8 @@ router.post('', async (req, res) => {
         let 해시 = await bcrypt.hash(req.body.password, 10) // 10 이면 적당히 꼬은거
         await db.collection('user').insertOne({ username: req.body.username, password: 해시 });
         return res.redirect('/list/1')
-    } catch (e) {
-        console.error(e);
-        return res.status(500).send('서버 에러');
+    } catch (err) {
+        serverError(err, res)
     }
 })
 

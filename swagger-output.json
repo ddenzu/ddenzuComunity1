@@ -162,7 +162,8 @@
               "type": "object",
               "properties": {
                 "아이디": {
-                  "$ref": "#/definitions/User"
+                  "type":"string",
+                  "description": "닉네임"
                 },
                 "isRead": {
                   "type": "boolean",
@@ -357,10 +358,7 @@
               "type": "object",
               "properties": {
                 "글목록": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/definitions/Post"
-                  }
+                  "type": "array"
                 },
                 "글수": {
                   "type": "integer",
@@ -429,10 +427,7 @@
               "type": "object",
               "properties": {
                 "글목록": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/definitions/Post"
-                  }
+                  "type": "array"
                 },
                 "글수": {
                   "type": "integer",
@@ -501,10 +496,7 @@
               "type": "object",
               "properties": {
                 "글목록": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/definitions/Post"
-                  }
+                  "type": "array"
                 },
                 "글수": {
                   "type": "integer",
@@ -566,10 +558,7 @@
               "type": "object",
               "properties": {
                 "글목록": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/definitions/Post"
-                  }
+                  "type": "array"
                 },
                 "resizeImg": {
                   "type": "array",

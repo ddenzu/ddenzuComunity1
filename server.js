@@ -9,8 +9,8 @@ const io = new Server(http);
 require('dotenv').config()
 const session = require('express-session')
 
-const swaggerUi = require('swagger-ui-express')
-const swaggerFile = require('./swagger-output.json')
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger-output.json');
 
 app.use(methodOverride('_method'))
 app.use(express.static(__dirname + '/public')) //(css.js,jpg...= static파일)은 public 폴더 사용
@@ -21,7 +21,7 @@ app.use(express.urlencoded({ extended: true }))
 const verify = require('./utils/verify.js')
 const passport = require('./utils/auth.js');
 const connectDB = require('./utils/database.js')
-const { serverError } = require('./utils/error.js');
+const serverError = require('./utils/error.js');
 
 app.use(passport.initialize())
 app.use(session({
@@ -56,7 +56,7 @@ app.use('/login', require('./routes/login.js'))
 app.use('/register', require('./routes/register.js'))
 app.use('/chat', require('./routes/chat.js'))
 
-app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerFile))
+app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.get('/', (req, res) => {
     console.log("client IP: " + requestIp.getClientIp(req));

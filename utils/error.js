@@ -3,6 +3,4 @@ const serverError = (err, res) => {
     return res.status(500).send('서버 에러');
 };
 
-module.exports = {
-    serverError
-};
+module.exports = serverError;

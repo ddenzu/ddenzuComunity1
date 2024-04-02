@@ -45,9 +45,15 @@
                         <p>No Video Available</p>
                     <% } %>
                 <% } else { %>
-                    <a href="/detail/<%= 글목록[i]._id %>">
-                        <img class="list-left" src="<%= resizeImg[i] %>" onerror="this.src='/image/dinosaur.png'" style="max-width: 100%; max-height: 100%;" loading="lazy" />
-                    </a>
+                    <% if (글목록[i].content.includes('youtube.com')) { %>
+                        <a href="/detail/<%= 글목록[i]._id %>">
+                            <img class="list-left" src="<%= resizeImg[i] %>" onerror="this.src='/image/dinosaurVid.png'" style="max-width: 100%; max-height: 100%;" loading="lazy" />
+                        </a>
+                    <% } else { %>
+                        <a href="/detail/<%= 글목록[i]._id %>">
+                            <img class="list-left" src="<%= resizeImg[i] %>" onerror="this.src='/image/dinosaur.png'" style="max-width: 100%; max-height: 100%;" loading="lazy" />
+                        </a>
+                    <% } %>
                 <% } %>
                     <h4 class="list-right">
                         <a href="/detail/<%= 글목록[i]._id %>"><%= 글목록[i].title %></a>
@@ -71,7 +77,6 @@
         <div style="position: relative;">
             <div class="page-box">
                 <p></p>
-                <!-- <p><%= Math.ceil(글수/5) %></p> -->
                 <ion-icon style="font-size: 24px;" class="first" name="ellipsis-horizontal-outline"></ion-icon>
                 <ion-icon class="back" name="caret-back-outline"></ion-icon>
                 <%for (let i=((Math.ceil(페이지넘버/5))*5)-4; i<((Math.ceil(페이지넘버/5))*5)+1; i++){ %>

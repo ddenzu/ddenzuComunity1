@@ -11,8 +11,8 @@
         <div class="nav">
             <h2 class="logo">
                 <a href="/list/1">
-                    <img class="home-img" src='/image/home.png' 
-                    loading="lazy" onerror="this.src='/image/dinosaur.png'"/>
+                    <img class="home-img" src='/image/home.webp' 
+                    loading="lazy" onerror="this.src='/image/dinosaur.webp'"/>
                 </a>
             </h2>
             <nav class="navigation">
@@ -38,7 +38,7 @@
                 href="/chat/matches?name=<%= 글목록.작성자 %>&id=<%= 글목록.작성자_id %>">
                     <img style="cursor: pointer; width: 25px; height: 25px; vertical-align: bottom; margin-right: 2px;" 
                     src="https://ddenzubucket.s3.ap-northeast-2.amazonaws.com/<%= 프로필 %>" 
-                    loading="lazy" onerror="this.src='/image/dinosaur.png'"/><%= 글목록.작성자 %>
+                    loading="lazy" onerror="this.src='/image/dinosaur.webp'"/><%= 글목록.작성자 %>
                 </a> 
                 <a class="postEdit" href="/edit/<%= 글목록._id %>">
                     <ion-icon style="font-size: 20px;" name="create-outline"></ion-icon>
@@ -110,8 +110,8 @@
                                     <a class="btn-a" href="/chat/matches?name=<%= 댓글목록[i].username %>&id=<%= 댓글목록[i].userId %>">
                                         <img style="cursor: pointer; width: 25px;height: 25px;object-fit: cover;
                                         padding-left: 5px;" loading="lazy" 
-                                        src="https:/ddenzubucket.s3.ap-northeast-2.amazonaws.com/<%= 댓글목록[i].userprofile %>"
-                                        onerror="this.src='/image/dinosaur.png'" />
+                                        src="https://ddenzubucket.s3.ap-northeast-2.amazonaws.com/<%= 댓글목록[i].userprofile %>"
+                                        onerror="this.src='/image/dinosaur.webp'" />
                                     </a>
                                 </button>
                             </div>
@@ -142,8 +142,8 @@
                                             <a class="btn-a" href="/chat/matches?name=<%= 대댓글[j].username %>&id=<%= 대댓글[j].userId %>">
                                                 <img style="cursor: pointer; width: 25px;height: 25px;object-fit: cover;
                                                 padding-left: 8px;" loading="lazy" 
-                                                src="https:/ddenzubucket.s3.ap-northeast-2.amazonaws.com/<%= 대댓글[j].userprofile %>"
-                                                onerror="this.src='/image/dinosaur.png'" />
+                                                src="https://ddenzubucket.s3.ap-northeast-2.amazonaws.com/<%= 대댓글[j].userprofile %>"
+                                                onerror="this.src='/image/dinosaur.webp'" />
                                             </a>
                                             <div style="width: 42px; text-align: center; margin-top: 0px;" class="profiletext"><%= 대댓글[j].username %></div>
                                         </div>

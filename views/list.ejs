@@ -7,15 +7,14 @@
     <title>승뮤니티</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="\main.css">
-    <link rel="icon" href="/public/favicon.ico">
 </head>
 <body style="position: relative; background-color: #1c1c1c;">
     <div class="wrap">
         <div class="nav">
             <h2 class="logo">
                 <a href="/list/1">
-                    <img class="home-img" src='/image/home.png' 
-                    loading="lazy" onerror="this.src='/image/dinosaur.png'"/>
+                    <img class="home-img" src='/image/home.webp' 
+                    loading="lazy" onerror="this.src='/image/dinosaur.webp'"/>
                 </a>
             </h2>
             <nav class="navigation">
@@ -39,19 +38,21 @@
                 <% if (글목록[i].vidName) { %>
                     <% if (글목록[i].vidName.length > 0) { %>
                         <a href="/detail/<%= 글목록[i]._id %>">
-                            <img class="list-left" src='/image/dinosaurVid.png' onerror="this.src='/image/dinosaurVid.png'" loading="lazy" />
+                            <img class="list-left" src='/image/dinosaurVid.webp' onerror="this.src='/image/dinosaurVid.webp'" loading="lazy" />
                         </a>
                     <% } else { %>
                         <p>No Video Available</p>
                     <% } %>
                 <% } else { %>
-                    <% if (글목록[i].content.includes('youtube.com')) { %>
+                    <% const content = 글목록[i].content;
+                        if (content.includes('youtube.com') || content.includes('youtu.be')) {
+                    %>
                         <a href="/detail/<%= 글목록[i]._id %>">
-                            <img class="list-left" src="<%= resizeImg[i] %>" onerror="this.src='/image/dinosaurVid.png'" style="max-width: 100%; max-height: 100%;" loading="lazy" />
+                            <img class="list-left" src="<%= resizeImg[i] %>" onerror="this.src='/image/dinosaurVid.webp'" style="max-width: 100%; max-height: 100%;" loading="lazy" />
                         </a>
                     <% } else { %>
                         <a href="/detail/<%= 글목록[i]._id %>">
-                            <img class="list-left" src="<%= resizeImg[i] %>" onerror="this.src='/image/dinosaur.png'" style="max-width: 100%; max-height: 100%;" loading="lazy" />
+                            <img class="list-left" src="<%= resizeImg[i] %>" onerror="this.src='/image/dinosaur.webp'" style="max-width: 100%; max-height: 100%;" loading="lazy" />
                         </a>
                     <% } %>
                 <% } %>

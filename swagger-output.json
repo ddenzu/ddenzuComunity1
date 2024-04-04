@@ -1189,20 +1189,5 @@
         }
       }
     }
-  },
-
-  "swaggerDefinition": {
-    "openapi": "3.0.0",
-    "info": {
-      "title": "pillnuts",
-      "version": "1.0.0",
-      "description": "a REST API using swagger and express."
-    },
-    "servers": [
-      {
-        "url": "https://localhost:8080"
-      }
-    ]
-  },
-  "apis": []
+  }
 }

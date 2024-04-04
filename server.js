@@ -8,15 +8,17 @@ const { Server } = require("socket.io");
 const io = new Server(http);
 require('dotenv').config()
 const session = require('express-session')
+const cors = require('cors');
 
-const swaggerUi = require('swagger-ui-express');
-const swaggerDocument = require('./swagger-output.json');
+// const swaggerUi = require('swagger-ui-express');
+// const swaggerDocument = require('./swagger-output.json');
 
 app.use(methodOverride('_method'))
 app.use(express.static(__dirname + '/public')) //(css.js,jpg...= static파일)은 public 폴더 사용
 app.set('view engine', 'ejs')
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
+app.use(cors());
 
 const verify = require('./utils/verify.js')
 const passport = require('./utils/auth.js');
@@ -56,7 +58,7 @@ app.use('/login', require('./routes/login.js'))
 app.use('/register', require('./routes/register.js'))
 app.use('/chat', require('./routes/chat.js'))
 
-app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+// app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.get('/', (req, res) => {
     console.log("client IP: " + requestIp.getClientIp(req));

@@ -5,8 +5,7 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js",
-    "prestart": "node ./swagger.js"
+    "start": "node server.js"
   },
   "keywords": [],
   "author": "",
@@ -36,7 +35,6 @@
     "socket.io": "^4.7.2"
   },
   "devDependencies": {
-    "swagger-autogen": "^2.23.7",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.0"
   }

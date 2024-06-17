@@ -3,7 +3,7 @@ const sharp = require('sharp');
 
 async function optimizeImage(imageUrl, w, h) {
     try {
-        const imageBuffer = await axios.get(`https:/ddenzubucket.s3.ap-northeast-2.amazonaws.com/${imageUrl}`, { responseType: 'arraybuffer' }).then(response => Buffer.from(response.data));
+        const imageBuffer = await axios.get(`https://ddenzubucket.s3.ap-northeast-2.amazonaws.com/${imageUrl}`, { responseType: 'arraybuffer' }).then(response => Buffer.from(response.data));
         // 이미지 최적화
         const optimizedImageBuffer = await sharp(imageBuffer)
             .rotate()

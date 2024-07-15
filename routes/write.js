@@ -13,13 +13,9 @@ connectDB.then((client) => {
 })
 
 router.get('', verify, async (req, res) => {
+    let isRead = req.user ? req.user.isRead : true;
     try {
-        let result = await db.collection('user').findOne({ username: req.user.username });
-        if (req.user.username == result.username) {
-            res.render('write.ejs');
-        } else {
-            res.status(401).send("<script>alert('로그인 요망');window.location.replace(`/login`)</script>");
-        }
+        res.render('write.ejs', {isRead});
     } catch (err) {
         serverError(err, res)
     }

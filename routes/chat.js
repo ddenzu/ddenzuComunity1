@@ -4,6 +4,7 @@ let connectDB = require('../utils/database.js')
 let verify = require('../utils/verify.js')
 const serverError = require('../utils/error.js')
 const dateFormat1 = require("./../public/time.js");
+const updateLocation = require('../utils/location.js')
 
 let db
 connectDB.then((client) => {
@@ -13,15 +14,14 @@ connectDB.then((client) => {
 })
 
 router.post('/message', verify, async function (req, res) { 
-    // console.log(req.body.content)
     try {
         if (!req.body.content) {
             return res.status(400).send("메세지 전송 실패");
         };
         let 저장할거 = {
             parent: req.body.parent, // 채팅방의 id
-            content: req.body.content, // 채팅내용
-            userid: req.user._id, // 채팅 건 사람
+            content: req.body.content, // 채팅 내용
+            userid: req.user._id, // 채팅 발신자
             date: dateFormat1.dateFormat(new Date()),
         };
         let result = await db.collection('message').insertOne(저장할거);
@@ -29,7 +29,7 @@ router.post('/message', verify, async function (req, res) {
             let receiver = await db.collection('chatroom').findOne({ _id: new ObjectId(req.body.parent) }).
                 then(data => data.name.filter(name => name !== req.user.username));
 
-            // 수신자가 chatroom 에 없다면 isRead: false 실행
+            // 수신자가 chatroom 에 없다면 isRead: false 설정으로 안읽음 표시
             if (await db.collection('user').findOne({ username: receiver[0], location: { $ne: "chatroom" } })) {
                 await db.collection('user').updateOne(
                     { username: receiver[0] }, // username이 receiver[0]와 일치하는 문서를 찾음
@@ -68,11 +68,12 @@ router.get('/message/:id', verify, function (req, res) {
     });
 });
 
-router.delete('',verify, async (req, res) => {
+router.delete('', verify, async (req, res) => {
     try {
         if (!req.body.삭제id) {
             return res.status(400).send('삭제할 ID가 존재하지 않음');
         }
+        let isRead = req.user ? req.user.isRead : true;
         await db.collection('chatroom').deleteOne({ _id: new ObjectId(req.body.삭제id) });
         await db.collection('message').deleteMany({ parent: req.body.삭제id });
         let result1 = await db.collection('chatroom').find({ member: req.user._id }).toArray();
@@ -84,7 +85,7 @@ router.delete('',verify, async (req, res) => {
                 }
             });
         });
-        return res.render('chat.ejs', { data: result1, cur: req.user._id, arrow: 0, counterpart });
+        return res.render('chat.ejs', { data: result1, cur: req.user._id, arrow: 0, counterpart, isRead });
     } catch (err) {
         serverError(err, res)
     }
@@ -92,10 +93,8 @@ router.delete('',verify, async (req, res) => {
 
 router.get('/matches', verify, async function (req, res) { // 매칭시
     try {
-        await db.collection('user').updateOne(
-            { _id: req.user._id },
-            { $set: { isRead: true, location: 'chatroom' } }
-        );
+        await updateLocation(req, 'chatroom', true)
+        let isRead = req.user ? req.user.isRead : true;
         if (req.query.name == req.user.username) {
             return res.send("<script>window.location.replace('/chat')</script>");
         }
@@ -120,7 +119,7 @@ router.get('/matches', verify, async function (req, res) { // 매칭시
                 }
             });
         });
-        res.render('chat.ejs', { data: result1, cur: req.user._id, arrow: result2._id, counterpart: counterpart })
+        res.render('chat.ejs', { data: result1, cur: req.user._id, arrow: result2._id, counterpart: counterpart, isRead })
     } catch (err) {
         serverError(err, res)
     }
@@ -128,10 +127,8 @@ router.get('/matches', verify, async function (req, res) { // 매칭시
 
 router.get('', verify, async function (req, res) { // navbar에서 올 때
     try {
-        await db.collection('user').updateOne(
-            { _id: req.user._id },
-            { $set: { isRead: true, location: 'chatroom' } }
-        );
+        await updateLocation(req, 'chatroom', true)
+        let isRead = req.user ? req.user.isRead : true;
         let result = await db.collection('chatroom').find({ member: req.user._id }).toArray();
         let counterpart = [];
         result.forEach(obj => {
@@ -141,7 +138,7 @@ router.get('', verify, async function (req, res) { // navbar에서 올 때
                 }
             });
         });
-        res.render('chat.ejs', { data: result, cur: req.user._id, arrow: 0, counterpart: counterpart });
+        res.render('chat.ejs', { data: result, cur: req.user._id, arrow: 0, counterpart: counterpart, isRead });
     } catch (err) {
         serverError(err, res)
     }

@@ -8,14 +8,20 @@ connectDB.then((client) => {
     console.log(err)
 })
 
-async function updateLocation(req, location, isRead = true){
+async function updateLocation(req, location, isRead) {
     if (req.user) {
-        await db.collection('user').updateOne(
-            { _id: req.user._id },
-            { $set: { location: location } }
-        );
+        if (isRead !== undefined) {
+            await db.collection('user').updateOne(
+                { _id: req.user._id },
+                { $set: { location: location, isRead: isRead } }
+            );
+        } else {
+            await db.collection('user').updateOne(
+                { _id: req.user._id },
+                { $set: { location: location } }
+            );
+        }
     }
-
 }
 
 module.exports = updateLocation;

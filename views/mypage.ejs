@@ -7,26 +7,7 @@
     <link rel="stylesheet" href="\main.css">
 </head>
 <body style="position: relative; background-color: #1c1c1c;">
-    <div class="wrap">
-        <div class="nav">
-            <h2 class="logo">
-                <a href="/list/1">
-                    <img class="home-img" src='/image/home.webp' 
-                    loading="lazy" onerror="this.src='/image/dinosaur.webp'"/>
-                </a>
-            </h2>
-            <nav class="navigation">
-                <a href="/mypage">MYPAGE</a>
-                <% if (!isRead) { %>
-                    <a id="chatAlert" href="/chat">CHATROOM</a>
-                <% } else { %>
-                    <a href="/chat">CHATROOM</a>
-                <% } %>
-                <a href="/login">LOGIN</a>
-                <a href="/register">REGISTER</a>
-            </nav>
-        </div> 
-    </div>
+    <%- include('nav.ejs', { isRead: isRead }) %>
     <div class="section2">
         <div style="height:60px;"></div>
         <div class="form-box form-box3">
@@ -64,7 +45,7 @@
             <div style="border-top: 1px #494a51 solid; width: 70%; margin: 10px;"></div>
 
             <form style="margin-bottom: 25px; margin-top: 10px;">
-                <a href="/logout" style="color: #EFEFEF;">로그아웃</a>
+                <a href="/log/logout" style="color: #EFEFEF;">로그아웃</a>
             </form>
         </div>
         
@@ -100,7 +81,7 @@
             let what = {
                 content : "mypage",
             }
-            fetch('/locations', {
+            fetch('/log/locations', {
             method : 'PUT',
             async : false,
             headers : {

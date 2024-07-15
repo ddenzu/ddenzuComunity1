@@ -3,6 +3,8 @@ let connectDB = require('../utils/database.js')
 let upload = require('../utils/upload.js')
 const { ObjectId } = require('mongodb')
 const serverError = require('../utils/error.js')
+const verify = require('../utils/verify.js')
+const updateLocation = require('../utils/location.js')
 
 let db
 connectDB.then((client) => {
@@ -11,15 +13,9 @@ connectDB.then((client) => {
     console.log(err)
 })
 
-router.get('', async (req, res) => {
+router.get('', verify, async (req, res) => {
     try {
-        if (!req.user) {
-            return res.status(401).send("<script>alert('로그인 요망');window.location.replace(`/login`)</script>");
-        }
-        await db.collection('user').updateOne(
-            { _id: req.user._id },
-            { $set: { location: 'mypage' } }
-        );
+        await updateLocation(req, 'mypage')
         let result = await db.collection('user').findOne({ username: req.user.username });
         let isRead = req.user ? req.user.isRead : true;
         res.render('mypage.ejs', { 아이디: result, isRead });

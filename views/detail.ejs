@@ -7,26 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body class="fix" style="position: relative;">
-    <div class="wrap">
-        <div class="nav">
-            <h2 class="logo">
-                <a href="/list/1">
-                    <img class="home-img" src='/image/home.webp' 
-                    loading="lazy" onerror="this.src='/image/dinosaur.webp'"/>
-                </a>
-            </h2>
-            <nav class="navigation">
-                <a href="/mypage">MYPAGE</a>
-                <% if (!isRead) { %>
-                    <a id="chatAlert" href="/chat">CHATROOM</a>
-                <% } else { %>
-                    <a href="/chat">CHATROOM</a>
-                <% } %>
-                <a href="/login">LOGIN</a>
-                <a href="/register">REGISTER</a>
-            </nav>
-        </div> 
-    </div>
+    <%- include('nav.ejs', { isRead: isRead }) %>
     <div class="section2">
         <div style="height:55px;"></div>
         <div class="detail-bg">
@@ -262,8 +243,8 @@
 
         $(document).on("click","span[name='add']", function(e){
             if (confirm('정말로 삭제하시겠습니까?')==true){
-                var 지울거 = {id : this.dataset.id,
-                userId : this.dataset.userid}
+                var 지울거 = {id : this.dataset.id, // 댓글 id
+                userId : this.dataset.userid} // 댓글 작성자 id
                 fetch('/detail/comment', {
                 method : 'DELETE',
                 async : false,
@@ -272,15 +253,34 @@
                 },
                 body : JSON.stringify(지울거)
                 })
-                .then((r)=>r.text())
-                .then((r)=>{
+                .then((r) => {
+                    if(r.status === 401){
+                        return r.text().then(script => {
+                        document.write(script); // 서버에서 받은 스크립트를 실행
+                        document.close(); // 문서 스트림을 닫아서 렌더링 완료
+                        });
+                    }
+                    return r.text();
+                })
+                .then((r)=>{ // r.text() 가 담김
+                    console.log(r)
                     if(r=='서버에러' || r=='fail'){
                         alert('삭제할 수 없습니다')
                     }
                     else {
                         $('#comment-box').load(location.href+' #comment-box');
                     }
-                }) 
+                })
+                // .then((r)=>r.text()) // verify 함수의 script 적용
+                // .then((r)=>{
+                //     console.log(r)
+                //     if(r=='서버에러' || r=='fail'){
+                //         alert('삭제할 수 없습니다')
+                //     }
+                //     else {
+                //         $('#comment-box').load(location.href+' #comment-box');
+                //     }
+                // }) 
             }
             else {
                 return 0
@@ -296,7 +296,7 @@
         document.querySelector('.comment-bar').addEventListener('click', () => {
             if ('<%= 현재접속자 %>' == "noUser") {
                 if (confirm('댓글 작성을 위해 로그인 페이지로 이동하시겠습니까?') == true) {
-                    window.location.replace(`/login`);
+                    window.location.replace(`/log`);
                 }
             }
         });
@@ -305,7 +305,7 @@
             reCommentBox.addEventListener('click', () => {
                 if ('<%= 현재접속자 %>' == "noUser") {
                     if (confirm('댓글 작성을 위해 로그인 페이지로 이동하시겠습니까?') == true) {
-                        window.location.replace(`/login`);
+                        window.location.replace(`/log`);
                     }
                 }
             });
@@ -318,7 +318,7 @@
         $(document).on("click",'.reComment', function(e){
             if('<%= 현재접속자 %>'=="noUser"){
                 if (confirm('댓글작성을 위해 로그인 페이지로 이동하시겠습니까?')==true){
-                    return window.location.replace(`/login`) 
+                    return window.location.replace(`/log`) 
                 }
             } else {
                 document.querySelectorAll('.reComment_box')[this.dataset.num].classList.remove('changeNameVisible');
@@ -346,7 +346,7 @@
             let what = {
                 content : "detail",
             }
-            fetch('/locations', {
+            fetch('/log/locations', {
             method : 'PUT',
             async : false,
             headers : {

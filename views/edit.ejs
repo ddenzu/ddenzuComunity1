@@ -6,7 +6,7 @@
     <title>승뮤니티</title>
     <link rel="stylesheet" href="\main.css">
 </head>
-<%- include('nav.ejs') %>
+<%- include('nav.ejs', { isRead: isRead }) %>
 <body class="grey-bg">
     <div class="section2">
         <div style="height:60px;"></div>
@@ -16,7 +16,6 @@
             <input style="color: #EFEFEF;border: 1px #494a51 solid;
             background: transparent;" name="title" value = "<%= result.title %>">
             <textarea name="content"><%= result.content %></textarea>
-            <!-- <input type="file" name="img1" accept="image/*"> -->
             <button type="submit">
                 <ion-icon style="color: #87FCC4;" name="paper-plane-outline"></ion-icon>
             </button>

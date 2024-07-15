@@ -13,11 +13,12 @@ connectDB.then((client) => {
 
 router.get('/:id', verify, async (req, res) => {
     try {
+        let isRead = req.user ? req.user.isRead : true;
         const result = await db.collection('post').findOne({ _id: new ObjectId(req.params.id) })
         if (!result) {
             return res.status(404).send('게시글을 찾을 수 없음');
         }
-        res.render('edit.ejs', { result });
+        res.render('edit.ejs', { result, isRead });
     } catch (err) {
         serverError(err, res)
     }

@@ -7,14 +7,12 @@
     overflow-x : hidden;
   }
   body {
-    /* background-image: linear-gradient(#1b1e37, #35364b); */
     background:#121212;
     overflow-x: hidden;
     width: 100%;
     margin: 0 auto;
   }
   body::after {
-    /* background-image: linear-gradient(#1b1e37, #35364b); */
     background-size: cover;
   }  
   .section {

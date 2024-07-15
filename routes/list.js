@@ -3,6 +3,7 @@ const { ObjectId } = require('mongodb')
 const requestIp = require('request-ip')
 const serverError = require('../utils/error.js')
 let optimizeImage = require('../utils/optimizeImg.js');
+const updateLocation = require('../utils/location.js')
 let connectDB = require('../utils/database.js')
 
 let db
@@ -13,7 +14,6 @@ connectDB.then((client) => {
 })
 
 router.get('/search', async (req, res) => {
-    // console.log(req.query.value)
     if (!req.query.value) {
         return res.status(400).send("<script>alert('검색어를 입력해주세요.');;window.location.replace(`/list/1`)</script>");
     }
@@ -33,6 +33,7 @@ router.get('/search', async (req, res) => {
         ]
         let result = await db.collection('post').aggregate(검색조건).toArray();
         if (result.length != 0) {
+            let isRead = req.user ? req.user.isRead : true;
             let resizeImgPromises = result.map(async (item) => {
                 if (item.imgName) {
                     return await optimizeImage(Array.isArray(item.imgName) ? item.imgName[0] : item.imgName, 75, 80);
@@ -41,7 +42,7 @@ router.get('/search', async (req, res) => {
                 }
             });
             let resizeImg = await Promise.all(resizeImgPromises);
-            return res.render('search.ejs', { 글목록: result, resizeImg })
+            return res.render('search.ejs', { 글목록: result, resizeImg, isRead })
         }
         res.status(404).send("<script>alert('존재하지 않는 글');window.location.replace(`/list/1`)</script>");
     } catch (err) {
@@ -91,12 +92,7 @@ router.get('/:num', async (req, res) => {
             }
         });
         let resizeImg = await Promise.all(resizeImgPromises);
-        if (req.user) {
-            await db.collection('user').updateOne(
-                { _id: req.user._id },
-                { $set: { location: 'list' } }
-            );
-        }
+        await updateLocation(req, 'list');
         res.render('list.ejs', { 글목록: result, 글수: cnt, 채팅사람, 페이지넘버: req.params.num, resizeImg, isRead });
     } catch (err) {
         serverError(err, res)
@@ -123,12 +119,7 @@ router.get('/next/:num', async (req, res) => {
             }
         });
         let resizeImg = await Promise.all(resizeImgPromises);
-        if (req.user) {
-            await db.collection('user').updateOne(
-                { _id: req.user._id },
-                { $set: { location: 'list' } }
-            );
-        }
+        await updateLocation(req, 'list');
         res.render('list.ejs', { 글목록: result, 글수: cnt, 채팅사람, 페이지넘버, resizeImg, isRead });
     } catch (err) {
         serverError(err, res)
@@ -156,12 +147,7 @@ router.get('/prev/:num', async (req, res) => {
             }
         });
         let resizeImg = await Promise.all(resizeImgPromises);
-        if (req.user) {
-            await db.collection('user').updateOne(
-                { _id: req.user._id },
-                { $set: { location: 'list' } }
-            );
-        }
+        await updateLocation(req, 'list');
         res.render('list.ejs', { 글목록: result, 글수: cnt, 채팅사람, 페이지넘버, resizeImg, isRead });
     } catch (err) {
         serverError(err, res)

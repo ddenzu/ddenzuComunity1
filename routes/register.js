@@ -11,7 +11,8 @@ connectDB.then((client) => {
 })
 
 router.get('', async (req, res) => {
-    res.render('register.ejs')
+    let isRead = req.user ? req.user.isRead : true;
+    res.render('register.ejs', {isRead})
 })
 
 router.post('', async (req, res) => {

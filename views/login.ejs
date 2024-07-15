@@ -19,12 +19,12 @@
         }
     </style>
 </head>
-<%- include('nav.ejs') %>
+<%- include('nav.ejs', { isRead: isRead }) %>
 <body>
     <div class="section">
         <div class="form-box2">
             <div class="form-value">
-                <form action="/login" method="POST">
+                <form action="/log/login" method="POST">
                     <h2>LogIn</h2>
                     <div class="inputbox">
                         <ion-icon name="mail-outline"></ion-icon>

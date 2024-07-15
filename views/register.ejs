@@ -18,7 +18,7 @@
         }
     </style>
 </head>
-<%- include('nav.ejs') %>
+<%- include('nav.ejs', { isRead: isRead }) %>
 <body>
     <div class="section">
         <div class="form-box2">
@@ -39,7 +39,7 @@
                         <p style="color: #EFEFEF;">가입하기</p>
                     </button>
                     <div class="register">
-                        <p>가입했으면 <a href="/login">로그인하기</a></p>
+                        <p>가입했으면 <a href="/log">로그인하기</a></p>
                     </div>
                 </form>
             </div>

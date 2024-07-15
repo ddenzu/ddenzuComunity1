@@ -9,26 +9,7 @@
     <link rel="stylesheet" href="\main.css">
 </head>
 <body class="fix" style="position: relative;">
-    <div class="wrap">
-        <div class="nav">
-            <h2 class="logo">
-                <a href="/list/1">
-                    <img class="home-img" src='/image/home.webp' 
-                    loading="lazy" onerror="this.src='/image/dinosaur.webp'"/>
-                </a>
-            </h2>
-            <nav class="navigation">
-                <a href="/mypage">MYPAGE</a>
-                <% if (!isRead) { %>
-                    <a id="chatAlert" href="/chat">CHATROOM</a>
-                <% } else { %>
-                    <a href="/chat">CHATROOM</a>
-                <% } %>
-                <a href="/login">LOGIN</a>
-                <a href="/register">REGISTER</a>
-            </nav>
-        </div> 
-    </div>
+    <%- include('nav.ejs', { isRead: isRead }) %>
     <div class="section2">
         <div class="section2-1"></div>
         <%for (let i=0; i<글목록.length; i++){ %>
@@ -199,7 +180,7 @@
                         }
                         else if(r=="notLogin"){
                             alert('로그인 요망')
-                            window.location.replace(`/login`)
+                            window.location.replace(`/log`)
                         }
                         else if(r=="serverError"){
                             alert('서버에러')
@@ -273,11 +254,11 @@
             num = parseInt('<%= 페이지넘버 %>')+1
             window.location.href=`/list/next/<%= 글목록[글목록.length-1]._id %>?pageNum=`+num;
         })
-        window.addEventListener('pageshow', (event) => {
+        window.addEventListener('pageshow', (event) => {//뒤로가기했을때 메세지읽지않음 해결
             let what = {
                 content : "list",
             }
-            fetch('/locations', {
+            fetch('/log/locations', {
             method : 'PUT',
             async : false,
             headers : {

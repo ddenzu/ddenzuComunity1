@@ -2,10 +2,10 @@ const router = require('express').Router()
 const { ObjectId } = require('mongodb')
 const requestIp = require('request-ip')
 const serverError = require('../utils/error.js')
-let optimizeImage = require('../utils/optimizeImg.js');
 let connectDB = require('../utils/database.js')
 let verify = require('../utils/verify.js')
 const dateFormat1 = require("./../public/time.js");
+const updateLocation = require('../utils/location.js')
 
 let db
 connectDB.then((client) => {
@@ -15,9 +15,6 @@ connectDB.then((client) => {
 })
 
 router.get('/:id', async (req, res) => {
-    // req.params 하면 유저가 url 파라미터에 입력한 데이터 가져옴(:id)
-    console.log("client IP: " + requestIp.getClientIp(req));
-    let isRead = req.user ? req.user.isRead : true;
     try {
         let result = await db.collection('post').findOne({ _id: new ObjectId(req.params.id) })
         if (!result) {
@@ -30,12 +27,8 @@ router.get('/:id', async (req, res) => {
         const 이미지주소 = Array.isArray(result.imgName) ? result.imgName : (result.imgName ? [result.imgName] : []);
         const 동영상주소 = Array.isArray(result.vidName) ? result.vidName : (result.vidName ? [result.vidName] : []);
         const 프로필 = result3.imgName ? result3.imgName : '';
-        if (req.user) {
-            await db.collection('user').updateOne(
-                { _id: req.user._id },
-                { $set: { location: 'detail' } }
-            );
-        }
+        await updateLocation(req, 'detail')
+        let isRead = req.user ? req.user.isRead : true;
         res.render('detail.ejs', {
             글목록: result,
             댓글목록: result2,
@@ -73,7 +66,7 @@ router.post('/comment', verify, async (req, res) => {
     }
 })
 
-router.delete('/comment', async (req, res) => {
+router.delete('/comment', verify, async (req, res) => {
     try {
         var 비교1 = JSON.stringify(req.user._id)
         var 비교2 = JSON.stringify(req.body.userId)

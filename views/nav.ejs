@@ -17,20 +17,16 @@
             </h2>
             <nav class="navigation">
                 <a href="/mypage">MYPAGE</a>
-                <a href="/chat">CHATROOM</a>
-                <a href="/login">LOGIN</a>
+                <% if (!isRead) { %>
+                    <a id="chatAlert" href="/chat">CHATROOM</a>
+                <% } else { %>
+                    <a href="/chat">CHATROOM</a>
+                <% } %>
+                <a href="/log">LOGIN</a>
                 <a href="/register">REGISTER</a>
             </nav>
         </div> 
     </div>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-    <!-- <script>
-        document.body.addEventListener('touchmove', function(event) {
-            // let color2 = '#131931'
-            let color3 = 'background-image: linear-gradient(#1b1e37, #35364b)'
-            // document.body.style.background= color2;
-            document.body.style.backgroundImage= color3;
-        }, { passive: true });
-    </script> -->
 </body>
 </html>

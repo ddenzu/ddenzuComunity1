@@ -12,7 +12,7 @@ connectDB.then((client) => {
 })
 
 passport.use(new LocalStrategy(async (입력한아이디, 입력한비번, cb) => { // 로그인 검사 로직
-    let result = await db.collection('user').findOne({ username: 입력한아이디 })
+    const result = await db.collection('user').findOne({ username: 입력한아이디 })
     if (!result) {
         return cb(null, false, { message: '존재하지 않는 아이디 입니다.' })
     }
@@ -21,7 +21,7 @@ passport.use(new LocalStrategy(async (입력한아이디, 입력한비번, cb) =
     } else {
         return cb(null, false, { message: '비밀번호가 일치하지 않습니다.' });
     }
-})) // 유저가 제출한 id,password가 db랑 일치하는지 확인하는 로직
+})) // 유저가 제출한 id,password가 db랑 일치하는지 확인
 
 passport.serializeUser((user, done) => {
     console.log(user)
@@ -31,7 +31,7 @@ passport.serializeUser((user, done) => {
 }) // 로그인할때 세션만들고 쿠키주기
 
 passport.deserializeUser(async (user, done) => {
-    let result = await db.collection('user').findOne({ _id: new ObjectId(user.id) })
+    const result = await db.collection('user').findOne({ _id: new ObjectId(user.id) })
     delete result.password
     process.nextTick(() => {
         return done(null, result)

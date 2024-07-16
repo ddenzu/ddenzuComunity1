@@ -69,19 +69,19 @@
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script>
-        var 지금누른채팅방id
-        var 채팅방삭제id
-        var eventSource;
-        var cnt;
+        let 지금누른채팅방id
+        let 채팅방삭제id
+        let eventSource;
+        let cnt;
+
         if('<%= arrow %>'!=0){
           let a = Array.from(document.querySelectorAll('.list-group-item'));
           a.forEach((i,b)=>{
             if(i.dataset.id=='<%= arrow %>'){
               setTimeout(()=> $(i).trigger('click') ,200) //*****
             }
-          })
-        } else {
-        }
+          });
+        } 
         
         $('.list-group-item').click(function(e){
           지금누른채팅방id = this.dataset.id;

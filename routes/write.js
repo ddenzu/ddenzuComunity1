@@ -1,7 +1,7 @@
 const router = require('express').Router()
 let connectDB = require('../utils/database.js')
-let verify = require('../utils/verify.js')
-let upload = require('../utils/upload.js')
+const verify = require('../utils/verify.js')
+const upload = require('../utils/upload.js')
 const dateFormat1 = require("./../public/time.js");
 const serverError = require('../utils/error.js')
 
@@ -13,7 +13,7 @@ connectDB.then((client) => {
 })
 
 router.get('', verify, async (req, res) => {
-    let isRead = req.user ? req.user.isRead : true;
+    const isRead = req.user ? req.user.isRead : true;
     try {
         res.render('write.ejs', {isRead});
     } catch (err) {

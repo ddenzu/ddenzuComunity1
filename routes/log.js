@@ -1,6 +1,6 @@
 const router = require('express').Router()
 const passport = require('../utils/auth.js');
-let verify = require('../utils/verify.js')
+const verify = require('../utils/verify.js')
 const serverError = require('../utils/error.js')
 let connectDB = require('../utils/database.js')
 const updateLocation = require('../utils/location.js')
@@ -13,7 +13,7 @@ connectDB.then((client) => {
 })
 
 router.get('', async (req, res) => {
-    let isRead = req.user ? req.user.isRead : true;
+    const isRead = req.user ? req.user.isRead : true;
     res.render('login.ejs', {isRead})
 })
 

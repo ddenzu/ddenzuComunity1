@@ -1,7 +1,7 @@
 const router = require('express').Router()
 const { ObjectId } = require('mongodb')
 let connectDB = require('../utils/database.js')
-let verify = require('../utils/verify.js')
+const verify = require('../utils/verify.js')
 const serverError = require('../utils/error.js')
 
 let db
@@ -13,7 +13,7 @@ connectDB.then((client) => {
 
 router.get('/:id', verify, async (req, res) => {
     try {
-        let isRead = req.user ? req.user.isRead : true;
+        const isRead = req.user ? req.user.isRead : true;
         const result = await db.collection('post').findOne({ _id: new ObjectId(req.params.id) })
         if (!result) {
             return res.status(404).send('게시글을 찾을 수 없음');
@@ -29,8 +29,8 @@ router.put('', async (req, res) => {
         if (req.body.title.length > 20){
             return res.status(400).send("<script>alert('제목을 20글자 이하로 지정해주세요.');history.go(-1);</script>");
         }
-        let 아이디비교용 = JSON.stringify(req.body.userId)
-        if (아이디비교용 === JSON.stringify(req.user._id)) {
+        const originalWriter = JSON.stringify(req.body.userId)
+        if (originalWriter === JSON.stringify(req.user._id)) {
             const updatedPost = {
                 title: req.body.title,
                 content: req.body.content
@@ -39,7 +39,7 @@ router.put('', async (req, res) => {
             res.redirect('/list/1');
         }
         else {
-            res.status(403).send("<script>alert('수정할 수 없슴다');window.location.replace(`/list/1`)</script>");
+            res.status(403).send("<script>alert('수정할 수 없습니다');window.location.replace(`/list/1`)</script>");
         }
     } catch (err) {
         serverError(err, res)

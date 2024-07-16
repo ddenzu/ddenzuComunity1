@@ -1,6 +1,6 @@
 const router = require('express').Router()
 let connectDB = require('../utils/database.js')
-let upload = require('../utils/upload.js')
+const upload = require('../utils/upload.js')
 const { ObjectId } = require('mongodb')
 const serverError = require('../utils/error.js')
 const verify = require('../utils/verify.js')
@@ -15,9 +15,8 @@ connectDB.then((client) => {
 
 router.get('', verify, async (req, res) => {
     try {
-        await updateLocation(req, 'mypage')
-        let result = await db.collection('user').findOne({ username: req.user.username });
-        let isRead = req.user ? req.user.isRead : true;
+        const isRead = await updateLocation(req, 'mypage')
+        const result = await db.collection('user').findOne({ username: req.user.username });
         res.render('mypage.ejs', { 아이디: result, isRead });
     } catch (err) {
         serverError(err, res)
@@ -29,7 +28,7 @@ router.put('/name', async (req, res) => {
         if (req.body.name.length > 20) {
             return res.status(400).send("<script>alert('아이디는 20글자 이하로 지정해주세요.');window.location.replace(`/mypage`);</script>");
         }
-        let result = await db.collection('user').findOne({ username: req.body.name })
+        const result = await db.collection('user').findOne({ username: req.body.name })
         if (result) {
             return res.status(409).send("<script>alert('이미 존재하는 아이디 입니다');window.location.replace(`/mypage`);</script>");
         }

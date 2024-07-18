@@ -69,43 +69,42 @@
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script>
-        let 지금누른채팅방id
-        let 채팅방삭제id
+      $(document).ready(function() {
+        let curChatroomId;
+        let delChatroomId
         let eventSource;
-        let cnt;
-
+        // 페이지 로드 시 상대방과 매칭
         if('<%= arrow %>'!=0){
-          let a = Array.from(document.querySelectorAll('.list-group-item'));
-          a.forEach((i,b)=>{
-            if(i.dataset.id=='<%= arrow %>'){
-              setTimeout(()=> $(i).trigger('click') ,200) //*****
+          let chatroomList = Array.from(document.querySelectorAll('.list-group-item'));
+          chatroomList.forEach((item, index)=>{
+            if(item.dataset.id=='<%= arrow %>'){
+              setTimeout(()=> $(item).trigger('click') ,200);
             }
           });
         } 
         
+        // 채팅방 목록 클릭 시 (상대방과 매칭)
         $('.list-group-item').click(function(e){
-          지금누른채팅방id = this.dataset.id;
+          curChatroomId = this.dataset.id;
           $('.chat-content').html('');
           if(eventSource != undefined){
             eventSource.close()
           }
-          var 현재사람 = '<%= cur %>';
-          eventSource = new EventSource('/chat/message/' + 지금누른채팅방id); // get요청
+          var currentUser  = '<%= cur %>';
+          eventSource = new EventSource('/chat/messages/' + curChatroomId); // get요청
           eventSource.addEventListener('test', function(e){
-            
-            var 가져온거 = JSON.parse(e.data);
-            가져온거.forEach(function(i){
-              if(i.userid==현재사람){
-                $('.chat-content').append('<li><span class="chat-box mine">'+i.content+'</span></li>')
-                $('.chat-content').append('<li><span class="mine time-box">'+i.date+'</span></li>')
-              } 
-              else {
-                $('.chat-content').append('<li><span class="chat-box">'+i.content+'</span></li>')
-                $('.chat-content').append('<li><span class="time-box">'+i.date+'</span></li>')
-              }
-            })
-            var 실제높이 = document.querySelector('.chat-content').scrollHeight;
-            $('.chat-content').scrollTop(실제높이+100); // 여기서 스크롤맨밑으로 (데이터를 수신했을때)
+            var messages = JSON.parse(e.data);
+            messages.forEach(function(message) {
+                var isCurrentUser = (message.userid === currentUser);
+                var chatBoxClass = isCurrentUser ? 'chat-box mine' : 'chat-box';
+                var timeBoxClass = isCurrentUser ? 'mine time-box' : 'time-box';
+                $('.chat-content').append(`
+                    <li><span class="${chatBoxClass}">${message.content}</span></li>
+                    <li><span class="${timeBoxClass}">${message.date}</span></li>
+                `);
+            });
+            var scrollHeight = document.querySelector('.chat-content').scrollHeight;
+            $('.chat-content').scrollTop(scrollHeight + 100); // 여기서 스크롤맨밑으로 (데이터를 수신했을때)
           })
           const elementsToRemove = document.querySelectorAll('.list-group-item');
           elementsToRemove.forEach(a => {
@@ -115,40 +114,37 @@
           document.querySelectorAll('.list-group-item')[this.dataset.i].classList.add('odd');
         })
 
+        // 메세지 전송 버튼 클릭
         $('#send').click(function(){
-            var 채팅내용 = $('#chat-input').val();
-            var 보낼거 = {
-                parent : 지금누른채팅방id,
-                content : 채팅내용,
+            var messageContent = $('#chat-input').val();
+            var messageData = {
+                parent : curChatroomId,
+                content : messageContent,
             }
-            $.post('/chat/message', 보낼거).done((a) => {
+            $.post('/chat/messages', messageData).done((a) => {
             })
             $('#chat-input').val('');
         })
-        $('.input-group').keypress(function(e){
-          if (e.keyCode===13){
-            var 채팅내용 = $('#chat-input').val();
-            var 보낼거 = {
-                parent : 지금누른채팅방id,
-                content : 채팅내용,
-            }
-            $.post('/chat/message', 보낼거).done((a) => {
-            })
-            $('#chat-input').val(''); 
-          } 
-        })
 
+        // 엔터로 메세지 전송
+        $('.input-group').keypress(function(e) {
+            if (e.keyCode === 13) {
+              $('#send').trigger('click');
+            }
+        });
+
+        // 채팅방 삭제 버튼 클릭
         $('.dele').click(function(e){
-          채팅방삭제id = this.dataset.id  
-          var 보낼거 = {삭제id : 채팅방삭제id};
-          if (confirm('리얼루다가 삭제하시겠슴까?')==true){
+          delChatroomId = this.dataset.id  
+          if (confirm('정말로 삭제하시겠습니까?')==true){
+            var deleteData = {삭제id : delChatroomId};
             fetch('/chat', {
             method : 'DELETE',
             async : false,
             headers : {
                 'Content-Type' : 'application/json'
             },
-            body : JSON.stringify(보낼거)
+            body : JSON.stringify(deleteData)
             })
             .then((r)=>r.text())
             .then((r)=>{
@@ -157,11 +153,13 @@
           }
         })
         
+        // 입력 필드 클릭 시 스크롤 조정
         $('.form-control').click(function(){
           setTimeout(()=>{
             window.scrollTo(0, 30)
           },200)
         })
+      })
     </script>
 </body>
 </html>

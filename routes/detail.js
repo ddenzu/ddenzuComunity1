@@ -45,7 +45,7 @@ router.get('/:id', async (req, res) => {
     }
 })
 
-router.post('/comment', verify, async (req, res) => {
+router.post('/comments', verify, async (req, res) => {
     try {
         if (!req.body.content) {
             return res.status(400).send("댓글등록 실패"); // 잘못된 요청
@@ -65,14 +65,14 @@ router.post('/comment', verify, async (req, res) => {
     }
 })
 
-router.delete('/comment', verify, async (req, res) => {
+router.delete('/comments', verify, async (req, res) => {
     try {
         const 비교1 = JSON.stringify(req.user._id)
         const 비교2 = JSON.stringify(req.body.userId)
         if (비교1 == 비교2) {
             const deletedComment = await db.collection('comment').deleteOne({ _id: new ObjectId(req.body.id) })
             if (deletedComment) {
-                return res.send('success');
+                return res.status(200).send('success');
             } else {
                 return res.status(404).send("fail");
             }
@@ -84,7 +84,7 @@ router.delete('/comment', verify, async (req, res) => {
     }
 })
 
-router.post('/recomment', verify, async (req, res) => {
+router.post('/recomments', verify, async (req, res) => {
     try {
         if (!req.body.content) {
             return res.status(400).send("<script>alert('대댓글등록 실패');</script>");

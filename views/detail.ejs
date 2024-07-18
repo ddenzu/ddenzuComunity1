@@ -75,7 +75,7 @@
                     <div class="comment-bar">
                         <div class="comment-write" style="width:97%;">
                             <textarea style="width: 80%; float: left; padding-top: 2px;" 
-                            class="comment_2" id="comment-input" placeholder=" 엔터누르면 줄바꿈"></textarea>
+                            id="comment-input" placeholder=" 엔터누르면 줄바꿈"></textarea>
                             <button style="float: right;" id="comment-btn">
                                 <ion-icon name="paper-plane-outline"></ion-icon>
                             </button>
@@ -168,68 +168,64 @@
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
     <script>
-        var 지금누른작성글id = '<%= 글목록._id %>'
-        var 지금누른작성글이름 = '<%= 글목록.title %>'
-        var 지금누른작성글 = '<%- 글목록.content.replace(/(?:\r\n|\r|\n)/g, '<br>') %>'
-        var 지울거 
+        const curPostId = '<%= 글목록._id %>'
+        const curPostTitle = '<%= 글목록.title %>'
+        const curPostContent = '<%- 글목록.content.replace(/(?:\r\n|\r|\n)/g, '<br>') %>'
+
+        // 좋아요 버튼 클릭 시
         $(document).on("click","span[name='like']", function(e){
-            var 보낼거 = {postid : 지금누른작성글id,
-            }
+            const data = { postid : curPostId }
             fetch('/detail/like', {
                 method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json' 
-                },
-                body: JSON.stringify(보낼거) 
-                })
+                headers: {'Content-Type': 'application/json' },
+                body: JSON.stringify(data) 
+            })
             .then(data => {
                 reloadLike();
             })
         })
-        var box = $(".profile2");
-        $('.profile2').change(function(){
-        })
 
-        document.querySelector('#comment-btn').addEventListener('click', ()=>{
-            var 댓글내용 = $('#comment-input').val()
-            var 보낼거 = {
-                parent : 지금누른작성글id,
-                content : 댓글내용,
+        // 댓글 입력 버튼 클릭 시
+        $('#comment-btn').click(function() {
+            const commentContent = $('#comment-input').val()
+            const data = {
+                parent : curPostId,
+                content : commentContent,
             }
-            fetch('/detail/comment', {
-            method : 'POST',
-            async : false,
-            headers : {
-                'Content-Type' : 'application/json'
-            },
-            body : JSON.stringify(보낼거)
+            fetch('/detail/comments', {
+                method : 'POST',
+                async : false,
+                headers : { 'Content-Type' : 'application/json' },
+                body : JSON.stringify(data)
             })
-            .then((r)=>r.text())
-            .then((r)=>{
-                if(r=="댓글저장"){
-                    $('#comment-box').load(location.href+' #comment-box');
-                    $('.comment_2').val('');
-                } else {
-                    alert('내용을 입력해 주세요')
-                }
-            }) 
+            .then((response)=> {
+                console.log(response.status)
+            })
+            // .then((result)=>{
+            //     console.log(result)
+            //     if(result=="댓글저장"){
+            //         $('#comment-box').load(location.href+' #comment-box');
+            //         $('#comment-input').val('');
+            //     } else {
+            //         alert('내용을 입력해 주세요')
+            //     }
+            // }) 
         })
 
+        // 대댓글 전송 버튼 클릭 시
         $(document).on("click",".reComment_send", function(e){
-            var 댓글내용 = document.querySelectorAll('#reComment-input')[e.target.dataset.num].value;
+            const reCommentContent = document.querySelectorAll('#reComment-input')[e.target.dataset.num].value;
             document.querySelectorAll('#reComment-input')[e.target.dataset.num].value = '';
-            var 보낼거 = {
-                parent : 지금누른작성글id,
+            var data = {
+                parent : curPostId,
                 reparent : e.target.dataset.id,
-                content : 댓글내용,
+                content : reCommentContent,
             }
-            fetch('/detail/recomment', {
-            method : 'POST',
-            async : false,
-            headers : {
-                'Content-Type' : 'application/json'
-            },
-            body : JSON.stringify(보낼거)
+            fetch('/detail/recomments', {
+                method : 'POST',
+                async : false,
+                headers : { 'Content-Type' : 'application/json' },
+                body : JSON.stringify(data)
             })
             .then((r)=>r.text())
             .then((r)=>{
@@ -241,17 +237,18 @@
             }) 
         })
 
+        // 댓글 삭제 버튼 클릭 시
         $(document).on("click","span[name='add']", function(e){
             if (confirm('정말로 삭제하시겠습니까?')==true){
-                var 지울거 = {id : this.dataset.id, // 댓글 id
-                userId : this.dataset.userid} // 댓글 작성자 id
-                fetch('/detail/comment', {
-                method : 'DELETE',
-                async : false,
-                headers : {
-                    'Content-Type' : 'application/json'
-                },
-                body : JSON.stringify(지울거)
+                var data = {
+                    id : this.dataset.id, // 댓글 id
+                    userId : this.dataset.userid // 댓글 작성자 id
+                } 
+                fetch('/detail/comments', {
+                    method : 'DELETE',
+                    async : false,
+                    headers : { 'Content-Type' : 'application/json' },
+                    body : JSON.stringify(data)
                 })
                 .then((r) => {
                     if(r.status === 401){
@@ -271,21 +268,12 @@
                         $('#comment-box').load(location.href+' #comment-box');
                     }
                 })
-                // .then((r)=>r.text()) // verify 함수의 script 적용
-                // .then((r)=>{
-                //     console.log(r)
-                //     if(r=='서버에러' || r=='fail'){
-                //         alert('삭제할 수 없습니다')
-                //     }
-                //     else {
-                //         $('#comment-box').load(location.href+' #comment-box');
-                //     }
-                // }) 
             }
             else {
                 return 0
             }
         }) 
+
         $(document).ready(function() {
             const profileElement = $('.profile2');
             if (profileElement.html() && profileElement.html().length > 2) {
@@ -293,13 +281,14 @@
             }
         });
 
-        document.querySelector('.comment-bar').addEventListener('click', () => {
-            if ('<%= 현재접속자 %>' == "noUser") {
-                if (confirm('댓글 작성을 위해 로그인 페이지로 이동하시겠습니까?') == true) {
-                    window.location.replace(`/log`);
-                }
-            }
-        });
+        // document.querySelector('.comment-bar').addEventListener('click', () => {
+        //     if ('<%= 현재접속자 %>' == "noUser") {
+        //         if (confirm('댓글 작성을 위해 로그인 페이지로 이동하시겠습니까?') == true) {
+        //             window.location.replace(`/log`);
+        //         }
+        //     }
+        // });
+
         const reCommentBox = document.querySelector('.reComment_box');
         if (reCommentBox) {
             reCommentBox.addEventListener('click', () => {

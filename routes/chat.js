@@ -13,7 +13,7 @@ connectDB.then((client) => {
     console.log(err)
 })
 
-router.post('/message', verify, async function (req, res) { 
+router.post('/messages', verify, async function (req, res) { 
     try {
         if (!req.body.content) {
             return res.status(400).send("메세지 전송 실패");
@@ -46,7 +46,7 @@ router.post('/message', verify, async function (req, res) {
     }
 })
 
-router.get('/message/:id', verify, function (req, res) {
+router.get('/messages/:id', verify, function (req, res) {
     res.writeHead(200, {
         "Connection": "keep-alive",
         "Content-Type": "text/event-stream",

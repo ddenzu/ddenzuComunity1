@@ -23,7 +23,6 @@ router.get('/:id', async (req, res) => {
         const result2 = await db.collection('comment').find({ postId: new ObjectId(req.params.id), parentId: null }).toArray()
         const result3 = await db.collection('user').findOne({ _id: result.작성자_id })
         const result4 = await db.collection('comment').find({ postId: new ObjectId(req.params.id), parentId: { $exists: true } }).toArray()
-        const 현재접속자 = req.user ? req.user.username : 'noUser';
         const 이미지주소 = Array.isArray(result.imgName) ? result.imgName : (result.imgName ? [result.imgName] : []);
         const 동영상주소 = Array.isArray(result.vidName) ? result.vidName : (result.vidName ? [result.vidName] : []);
         const 프로필 = result3.imgName ? result3.imgName : '';
@@ -34,7 +33,6 @@ router.get('/:id', async (req, res) => {
             이미지주소,
             프로필,
             동영상주소,
-            현재접속자,
             dateFormat1,
             대댓글: result4,
             isRead
@@ -48,7 +46,7 @@ router.get('/:id', async (req, res) => {
 router.post('/comments', verify, async (req, res) => {
     try {
         if (!req.body.content) {
-            return res.status(400).send("댓글등록 실패"); // 잘못된 요청
+            return res.status(400).send("댓글내용이 존재하지 않음"); 
         }
         const commentData = {
             postId: new ObjectId(req.body.parent), // 작성글 id
@@ -59,7 +57,7 @@ router.post('/comments', verify, async (req, res) => {
             date: new Date(),
         };
         await db.collection('comment').insertOne(commentData);
-        res.send('댓글저장');
+        res.status(200).send("댓글 저장 성공");
     } catch (err) {
         serverError(err, res)
     }
@@ -72,12 +70,12 @@ router.delete('/comments', verify, async (req, res) => {
         if (비교1 == 비교2) {
             const deletedComment = await db.collection('comment').deleteOne({ _id: new ObjectId(req.body.id) })
             if (deletedComment) {
-                return res.status(200).send('success');
+                return res.status(200).send('댓글 삭제 성공');
             } else {
-                return res.status(404).send("fail");
+                return res.status(404).send("db에 삭제할 댓글이 존재하지 않음");
             }
         } else {
-            return res.status(403).send("fail");
+            return res.status(403).send("본인이 작성한 댓글이 아님");
         }
     } catch (err) {
         serverError(err, res)
@@ -87,7 +85,7 @@ router.delete('/comments', verify, async (req, res) => {
 router.post('/recomments', verify, async (req, res) => {
     try {
         if (!req.body.content) {
-            return res.status(400).send("<script>alert('대댓글등록 실패');</script>");
+            return res.status(400).send("대댓글내용이 존재하지 않음");
         }
         const recommentData = {
             postId: new ObjectId(req.body.parent), // 작성글 id
@@ -99,16 +97,21 @@ router.post('/recomments', verify, async (req, res) => {
             date: new Date(),
         }
         await db.collection('comment').insertOne(recommentData);
-        res.send('대댓글저장');
+        res.status(200).send('대댓글 저장 성공');
     } catch (err) {
         serverError(err, res)
     }
 })
 
 router.put('/like', async (req, res) => {
-    db.collection('post').updateOne({ _id: new ObjectId(req.body.postid) }, { $inc: { like: 1 } }).then(() => {
-        res.send('success');
-    })
+    try {
+        db.collection('post').updateOne({ _id: new ObjectId(req.body.postid) }, { $inc: { like: 1 } }).then(() => {
+            res.status(200).send('성공');
+        })
+    } catch (err) {
+        serverError(err, res)
+    }
+
 })
 
 module.exports = router

@@ -16,7 +16,7 @@ router.get('/:id', verify, async (req, res) => {
         const isRead = req.user ? req.user.isRead : true;
         const result = await db.collection('post').findOne({ _id: new ObjectId(req.params.id) })
         if (!result) {
-            return res.status(404).send('게시글을 찾을 수 없음');
+            return res.status(404).send('게시글이 db에 존재하지 않음');
         }
         res.render('edit.ejs', { result, isRead });
     } catch (err) {
@@ -27,7 +27,7 @@ router.get('/:id', verify, async (req, res) => {
 router.put('', async (req, res) => {
     try {
         if (req.body.title.length > 20){
-            return res.status(400).send("<script>alert('제목을 20글자 이하로 지정해주세요.');history.go(-1);</script>");
+            return res.status(400).send('제목이 20자 초과임');
         }
         const originalWriter = JSON.stringify(req.body.userId)
         if (originalWriter === JSON.stringify(req.user._id)) {
@@ -39,7 +39,7 @@ router.put('', async (req, res) => {
             res.redirect('/list/1');
         }
         else {
-            res.status(403).send("<script>alert('수정할 수 없습니다');window.location.replace(`/list/1`)</script>");
+            res.status(403).send("본인이 작성한 글이 아님");
         }
     } catch (err) {
         serverError(err, res)

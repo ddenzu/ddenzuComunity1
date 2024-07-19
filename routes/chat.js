@@ -16,7 +16,7 @@ connectDB.then((client) => {
 router.post('/messages', verify, async function (req, res) { 
     try {
         if (!req.body.content) {
-            return res.status(400).send("메세지 전송 실패");
+            return res.status(400).send("메세지 내용이 없음");
         };
         const messageData = {
             parent: req.body.parent, // 채팅방의 id
@@ -28,7 +28,6 @@ router.post('/messages', verify, async function (req, res) {
         if (result) {
             const receiver = await db.collection('chatroom').findOne({ _id: new ObjectId(req.body.parent) }).
                 then(data => data.name.filter(name => name !== req.user.username));
-
             // 수신자가 chatroom 에 없다면 isRead: false 설정으로 안읽음 표시
             if (await db.collection('user').findOne({ username: receiver[0], location: { $ne: "chatroom" } })) {
                 await db.collection('user').updateOne(
@@ -36,13 +35,13 @@ router.post('/messages', verify, async function (req, res) {
                     { $set: { isRead: false } } // 해당 문서에 isRead 컬럼을 추가하고 false로 설정
                 );
             }
-            return res.send('성공');
+            return res.status(200).send('메세지 저장 성공');
         }
         else {
-            return res.send("채팅 메시지를 저장하는데 문제가 발생함");
+            return res.status(500).send("서버 오류");
         }
     } catch (err) {
-        serverError(err, res)
+        serverError(err, res) 
     }
 })
 

@@ -1,6 +1,5 @@
 const router = require('express').Router()
 const { ObjectId } = require('mongodb')
-const requestIp = require('request-ip')
 const serverError = require('../utils/error.js')
 let connectDB = require('../utils/database.js')
 const verify = require('../utils/verify.js')
@@ -14,6 +13,7 @@ connectDB.then((client) => {
     console.log(err)
 })
 
+// 게시글을 클릭하여 게시글의 세부사항 페이지 로드
 router.get('/:id', async (req, res) => {
     try {
         const result = await db.collection('post').findOne({ _id: new ObjectId(req.params.id) })
@@ -27,7 +27,7 @@ router.get('/:id', async (req, res) => {
         const 동영상주소 = Array.isArray(result.vidName) ? result.vidName : (result.vidName ? [result.vidName] : []);
         const 프로필 = result3.imgName ? result3.imgName : '';
         const isRead = await updateLocation(req, 'detail')
-        res.render('detail.ejs', {
+        return res.render('detail.ejs', {
             글목록: result,
             댓글목록: result2,
             이미지주소,
@@ -43,6 +43,7 @@ router.get('/:id', async (req, res) => {
     }
 })
 
+// 게시글에 댓글을 기재
 router.post('/comments', verify, async (req, res) => {
     try {
         if (!req.body.content) {
@@ -57,12 +58,13 @@ router.post('/comments', verify, async (req, res) => {
             date: new Date(),
         };
         await db.collection('comment').insertOne(commentData);
-        res.status(200).send("댓글 저장 성공");
+        return res.status(200).send("댓글 저장 성공");
     } catch (err) {
         serverError(err, res)
     }
 })
 
+// 게시글의 댓글을 삭제
 router.delete('/comments', verify, async (req, res) => {
     try {
         const 비교1 = JSON.stringify(req.user._id)
@@ -82,6 +84,7 @@ router.delete('/comments', verify, async (req, res) => {
     }
 })
 
+// 댓글에 대댓글을 기재
 router.post('/recomments', verify, async (req, res) => {
     try {
         if (!req.body.content) {
@@ -97,16 +100,17 @@ router.post('/recomments', verify, async (req, res) => {
             date: new Date(),
         }
         await db.collection('comment').insertOne(recommentData);
-        res.status(200).send('대댓글 저장 성공');
+        return res.status(200).send('대댓글 저장 성공');
     } catch (err) {
         serverError(err, res)
     }
 })
 
+// 좋아요 + 1
 router.put('/like', async (req, res) => {
     try {
         db.collection('post').updateOne({ _id: new ObjectId(req.body.postid) }, { $inc: { like: 1 } }).then(() => {
-            res.status(200).send('성공');
+            return res.status(200).send('좋아요 + 1 성공');
         })
     } catch (err) {
         serverError(err, res)

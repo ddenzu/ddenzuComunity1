@@ -974,6 +974,52 @@
   .changeNameVisible {
     display: none;
   }
+  .changeProfile {
+    margin-bottom: 10px;
+    text-align: center;
+  }
+  .changeName {
+    margin-bottom: 10px;
+    text-align: center;
+  }
+  .changeProfile input {
+    border: 1px #494a51 solid; 
+    color: #fff; 
+    width: 70%;
+    display: block; 
+    margin: 0 auto; 
+    margin-top: 15px; 
+    margin-bottom: 15px;
+    color: rgba(255, 255, 255, 0.5)
+  }
+  #newNameInput {
+    color: #EFEFEF; 
+    border: 1px #494a51 solid; 
+    width: 80%;
+  }
+  .changeProfile button {
+    color: #fff;
+    background: #79B397; 
+    padding: 10px; 
+    border-radius: 20px; 
+    border: none; 
+    cursor: pointer;
+  }
+  .changeName button {
+    color: #fff;
+    background: #79B397; 
+    padding: 10px; 
+    border-radius: 20px; 
+    border: none; 
+    cursor: pointer;
+  }
+  .logout-form {
+    margin-bottom: 25px; 
+    margin-top: 10px;
+  }
+  .logout-form a {
+    color: #EFEFEF;
+  }
   .kakao-ad {
     width: 320px;
     height: 100px;
@@ -1009,6 +1055,46 @@
   }
   .form-control::placeholder {
     color: rgba(255,255,255,0.7); 
+  }
+  .profile-header {
+    width: 100%;
+    background: linear-gradient(135deg, rgba(251, 204, 154, 1) 0%, rgba(121, 179, 151, 1) 46%, rgba(121, 179, 151, 1) 100%);
+    display: flex;
+    justify-content: center; 
+    border-top-left-radius: 20px; 
+    border-top-right-radius: 20px;
+  }
+  .profile-image {
+    width: 100px; 
+    height: 100px; 
+    border-radius: 50%; 
+    overflow: hidden; 
+    margin-bottom: 35px;
+    margin-top: 35px; 
+    border: 2px solid #EFEFEF;
+  }
+  .profile-image img {
+    width: 100%; 
+    height: 100%; 
+    object-fit: cover;
+  }
+  .profile-text {
+    margin-bottom: 5px;
+    margin-top: 20px;
+  }
+  .edit-icon {
+    font-size: 25px;
+    color: #87FCC4;
+    margin-bottom: 5px;
+  }
+  .mypage-divider {
+    border-top: 1px #494a51 solid; 
+    width: 70%; 
+    margin: 20px;
+  }
+  .username {
+    margin-bottom: 10px; 
+    font-weight: 600;
   }
   @media (min-width: 1024px) {
     .fix {

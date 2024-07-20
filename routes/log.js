@@ -14,17 +14,21 @@ connectDB.then((client) => {
 
 router.get('', async (req, res) => {
     const isRead = req.user ? req.user.isRead : true;
-    res.render('login.ejs', {isRead})
+    return res.render('login.ejs', {isRead})
 })
 
+// 로그인 시도
 router.post('/login', async (req, res, next) => {
     try{
+        if(!req.body.username || !req.body.password){
+            return res.status(400).send('아이디 또는 비밀번호를 입력하지 않음')
+        }
         passport.authenticate('local', (error, user, info) => { // auth 의 검사함수 사용
-            if (error) return res.status(500).json(error) // 에러날때
-            if (!user) return res.status(401).send(`<script>alert("${info.message}");history.go(-1)</script>`); // db에 없을때
+            if (error) return res.status(500).json(error) 
+            if (!user) return res.status(401).send(`${info.message}`); // db에 없을때
             req.logIn(user, (err) => { // 세션만들기 실행
                 if (err) return next(err)
-                res.redirect('/list/1') // 성공했을때
+                return res.status(200).send('로그인 성공') 
             })
         })(req, res, next)
     } catch (err) {
@@ -32,23 +36,32 @@ router.post('/login', async (req, res, next) => {
     }
 })
 
-router.get('/logout', function (req, res) {
-    req.session.destroy((err) => {
-        if (err) {
-            serverError(err, res);
-            return;
-        }
-        res.redirect('/list/1');
-    });
+// 로그아웃
+router.get('/logout', function (req, res, next) {
+    try{
+        req.session.destroy((err) => {
+            if (err) {
+                serverError(err, res);
+                return;
+            }
+            return res.redirect('/list/1');
+        }); 
+    } catch(err) {
+        serverError(err, res);
+    }
 });
 
-router.put('/locations', verify, async (req, res) => { 
+// 사용자의 현재 위치정보 저장
+router.put('/locations', async (req, res) => { 
+    if(!req.user){ // 로그인 하지 않고 페이지를 넘기는 과정에서 verify 의 else 문을 거치면
+        return // 성능저하가 발생할 수 있기 때문에 verify 함수 사용 x
+    }
     try {
         if (!req.body) {
             return res.status(400).send("위치정보 없음");
         }
         await updateLocation(req, req.body.content)
-        res.send('위치 업데이트');
+        return res.status(200).send('위치 업데이트');
     } catch (err) {
         serverError(err, res);
     }

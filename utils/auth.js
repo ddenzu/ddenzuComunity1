@@ -17,14 +17,14 @@ passport.use(new LocalStrategy(async (입력한아이디, 입력한비번, cb) =
         return cb(null, false, { message: '존재하지 않는 아이디 입니다.' })
     }
     if (await bcrypt.compare(입력한비번, result.password)) { // 해싱한 비번 확인
-        return cb(null, result) // 여기 result 가 serializeUser (user) 로 들어감
+        return cb(null, result) // result 가 serializeUser (user) 로 들어감
     } else {
         return cb(null, false, { message: '비밀번호가 일치하지 않습니다.' });
     }
-})) // 유저가 제출한 id,password가 db랑 일치하는지 확인
+})) 
 
 passport.serializeUser((user, done) => {
-    console.log(user)
+    // console.log(user)
     process.nextTick(() => { // 비동기적으로 실행 (처리보류)
         done(null, { id: user._id, username: user.username })
     })

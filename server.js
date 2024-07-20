@@ -1,5 +1,4 @@
 const express = require('express')
-const requestIp = require('request-ip')
 const app = express()
 const methodOverride = require('method-override') // form 태그에서 put, delete 요청 가능
 const MongoStore = require('connect-mongo')
@@ -11,23 +10,21 @@ const session = require('express-session')
 const cors = require('cors');
 
 app.use(methodOverride('_method'))
-app.use(express.static(__dirname + '/public')) //(css.js,jpg...= static파일)은 public 폴더 사용
+app.use(express.static(__dirname + '/public')) 
 app.set('view engine', 'ejs')
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cors());
 
 // utils
-const verify = require('./utils/verify.js')
 const passport = require('./utils/auth.js');
 const connectDB = require('./utils/database.js')
-const serverError = require('./utils/error.js');
 
 app.use(passport.initialize())
 app.use(session({
     secret: '비번',
-    resave: false, // 보통 false
-    saveUninitialized: false, // 보통 false
+    resave: false, 
+    saveUninitialized: false, 
     cookie: { maxAge: 60 * 60 * 1000 }, 
     store: MongoStore.create({
         mongoUrl: process.env.DB_URL,
@@ -57,7 +54,5 @@ app.use('/register', require('./routes/register.js'))
 app.use('/chat', require('./routes/chat.js'))
 
 app.get('/', (req, res) => {
-    console.log("client IP: " + requestIp.getClientIp(req));
-    console.log("time : " + new Date())
     res.redirect('/list/1')
 })

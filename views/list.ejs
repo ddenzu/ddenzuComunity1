@@ -214,9 +214,9 @@
                 $('.draggableChatbox').scrollTop(chatBox+100); 
             })
 
-            // 메세지를 읽고 뒤로가기를 했을 때 메세지가 읽음 표시
+            // 메세지를 읽고 뒤로가기를 했을 때 메세지 읽음 표시
             window.addEventListener('pageshow', async (event) => {
-                let what = {
+                const what = {
                     content : "list",
                 }
                 const response = await fetch('/log/locations', {

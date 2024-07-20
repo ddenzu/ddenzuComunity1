@@ -155,7 +155,6 @@
             try{
               const response = await fetch('/chat', {
                 method : 'DELETE',
-                async : false,
                 headers : { 'Content-Type' : 'application/json' },
                 body : JSON.stringify(deleteData)
               })

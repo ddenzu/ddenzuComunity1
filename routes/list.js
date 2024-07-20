@@ -1,6 +1,5 @@
 const router = require('express').Router()
 const { ObjectId } = require('mongodb')
-const requestIp = require('request-ip')
 const serverError = require('../utils/error.js')
 const optimizeImage = require('../utils/optimizeImg.js');
 const updateLocation = require('../utils/location.js')
@@ -14,6 +13,7 @@ connectDB.then((client) => {
     console.log(err)
 })
 
+// 썸네일 이미지 최적화
 const handleImageResize = async (items) => {
     return await Promise.all(
         items.map(async (item) => {
@@ -25,6 +25,7 @@ const handleImageResize = async (items) => {
     );
 };
 
+// 게시글 검색
 router.get('/search', async (req, res) => {
     try {
         const searchCriteria = [
@@ -46,7 +47,7 @@ router.get('/search', async (req, res) => {
             const resizeImg = await handleImageResize(result);
             return res.render('search.ejs', { 글목록: result, resizeImg, isRead })
         }
-        res.status(404).send("<script>alert('존재하지 않는 글 입니다.');window.location.replace(`/list/1`)</script>");
+        return res.status(404).send("<script>alert('존재하지 않는 글 입니다.');window.location.replace(`/list/1`)</script>");
     } catch (err) {
         serverError(err, res)
     }
@@ -56,20 +57,22 @@ router.get('', async (req, res) => {
     res.redirect('/list/1') 
 })
 
+// 게시글 삭제
 router.delete('', verify, async (req, res) => {
     try {
         const result = await db.collection('post').deleteOne({ 작성자: req.user.username, _id: new ObjectId(req.query.docid) })
         if (result.deletedCount > 0) {
-            res.status(200).send('삭제 완료'); // ajax 요청 뒤에 redirect render 사용 x 
+            return res.status(200).send('삭제 완료'); // ajax 요청 뒤에 redirect render 사용 x 
         }
         else {
-            res.status(403).send('본인이 작성한 글이 아님'); 
+            return res.status(403).send('본인이 작성한 글이 아님'); 
         }
     } catch (err) {
         serverError(err, res)
     }
 })
 
+// 게시글 페이지 변경
 router.get('/:num', async (req, res) => {
     try {
         const result = await db.collection('post').find().sort({ _id: -1 }).skip((req.params.num - 1) * 5).limit(5).toArray()
@@ -79,12 +82,13 @@ router.get('/:num', async (req, res) => {
         const cnt = await db.collection('post').count();
         const resizeImg = await handleImageResize(result);
         const isRead = await updateLocation(req, 'list');
-        res.render('list.ejs', { 글목록: result, 글수: cnt, 페이지넘버: req.params.num, resizeImg, isRead });
+        return res.render('list.ejs', { 글목록: result, 글수: cnt, 페이지넘버: req.params.num, resizeImg, isRead });
     } catch (err) {
         serverError(err, res)
     }
 })
 
+// 게시글 페이지 +1
 router.get('/next/:num', async (req, res) => {
     try {
         const result = await db.collection('post')
@@ -96,12 +100,13 @@ router.get('/next/:num', async (req, res) => {
         const pageNumber = req.query.pageNum;
         const resizeImg = await handleImageResize(result);
         const isRead = await updateLocation(req, 'list');
-        res.render('list.ejs', { 글목록: result, 글수: cnt, 페이지넘버: pageNumber, resizeImg, isRead });
+        return res.render('list.ejs', { 글목록: result, 글수: cnt, 페이지넘버: pageNumber, resizeImg, isRead });
     } catch (err) {
         serverError(err, res)
     }
 })
 
+// 게시글 페이지 -1
 router.get('/prev/:num', async (req, res) => {
     try {
         const result = await db.collection('post')
@@ -114,7 +119,7 @@ router.get('/prev/:num', async (req, res) => {
         const pageNumber = req.query.pageNum;
         const resizeImg = await handleImageResize(result);
         const isRead = await updateLocation(req, 'list');
-        res.render('list.ejs', { 글목록: result, 글수: cnt, 페이지넘버: pageNumber, resizeImg, isRead });
+        return res.render('list.ejs', { 글목록: result, 글수: cnt, 페이지넘버: pageNumber, resizeImg, isRead });
     } catch (err) {
         serverError(err, res)
     }

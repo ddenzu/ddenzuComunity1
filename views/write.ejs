@@ -10,10 +10,9 @@
 <body class="grey-bg">
     <div class="section2">
         <div style="height:60px;"></div>
-        <form class="form-box form-box4" action="/write" method="POST" enctype="multipart/form-data">
+        <form id="writeForm" class="form-box form-box4" enctype="multipart/form-data">
             <h4>글작성</h4>
             <input name="title" placeholder="제목 (20글자 이하로 지정해주세요)" required>
-            <!-- <input style="height: 150px;" name="content" placeholder="본문" required> -->
             <textarea name="content"  placeholder="본문, 엔터눌러서 줄바꿈" required></textarea>
             <input style="margin-bottom: 5px; background: transparent;
             border: 1px #494a51 solid; color: #494a51; color: rgba(255,255,255,0.4); " 
@@ -35,5 +34,35 @@
     </script>
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <script>
+        //게시글 작성
+        document.getElementById('writeForm').addEventListener('submit', async function(event) {
+            event.preventDefault(); 
+            const form = event.target;
+            const formData = new FormData(form);
+            if (!formData.get('title') || !formData.get('content')){
+              alert('제목 또는 내용을 작성해 주세요');
+              return;
+            }
+            try {
+                const response = await fetch('/write', {
+                    method: 'POST',
+                    body: formData 
+                });
+                if (response.ok) {
+                    window.location.replace('/list/1');
+                    return
+                } else if(response.status == 400){
+                    alert("제목을 20글자 이하로 지정해주세요.")
+                } else if(response.status == 500){
+                    alert('서버 오류가 발생했습니다.');
+                } else {
+                    alert('알 수 없는 오류가 발생했습니다');
+                }
+            } catch (error) {
+                alert('네트워크 오류가 발생했습니다.');
+            }
+        });
+    </script>
 </body>
 </html>

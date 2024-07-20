@@ -24,7 +24,7 @@
     <div class="section">
         <div class="form-box2">
             <div class="form-value">
-                <form action="/log/login" method="POST">
+                <form action="/log/login" id="login-form" method="POST">
                     <h2>LogIn</h2>
                     <div class="inputbox">
                         <ion-icon name="mail-outline"></ion-icon>
@@ -51,14 +51,49 @@
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
     <script type="module">
         import {makeSnowflake} from '/snow.js';
-
         window.onload = function(){
             for (let i = 0; i < 40; i++){
                 setTimeout(makeSnowflake(), 500 * i);
             }
         }      
     </script>
-
+    <script>
+        //로그인
+        document.getElementById('login-form').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            if (!formData.get('username') || !formData.get('password')){
+              alert('아이디 또는 비밀번호를 입력해 주세요');
+              return;
+            }
+            const data = {
+                username: formData.get('username'),
+                password: formData.get('password')
+            };
+            try {
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                if (response.ok){
+                    window.location.replace('/list/1');
+                    return
+                } else if (response.status == 400){
+                    alert('아이디 또는 비밀번호를 입력해주세요.');
+                } else if (response.status == 401){
+                    alert('존재하지 않는 아이디입니다.')
+                } else if (response.status == 500){
+                    alert('서버 오류가 발생했습니다');
+                } else {
+                    alert('알 수 없는 오류가 발생했습니다');
+                }
+            } catch(error){
+                alert('네트워크 오류가 발생했습니다');
+            }
+        })
+    </script>
 
 </body>
 </html>

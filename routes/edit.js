@@ -11,6 +11,7 @@ connectDB.then((client) => {
     console.log(err)
 })
 
+// 게시글 수정 페이지
 router.get('/:id', verify, async (req, res) => {
     try {
         const isRead = req.user ? req.user.isRead : true;
@@ -18,12 +19,13 @@ router.get('/:id', verify, async (req, res) => {
         if (!result) {
             return res.status(404).send('게시글이 db에 존재하지 않음');
         }
-        res.render('edit.ejs', { result, isRead });
+        return res.render('edit.ejs', { result, isRead });
     } catch (err) {
         serverError(err, res)
     }
 })
 
+// 게시글 제목 or 내용 변경
 router.put('', async (req, res) => {
     try {
         if (req.body.title.length > 20){
@@ -36,10 +38,10 @@ router.put('', async (req, res) => {
                 content: req.body.content
             };
             await db.collection('post').updateOne({ _id: new ObjectId(req.body.id) }, { $set: updatedPost })
-            res.redirect('/list/1');
+            return res.redirect('/list/1');
         }
         else {
-            res.status(403).send("본인이 작성한 글이 아님");
+            return res.status(403).send("본인이 작성한 글이 아님");
         }
     } catch (err) {
         serverError(err, res)

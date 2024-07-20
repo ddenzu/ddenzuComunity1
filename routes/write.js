@@ -15,7 +15,7 @@ connectDB.then((client) => {
 router.get('', verify, async (req, res) => {
     const isRead = req.user ? req.user.isRead : true;
     try {
-        res.render('write.ejs', {isRead});
+        return res.render('write.ejs', {isRead});
     } catch (err) {
         serverError(err, res)
     }
@@ -23,11 +23,11 @@ router.get('', verify, async (req, res) => {
 
 router.post('', upload.array('img1'), async (req, res) => {
     try {
-        if (req.body.title === "" || req.body.content === "") {
+        if (!req.body.title || !req.body.content) {
             return res.status(400).send('내용이 존재하지 않습니다');
         }
         if (req.body.title.length > 20){
-            return res.status(400).send("<script>alert('제목을 20글자 이하로 지정해주세요.');history.go(-1)</script>");
+            return res.status(400).send("글의 제목이 20글자를 초과함");
         }
         const postDetails = {
             title: req.body.title,
@@ -57,7 +57,7 @@ router.post('', upload.array('img1'), async (req, res) => {
             }
             await db.collection('post').insertOne(postDetails);
         }
-        res.redirect('/list/1');
+        return res.status(200).send('글작성 성공')
     } catch (err) {
         serverError(err, res)
     }

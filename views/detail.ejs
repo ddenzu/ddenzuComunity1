@@ -279,6 +279,7 @@
             }
         })        
 
+        // 좋아요 버튼 클릭 시 애니메이션
         const likeButton = document.getElementById('likeButton');
         likeButton.addEventListener('click', function() {
             var icon = this.querySelector('.like-icon');
@@ -290,6 +291,7 @@
             }, 500);
         });
 
+        // 닉네임이 너무 길 때
         $(document).ready(function() {
             const profileElement = $('.profile2');
             if (profileElement.html() && profileElement.html().length > 2) {
@@ -297,6 +299,7 @@
             }
         });
 
+        // 대댓글 UI
         $(document).on("click",'.reComment', function(e){
             document.querySelectorAll('.reComment_box')[this.dataset.num].classList.remove('changeNameVisible');
             document.querySelectorAll('.reComment')[this.dataset.num].classList.add('reComment_click');
@@ -310,7 +313,7 @@
 
         // 메세지 읽고 뒤로가기 했을 때 읽음처리
         window.addEventListener('pageshow', async (event) => { 
-            let what = {
+            const what = {
                 content : "detail",
             }
             const response = await fetch('/log/locations', {

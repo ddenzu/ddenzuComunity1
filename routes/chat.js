@@ -13,6 +13,19 @@ connectDB.then((client) => {
     console.log(err)
 })
 
+function getCounterpart(chatrooms, username) {
+    const counterpart = [];
+    chatrooms.forEach(obj => {
+        obj.name.forEach(nameElement => {
+            if (nameElement !== username) {
+                counterpart.push(nameElement);
+            }
+        });
+    });
+    return counterpart;
+}
+
+// 메세지 전송
 router.post('/messages', verify, async function (req, res) { 
     try {
         if (!req.body.content) {
@@ -45,6 +58,7 @@ router.post('/messages', verify, async function (req, res) {
     }
 })
 
+// 몽고db chage stream
 router.get('/messages/:id', verify, function (req, res) {
     res.writeHead(200, {
         "Connection": "keep-alive",
@@ -67,30 +81,25 @@ router.get('/messages/:id', verify, function (req, res) {
     });
 });
 
+// 채팅방 삭제
 router.delete('', verify, async (req, res) => {
     try {
         if (!req.body.삭제id) {
-            return res.status(400).send('삭제할 ID가 존재하지 않음');
+            return res.status(400).send('삭제할 채팅방의 ID가 존재하지 않음');
         }
         await db.collection('chatroom').deleteOne({ _id: new ObjectId(req.body.삭제id) });
         await db.collection('message').deleteMany({ parent: req.body.삭제id });
         const isRead = req.user ? req.user.isRead : true;
         const result1 = await db.collection('chatroom').find({ member: req.user._id }).toArray();
-        const counterpart = [];
-        result1.forEach(obj => {
-            obj.name.forEach(nameElement => {
-                if (nameElement !== req.user.username) {
-                    counterpart.push(nameElement);
-                }
-            });
-        });
+        const counterpart = getCounterpart(result1, req.user.username)
         return res.render('chat.ejs', { data: result1, cur: req.user._id, arrow: 0, counterpart, isRead });
     } catch (err) {
         serverError(err, res)
     }
 })
 
-router.get('/matches', verify, async function (req, res) { // 직접 매칭했을 때
+// 상대방과 직접 채팅을 시작하거나 상대방의 프로필 사진을 클릭하여 채팅을 시작했을 때
+router.get('/matches', verify, async function (req, res) { 
     try {
         if (req.query.name == req.user.username) {
             return res.send("<script>window.location.replace('/chat')</script>");
@@ -109,33 +118,20 @@ router.get('/matches', verify, async function (req, res) { // 직접 매칭했�
         }
         const result1 = await db.collection('chatroom').find({ member: req.user._id }).toArray()
         const result2 = await db.collection('chatroom').findOne({ name: { $all: [req.user.username, req.query.name] } })
-        const counterpart = [];
-        result1.forEach(obj => {
-            obj.name.forEach(nameElement => {
-                if (nameElement !== req.user.username) {
-                    counterpart.push(nameElement);
-                }
-            });
-        });
-        res.render('chat.ejs', { data: result1, cur: req.user._id, arrow: result2._id, counterpart: counterpart, isRead })
+        const counterpart = getCounterpart(result1, req.user.username)
+        return res.render('chat.ejs', { data: result1, cur: req.user._id, arrow: result2._id, counterpart: counterpart, isRead })
     } catch (err) {
         serverError(err, res)
     }
 })
 
-router.get('', verify, async function (req, res) { // navbar에서 올 때
+// 네이게이션바에서 chatroom을 클릭했을 때
+router.get('', verify, async function (req, res) { 
     try {
         const isRead = await updateLocation(req, 'chatroom', true) // 최신 isRead 를 가져오기 위해
         const result = await db.collection('chatroom').find({ member: req.user._id }).toArray();
-        const counterpart = [];
-        result.forEach(obj => {
-            obj.name.forEach(nameElement => {
-                if (nameElement !== req.user.username) {
-                    counterpart.push(nameElement);
-                }
-            });
-        });
-        res.render('chat.ejs', { data: result, cur: req.user._id, arrow: 0, counterpart: counterpart, isRead });
+        const counterpart = getCounterpart(result, req.user.username)
+        return res.render('chat.ejs', { data: result, cur: req.user._id, arrow: 0, counterpart: counterpart, isRead });
     } catch (err) {
         serverError(err, res)
     }

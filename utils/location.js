@@ -1,5 +1,4 @@
 let connectDB = require('./database.js')
-const serverError = require('../utils/error.js')
 
 let db
 connectDB.then((client) => {

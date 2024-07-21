@@ -41,6 +41,11 @@
   .section2-1{
     height: 55px;
   }
+  .section2-chat {
+    display: flex;
+    justify-content: center; 
+    height: 100vh;
+  }
   .white-bg {
     border-radius: 10px;
     background: rgba(255,255,255,0.065);
@@ -257,6 +262,25 @@
     color: #EFEFEF;
     font-size: 14px;
   }
+  .profile-image-box {
+    text-decoration: none; 
+    color: #EFEFEF; 
+    margin-left: 3px;
+  }
+  .profile-image-box > img {
+    cursor: pointer; 
+    width: 25px; 
+    height: 25px; 
+    vertical-align: bottom; 
+    margin-right: 2px;
+  }
+  .comment-profile-image {
+    cursor: pointer; 
+    width: 25px;
+    height: 25px;
+    object-fit: cover;
+    padding-left: 5px;
+  }
   .search-bar{
     width: 55%;
     max-width: 700px;
@@ -285,6 +309,13 @@
     color: #B8B8B3;
     margin-top: 3px;
     float: left;
+  }
+  .recommentTime{
+    font-size: 11px;
+    color: #B8B8B3;
+    margin-top: 3px;
+    float: left;
+    margin: 3px 0px 0px 4px;
   }
   .reComment {
     font-size: 12px;
@@ -460,7 +491,6 @@
   }
 
   .list-group-item {
-    /* background-color: rgba(0, 0, 0, 0.5); */
     background: transparent;
     border: 1px #494a51 solid;
     display: inline-block;
@@ -471,6 +501,17 @@
   }
   .list-group-item * {
     text-align: center;
+  }
+  .list-group-item > h6 {
+    font-size: 15px;
+  }
+  .list-group-item > button {
+    margin: auto; 
+    display: block;
+  }
+  .trash-icon {
+    font-size: 20px; 
+    color: #87FCC4;
   }
   .odd {
     background-color: rgba(255, 255, 255, 0.3);
@@ -500,7 +541,12 @@
     text-align: center;
     border-radius: 5px;
   }
-
+  .infomation > p {
+    font-weight: bold; 
+    color: #1fd39a;
+    padding: 5px; 
+    font-size: 20px;
+  }
   .like-box {
     display: flex;
     align-items: center;
@@ -631,16 +677,32 @@
     display: flex;
     margin-top: 8px;
   }
-  .img-box {
+  .img-box { /* detail 에 게시된 이미지 */
     width: 100%;
     margin: 10px 0px 10px 0px;
     overflow: auto;
+  }
+  .img-box > img {
+    max-width: 330px;
+  }
+  .comment-write > textarea {
+    width: 80%; 
+    float: left; 
+    padding-top: 2px;
+  }
+  .comment-write > button {
+    float: right;
+  }
+  .comment-list {
+    text-align: left; 
+    margin-bottom: 20px; 
+    clear: both;
   }
   .dark {
     background: #303134;
     color : #EFEFEF;
   }
-  .profiletext{
+  .profiletext{ /* 댓글의 닉네임 */
     width: 130%;
     font-size: 14px;
     margin-top: 2px;
@@ -648,6 +710,20 @@
     overflow: hidden;
     white-space: nowrap;
     color: #EFEFEF;
+  }
+  .profiletext-recomment { /* 대댓글의 닉네임 */
+    width: 42px; 
+    text-align: center; 
+    margin-top: 0px;
+  }
+  .recomment-content-box {
+    display: flex; 
+    flex-direction: column;
+  }
+  .recomment-content {
+    font-size: 16px; 
+    margin: 3px 0px 0px 4px; 
+    display: block;
   }
   .page-btn{
     padding-left: 4px;
@@ -698,11 +774,15 @@
     top: -16px;
     animation: fall 10s linear;
   }
-
   ion-icon {
     cursor: pointer;
     color: #87FCC4;
     font-size: 30px;
+  }
+  .input-group > button {
+    background-color: #1fd39a; 
+    border: none; 
+    border-radius: 2px;
   }
   .btn {
     padding: 5px 10px;
@@ -723,6 +803,7 @@
     border: 1px solid grey !important;
     background: rgba(0, 0, 0, 0.5);
     color: transparent;
+    padding: 0px;
   }
   .btn:focus {
     outline: none;
@@ -762,7 +843,11 @@
   .chat-btn:hover {
     background-color: transparent
   }
-
+  .send-icon {
+    color: white; 
+    padding-top: 5px; 
+    font-size: 25px;
+  }
   .snowFlake {
     width: 6px;
     height: 6px;
@@ -1095,6 +1180,11 @@
   .username {
     margin-bottom: 10px; 
     font-weight: 600;
+  }
+  .edit-title {
+    color: #EFEFEF;
+    border: 1px #494a51 solid;
+    background: transparent;
   }
   @media (min-width: 1024px) {
     .fix {

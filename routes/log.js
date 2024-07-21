@@ -13,8 +13,12 @@ connectDB.then((client) => {
 })
 
 router.get('', async (req, res) => {
-    const isRead = req.user ? req.user.isRead : true;
-    return res.render('login.ejs', {isRead})
+    try{
+        const isRead = req.user ? req.user.isRead : true;
+        return res.render('login.ejs', {isRead})
+    } catch(err){
+        serverError(err, res)
+    }
 })
 
 // 로그인 시도

@@ -11,15 +11,15 @@
     <div class="section2">
         <div style="height:55px;"></div>
         <div class="detail-bg">
-            <h4 ><%= 글목록.title %>
-            <p class="date-p"><%= 글목록.date %></p>
+            <h4 >
+                <%= 글목록.title %>
+                <p class="date-p"><%= 글목록.date %></p>
             </h4>
             <p>
-                <a class="btn-a" style="text-decoration: none; color: #EFEFEF; margin-left: 3px;" 
-                href="/chat/matches?name=<%= 글목록.작성자 %>&id=<%= 글목록.작성자_id %>">
-                    <img style="cursor: pointer; width: 25px; height: 25px; vertical-align: bottom; margin-right: 2px;" 
-                    src="https://ddenzubucket.s3.ap-northeast-2.amazonaws.com/<%= 프로필 %>" 
-                    loading="lazy" onerror="this.src='/image/dinosaur.webp'"/><%= 글목록.작성자 %>
+                <a class="profile-image-box" href="/chat/matches?name=<%= 글목록.작성자 %>&id=<%= 글목록.작성자_id %>">
+                    <img src="https://ddenzubucket.s3.ap-northeast-2.amazonaws.com/<%= 프로필 %>" 
+                    loading="lazy" onerror="this.src='/image/dinosaur.webp'"/>
+                    <%= 글목록.작성자 %>
                 </a> 
                 <a class="postEdit" href="/edit/<%= 글목록._id %>">
                     <ion-icon style="font-size: 20px;" name="create-outline"></ion-icon>
@@ -34,7 +34,7 @@
             <% } %>
             <% for (let i = 0; i < 이미지주소.length; i++) { %>
                 <div class="img-box">
-                    <img style="max-width: 330px;" loading="lazy" 
+                    <img loading="lazy" 
                     src="https://ddenzubucket.s3.ap-northeast-2.amazonaws.com/<%= 이미지주소[i] %>"/>
                 </div>
             <% } %>
@@ -74,9 +74,8 @@
                 <div class="ccontainer">
                     <div class="comment-bar">
                         <div class="comment-write" style="width:97%;">
-                            <textarea style="width: 80%; float: left; padding-top: 2px;" 
-                            id="comment-input" placeholder=" 엔터누르면 줄바꿈"></textarea>
-                            <button style="float: right;" id="comment-btn">
+                            <textarea id="comment-input" placeholder=" 엔터누르면 줄바꿈"></textarea>
+                            <button id="comment-btn">
                                 <ion-icon name="paper-plane-outline"></ion-icon>
                             </button>
                         </div>
@@ -84,13 +83,12 @@
                 </div>
             <div id="comment-box" style="margin: 0; display: block;">
                 <%for (let i=0; i<댓글목록.length; i++){ %>
-                    <p style="text-align: left; margin-bottom: 20px; clear: both;">
+                    <p class="comment-list">
                         <div class="profile">
                             <div class="profileImage" data-name="<%= 댓글목록[i].username %>" data-id="<%= 댓글목록[i].userId %>">
                                 <button style="background: transparent; border: none;">
-                                    <a class="btn-a" href="/chat/matches?name=<%= 댓글목록[i].username %>&id=<%= 댓글목록[i].userId %>">
-                                        <img style="cursor: pointer; width: 25px;height: 25px;object-fit: cover;
-                                        padding-left: 5px;" loading="lazy" 
+                                    <a href="/chat/matches?name=<%= 댓글목록[i].username %>&id=<%= 댓글목록[i].userId %>">
+                                        <img class="comment-profile-image" loading="lazy" 
                                         src="https://ddenzubucket.s3.ap-northeast-2.amazonaws.com/<%= 댓글목록[i].userprofile %>"
                                         onerror="this.src='/image/dinosaur.webp'" />
                                     </a>
@@ -120,23 +118,21 @@
                                 <%if(a==b){%>
                                     <div class="reComment-box">
                                         <div style="display: flex; flex-direction: column;">
-                                            <a class="btn-a" href="/chat/matches?name=<%= 대댓글[j].username %>&id=<%= 대댓글[j].userId %>">
-                                                <img style="cursor: pointer; width: 25px;height: 25px;object-fit: cover;
-                                                padding-left: 8px;" loading="lazy" 
+                                            <a href="/chat/matches?name=<%= 대댓글[j].username %>&id=<%= 대댓글[j].userId %>">
+                                                <img class="comment-profile-image" style="padding-left: 8px;" loading="lazy" 
                                                 src="https://ddenzubucket.s3.ap-northeast-2.amazonaws.com/<%= 대댓글[j].userprofile %>"
                                                 onerror="this.src='/image/dinosaur.webp'" />
                                             </a>
-                                            <div style="width: 42px; text-align: center; margin-top: 0px;" class="profiletext"><%= 대댓글[j].username %></div>
+                                            <div class="profiletext profiletext-recomment"><%= 대댓글[j].username %></div>
                                         </div>
-
-                                        <div style="display: flex; flex-direction: column;">
-                                            <p style="font-size: 16px; margin: 3px 0px 0px 4px; display: block;"><%= 대댓글[j].content %></p>
+                                        <div class="recomment-content-box">
+                                            <p class="recomment-content"><%= 대댓글[j].content %></p>
                                             <% var time1 = dateFormat1.dateFormat(new Date(대댓글[j].date)) %>
-                                            <p class="commentTime" style="margin: 3px 0px 0px 4px;"><%= time1 %></p>
+                                            <p class="recommentTime"><%= time1 %></p>
                                         </div>
                                         <span style="margin: 7px 0px 0px 7px;" name="add" id="commentDel" data-id="<%= 대댓글[j]._id %>"
                                             data-postId="<%= 대댓글[j].postId %>" data-userId="<%= 대댓글[j].userId %>">
-                                            <ion-icon style="font-size: 20px; color: #87FCC4" name="trash-outline"></ion-icon>
+                                            <ion-icon style="font-size: 20px;" name="trash-outline"></ion-icon>
                                         </span>
                                     </div>
                                 <%} %>
@@ -144,7 +140,7 @@
                         </div>
                         <span name="add" id="commentDel" data-id="<%= 댓글목록[i]._id %>"
                             data-postId="<%= 댓글목록[i].postId %>" data-userId="<%= 댓글목록[i].userId %>">
-                            <ion-icon style="font-size: 20px; color: #87FCC4;" name="trash-outline"></ion-icon>
+                            <ion-icon style="font-size: 20px;" name="trash-outline"></ion-icon>
                         </span>
                     </p>
                     <div style="clear: both; height: 0px;"></div>

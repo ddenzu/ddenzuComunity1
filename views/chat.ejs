@@ -14,31 +14,27 @@
 </head>
 <%- include('nav.ejs', { isRead: isRead }) %>
 <body>
-    <div class="section2" style="display: flex;justify-content: center; height: 100vh;">
+    <div class="section2 section2-chat">
     <div style="color: white; width: 90%;margin-top: 80px;">
     <div class="container p-3 detail">
         <div class="row">
           <div class="col-3" style="padding: 0 8px 0 0;">
-            <ul class="list-group chat-list" id="kk">
+            <ul class="list-group chat-list">
                 <% for (let i = 0; i < data.length; i++ ){%>
-                    <li class="list-group-item" data-id="<%= data[i]._id %>" data-i="<%= i %>" 
-                      data-cnt=0>
-                        <h6 style="font-size: 15px;"><%= counterpart[i] %></h6>
-                        <button style="margin: auto; display: block;" class="dele" data-id="<%= data[i]._id %>">
-                          <ion-icon style="font-size: 20px; color: #87FCC4;"
-                          name="trash-outline"></ion-icon>
-                        </button>
+                    <li class="list-group-item" data-id="<%= data[i]._id %>" data-i="<%= i %>" data-cnt=0>
+                      <h6><%= counterpart[i] %></h6>
+                      <button class="dele" data-id="<%= data[i]._id %>">
+                        <ion-icon class="trash-icon" name="trash-outline"></ion-icon>
+                      </button>
                     </li>
                 <%}%>
              </ul>
            </div>
-      
            <div class="col-9 p-0" >
              <div class="chat-room">
                 <ul class="list-group chat-content">
                   <div class="infomation">
-                    <p style="font-weight: bold; color: #1fd39a;
-                    padding: 5px; font-size: 20px;">⛔사용방법⛔<br>
+                    <p>⛔사용방법⛔<br>
                       1. 왼쪽 선택창에서 채팅방을 선택하세요<br>
                     </p>
                   </div>
@@ -47,9 +43,8 @@
                 <input class="form-control" style="background: rgba(255, 255, 255, 0.1);
                 color: white; border: none; height: 38px;" id="chat-input"
                 placeholder="엔터 누르면 전송">
-                <button class="btn chat-btn" style="padding: 0px;" id="send">
-                  <ion-icon style="color: white; padding-top: 5px; font-size: 25px;" 
-                  name="paper-plane-outline"></ion-icon>
+                <button class="btn chat-btn" id="send">
+                  <ion-icon class="send-icon" name="paper-plane-outline"></ion-icon>
                 </button>
               </div>
             </div>

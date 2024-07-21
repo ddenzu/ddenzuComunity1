@@ -9,7 +9,6 @@ async function optimizeImage(imageUrl, w, h) {
             .rotate()
             .resize({ width: w, height: h, fit: 'cover' }) // 적절한 사이즈로 조정
             .toBuffer();
-    
         // 최적화된 이미지를 base64로 인코딩하여 반환
         return `data:image/jpeg;base64,${optimizedImageBuffer.toString('base64')}`;
     } catch (error) {

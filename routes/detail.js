@@ -115,7 +115,6 @@ router.put('/like', async (req, res) => {
     } catch (err) {
         serverError(err, res)
     }
-
 })
 
 module.exports = router

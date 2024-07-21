@@ -13,11 +13,10 @@
         <form class="form-box form-box4" id="edit-form" method="POST">
             <h4>수정하기</h4>
             <input name="id" value = "<%= result._id %>" style="display: none">
-            <input style="color: #EFEFEF;border: 1px #494a51 solid;
-            background: transparent;" name="title" value = "<%= result.title %>">
+            <input class="edit-title" name="title" value = "<%= result.title %>">
             <textarea name="content"><%= result.content %></textarea>
             <button type="submit">
-                <ion-icon style="color: #87FCC4;" name="paper-plane-outline"></ion-icon>
+                <ion-icon name="paper-plane-outline"></ion-icon>
             </button>
             <p style="clear: both;"></p>
             <input name="userId" value = "<%= result.작성자_id %>" style="display: none">

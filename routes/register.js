@@ -11,8 +11,12 @@ connectDB.then((client) => {
 })
 
 router.get('', async (req, res) => {
-    const isRead = req.user ? req.user.isRead : true;
-    return res.render('register.ejs', {isRead})
+    try{
+        const isRead = req.user ? req.user.isRead : true;
+        return res.render('register.ejs', {isRead})
+    } catch(err){
+        serverError(err, res)
+    }
 })
 
 router.post('', async (req, res) => {

@@ -13,15 +13,15 @@ connectDB.then((client) => {
 })
 
 router.get('', verify, async (req, res) => {
-    const isRead = req.user ? req.user.isRead : true;
     try {
+        const isRead = req.user ? req.user.isRead : true;
         return res.render('write.ejs', {isRead});
     } catch (err) {
         serverError(err, res)
     }
 });
 
-router.post('', upload.array('img1'), async (req, res) => {
+router.post('', verify, upload.array('img1'), async (req, res) => {
     try {
         if (!req.body.title || !req.body.content) {
             return res.status(400).send('내용이 존재하지 않습니다');

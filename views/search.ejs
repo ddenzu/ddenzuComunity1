@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>승뮤니티</title>
+    <meta name="description" content="검색된 게시물 페이지입니다. 검색된 게시물을 확인할 수 있습니다.">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="\main.css">
 </head>
@@ -16,23 +17,25 @@
                 <div class="white-bg">
                     <div class="list-box">
                     <% if(글목록[i].vidName !== undefined){ %>
-                        <a href="/detail/<%= 글목록[i]._id %>">
-                            <img class="list-left" src="<%= resizeImg[i] %>" onerror="this.src='/image/dinosaurVid.webp'" loading="lazy" />
+                        <a href="/detail/<%= 글목록[i]._id %>" aria-label="게시물 세부사항 페이지로 이동">
+                            <img class="list-left" src="<%= resizeImg[i] %>" onerror="this.src='/image/dinosaurVid.webp'" 
+                            alt="동영상 썸네일" loading="lazy" />
                         </a>
                     <% } else { %>
-                        <a href="/detail/<%= 글목록[i]._id %>">
-                            <img class="list-left" src="<%= resizeImg[i] %>" onerror="this.src='/image/dinosaur.webp'" style="max-width: 100%; max-height: 100%; margin-bottom: 4px;" loading="lazy" />
+                        <a href="/detail/<%= 글목록[i]._id %>" aria-label="게시물 세부사항 페이지로 이동">
+                            <img class="list-left" src="<%= resizeImg[i] %>" onerror="this.src='/image/dinosaur.webp'" 
+                            alt="이미지 썸네일" style="max-width: 100%; max-height: 100%; margin-bottom: 4px;" loading="lazy" />
                         </a>
                     <% } %>
                         <h4 class="list-right">
-                            <a href="/detail/<%= 글목록[i]._id %>"><%= 글목록[i].title %></a>
+                            <a href="/detail/<%= 글목록[i]._id %>" aria-label="게시물 세부사항 페이지로 이동"><%= 글목록[i].title %></a>
                             <span class="delete" data-id="<%= 글목록[i]._id %>">
                                 <ion-icon style="font-size: 20px;" name="trash-outline"
                                 data-id="<%= 글목록[i]._id %>"></ion-icon>
                             </span>
                             <p>작성자: <%= 글목록[i].작성자 %></p>
                             <div>
-                                <button class="btn" data-id="<%= 글목록[i].작성자_id %>" 
+                                <button class="btn" data-id="<%= 글목록[i].작성자_id %>" aria-label="<%= 글목록[i].작성자 %> 와 채팅"
                                     data-name="<%= 글목록[i].작성자 %>">
                                     <a class="btn-a" href="/chat/matches?name=<%= 글목록[i].작성자 %>&id=<%= 글목록[i].작성자_id %>">채팅하기</a>
                                 </button>

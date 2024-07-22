@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, minimum-scale=1">    
+    <meta name="description" content="게시물의 세부사항 페이지입니다. 게시물에 포함된 제목과 첨부된 이미지, 동영상,
+    텍스트 내용, 댓글들을 확인할 수 있고 게시물의 좋아요를 누르거나 댓글을 기재할 수 있습니다.">
     <link rel="stylesheet" href="\main.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
@@ -18,7 +20,7 @@
             <p>
                 <a class="profile-image-box" href="/chat/matches?name=<%= 글목록.작성자 %>&id=<%= 글목록.작성자_id %>">
                     <img src="https://ddenzubucket.s3.ap-northeast-2.amazonaws.com/<%= 프로필 %>" 
-                    loading="lazy" onerror="this.src='/image/dinosaur.webp'"/>
+                    alt="작성자의 프로필 사진" loading="lazy" onerror="this.src='/image/dinosaur.webp'"/>
                     <%= 글목록.작성자 %>
                 </a> 
                 <a class="postEdit" href="/edit/<%= 글목록._id %>">
@@ -27,14 +29,15 @@
             </p>
             <% for (let i = 0; i < 동영상주소.length; i++) { %>
                 <div class="img-box">
-                    <video src="https://ddenzubucket.s3.ap-northeast-2.amazonaws.com/<%= 동영상주소[i] %>" type="video/mp4" controls muted loop autoplay 
+                    <video src="https://ddenzubucket.s3.ap-northeast-2.amazonaws.com/<%= 동영상주소[i] %>" 
+                    alt="게시물에 포함된 동영상 파일" type="video/mp4" controls muted loop autoplay 
                     playsinline preload="metadata" style="width: 200px" loading="lazy" onerror="this.style.display='none';">
                     </video>
                 </div>
             <% } %>
             <% for (let i = 0; i < 이미지주소.length; i++) { %>
                 <div class="img-box">
-                    <img loading="lazy" 
+                    <img loading="lazy" alt="게시물에 포함된 이미지 파일" 
                     src="https://ddenzubucket.s3.ap-northeast-2.amazonaws.com/<%= 이미지주소[i] %>"/>
                 </div>
             <% } %>
@@ -75,7 +78,7 @@
                     <div class="comment-bar">
                         <div class="comment-write" style="width:97%;">
                             <textarea id="comment-input" placeholder=" 엔터누르면 줄바꿈"></textarea>
-                            <button id="comment-btn">
+                            <button id="comment-btn" aria-label="댓글을 기재">
                                 <ion-icon name="paper-plane-outline"></ion-icon>
                             </button>
                         </div>
@@ -86,9 +89,9 @@
                     <p class="comment-list">
                         <div class="profile">
                             <div class="profileImage" data-name="<%= 댓글목록[i].username %>" data-id="<%= 댓글목록[i].userId %>">
-                                <button style="background: transparent; border: none;">
+                                <button style="background: transparent; border: none;" aria-label="<%= 댓글목록[i].username %> 와 채팅">
                                     <a href="/chat/matches?name=<%= 댓글목록[i].username %>&id=<%= 댓글목록[i].userId %>">
-                                        <img class="comment-profile-image" loading="lazy" 
+                                        <img class="comment-profile-image" loading="lazy" alt="댓글 작성자의 프로필 사진"
                                         src="https://ddenzubucket.s3.ap-northeast-2.amazonaws.com/<%= 댓글목록[i].userprofile %>"
                                         onerror="this.src='/image/dinosaur.webp'" />
                                     </a>
@@ -118,8 +121,8 @@
                                 <%if(a==b){%>
                                     <div class="reComment-box">
                                         <div style="display: flex; flex-direction: column;">
-                                            <a href="/chat/matches?name=<%= 대댓글[j].username %>&id=<%= 대댓글[j].userId %>">
-                                                <img class="comment-profile-image" style="padding-left: 8px;" loading="lazy" 
+                                            <a href="/chat/matches?name=<%= 대댓글[j].username %>&id=<%= 대댓글[j].userId %>" aria-label="<%= 대댓글[j].username %> 와 채팅">
+                                                <img class="comment-profile-image" style="padding-left: 8px;" loading="lazy" alt="대댓글 작성자의 프로필 사진" 
                                                 src="https://ddenzubucket.s3.ap-northeast-2.amazonaws.com/<%= 대댓글[j].userprofile %>"
                                                 onerror="this.src='/image/dinosaur.webp'" />
                                             </a>

@@ -2,28 +2,29 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, minimum-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>승뮤니티</title>
+    <meta name="description" content="네이게이션바 입니다.">
     <link rel="stylesheet" href="\main.css">
 </head>
 <body style="background-color: #1c1c1c;">
     <div class="wrap">
         <div class="nav">
             <h2 class="logo">
-                <a href="/list/1">
-                    <img class="home-img" src='/image/home.webp' 
+                <a href="/list/1" aria-label="첫 페이지로 이동">
+                    <img class="home-img" src='/image/home.webp' alt="홈으로 이동하는 버튼 이미지"
                     loading="lazy" onerror="this.src='/image/dinosaur.webp'"/>
                 </a>
             </h2>
             <nav class="navigation">
-                <a href="/mypage">MYPAGE</a>
+                <a href="/mypage" aria-label="마이 페이지로 이동">MYPAGE</a>
                 <% if (!isRead) { %>
-                    <a id="chatAlert" href="/chat">CHATROOM</a>
+                    <a id="chatAlert" href="/chat" aria-label="채팅 페이지로 이동">CHATROOM</a>
                 <% } else { %>
-                    <a href="/chat">CHATROOM</a>
+                    <a href="/chat" aria-label="채팅 페이지로 이동">CHATROOM</a>
                 <% } %>
-                <a href="/log">LOGIN</a>
-                <a href="/register">REGISTER</a>
+                <a href="/log" aria-label="로그인 페이지로 이동">LOGIN</a>
+                <a href="/register" aria-label="회원가입 페이지로 이동">REGISTER</a>
             </nav>
         </div> 
     </div>

@@ -2,8 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name = "viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scaleable=0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>승뮤니티</title>
+    <meta name="description" content="로그인 페이지 입니다. 아이디와 비밀번호를 입력하여
+    로그인을 시도할 수 있습니다.">
     <link rel="stylesheet" href="\main.css">
     <style>
         button {
@@ -36,11 +38,13 @@
                         <input name="password" type="password" required> 
                         <label for="">PASSWORD</label>
                     </div>
-                    <button type="submit">
+                    <button type="submit" aria-label="로그인 버튼">
                         <p style="color: #EFEFEF;">로그인</p>
                     </button>
                     <div class="register">
-                        <p>아이디가 없다면 <a href="/register">회원가입</a></p>
+                        <p>아이디가 없다면 <a href="/register" aria-label="회원가입 페이지로 이동">
+                            회원가입</a>
+                        </p>
                     </div>
                 </form>
             </div>

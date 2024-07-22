@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>승뮤니티</title>
+    <meta name="description" content="게시물 수정 페이지입니다. 작성한 게시물의
+    제목과 내용을 수정할 수 있습니다.">
     <link rel="stylesheet" href="\main.css">
 </head>
 <%- include('nav.ejs', { isRead: isRead }) %>
@@ -15,7 +17,7 @@
             <input name="id" value = "<%= result._id %>" style="display: none">
             <input class="edit-title" name="title" value = "<%= result.title %>">
             <textarea name="content"><%= result.content %></textarea>
-            <button type="submit">
+            <button type="submit" aria-label="수정한 게시물 등록">
                 <ion-icon name="paper-plane-outline"></ion-icon>
             </button>
             <p style="clear: both;"></p>
@@ -69,7 +71,6 @@
             } catch(error){
                 alert('네트워크 오류가 발생했습니다');
             }
-
         })
     </script>
 </body>

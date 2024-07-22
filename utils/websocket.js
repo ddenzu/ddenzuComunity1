@@ -5,11 +5,10 @@ function useWebSocket(server) {
 
     io.on('connection', function (socket) {
         socket.on('user-send', function (data) {
-            console.log(data);
+            // console.log(data);
             io.emit('broadcast', data);
         });
     });
-
     return io;
 }
 

@@ -11,24 +11,23 @@ connectDB.then((client) => {
     console.log(err)
 })
 
-passport.use(new LocalStrategy(async (입력한아이디, 입력한비번, cb) => { // 로그인 검사 로직
-    const result = await db.collection('user').findOne({ username: 입력한아이디 })
-    if (!result) {
+passport.use(new LocalStrategy(async (username, password, cb) => { // 로그인 검사 로직
+    const user = await db.collection('user').findOne({ username })
+    if (!user) {
         return cb(null, false, { message: '존재하지 않는 아이디 입니다.' })
     }
-    if (await bcrypt.compare(입력한비번, result.password)) { // 해싱한 비번 확인
-        return cb(null, result) // result 가 serializeUser (user) 로 들어감
+    if (await bcrypt.compare(password, user.password)) { // 해싱한 비번 확인
+        return cb(null, user) // user 가 serializeUser (user) 로 들어감
     } else {
         return cb(null, false, { message: '비밀번호가 일치하지 않습니다.' });
     }
 })) 
 
 passport.serializeUser((user, done) => {
-    // console.log(user)
-    process.nextTick(() => { // 비동기적으로 실행 (처리보류)
+    process.nextTick(() => { // 비동기적으로 실행
         done(null, { id: user._id, username: user.username })
     })
-}) // 로그인할때 세션만들고 쿠키주기
+}) // 로그인할 때 세션만들고 쿠키주기
 
 passport.deserializeUser(async (user, done) => {
     const result = await db.collection('user').findOne({ _id: new ObjectId(user.id) })
@@ -36,6 +35,6 @@ passport.deserializeUser(async (user, done) => {
     process.nextTick(() => {
         return done(null, result)
     })
-}) // 유저가 보낸 쿠키를 분석(세션데이터랑 비교)하는 로직 , 이제 api 에서 (요청.user) 사용가능
+}) // 유저가 보낸 쿠키를 분석(세션데이터랑 비교)하는 함수 , 이제 api 에서 (요청.user) 사용가능
 
 module.exports = passport;

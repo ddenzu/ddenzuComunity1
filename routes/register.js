@@ -21,8 +21,8 @@ router.get('', async (req, res) => {
 
 router.post('', async (req, res) => {
     try {
-        if (req.body.username.length > 20 || req.body.password.length > 20) {
-            return res.status(400).send("아이디 또는 비밀번호가 20자를 초과함");
+        if (req.body.username.length > 15 || req.body.password.length > 15) {
+            return res.status(400).send("아이디 또는 비밀번호가 15자를 초과함");
         }
         const result = await db.collection('user').findOne({ username: req.body.username });
         if (result) {

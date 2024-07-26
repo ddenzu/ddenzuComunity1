@@ -27,16 +27,38 @@ router.get('', verify, async (req, res) => {
 // 아이디 변경
 router.put('/name', async (req, res) => {
     try {
-        if (req.body.name.length > 20) {
-            return res.status(400).send('아이디가 20글자를 초과');
+        if (req.body.name.length > 15) {
+            return res.status(400).send('아이디가 15글자를 초과');
         }
+        const beforeUsername = req.user.username
         const result = await db.collection('user').findOne({ username: req.body.name })
         if (result) {
             return res.status(409).send("이미 존재하는 아이디");
         }
         await db.collection('user').updateOne({ _id: new ObjectId(req.user._id) }, { $set: { username: req.body.name } })
-        await db.collection('comment').updateMany({ userId: new ObjectId(req.user._id) }, { $set: { username: req.body.name } })
-        await db.collection('post').updateMany({ 작성자_id: new ObjectId(req.user._id) }, { $set: { 작성자: req.body.name } })
+        // 업데이트 쿼리 병렬 처리
+        await Promise.all([
+            db.collection('comment').updateMany(
+                { userId: new ObjectId(req.user._id) },
+                { $set: { username: req.body.name } }
+            ),
+            db.collection('post').updateMany(
+                { 작성자_id: new ObjectId(req.user._id) },
+                { $set: { 작성자: req.body.name } }
+            ),
+            db.collection('chatroom').updateMany(
+                { receiver: beforeUsername },
+                { $set: { 'receiver': req.body.name } }
+            ),
+            db.collection('chatroom').updateMany(
+                { sender: beforeUsername },
+                { $set: { 'sender': req.body.name } }
+            ),
+            db.collection('chatroom').updateMany(
+                { 'name': beforeUsername },
+                { $set: { 'name.$': req.body.name } }
+            )
+        ]);
         return res.status(200).send("닉네임 변경 성공");
     } catch (err) {
         serverError(err, res)

@@ -1,7 +1,7 @@
 const router = require('express').Router()
 const { ObjectId } = require('mongodb')
 const serverError = require('../utils/error.js')
-const optimizeImage = require('../utils/optimizeImg.js');
+const optimizeThumbnail = require('../utils/optimizeImg.js');
 const updateLocation = require('../utils/location.js')
 let connectDB = require('../utils/database.js')
 const verify = require('../utils/verify.js')
@@ -12,18 +12,6 @@ connectDB.then((client) => {
 }).catch((err) => {
     console.log(err)
 })
-
-// 썸네일 이미지 최적화
-const handleImageResize = async (items) => {
-    return await Promise.all(
-        items.map(async (item) => {
-            if (item.imgName) {
-                return await optimizeImage(Array.isArray(item.imgName) ? item.imgName[0] : item.imgName, 75, 80);
-            }
-            return ''; // 빈 문자열 추가
-        })
-    );
-};
 
 // 게시글 검색
 router.get('/search', async (req, res) => {
@@ -44,7 +32,7 @@ router.get('/search', async (req, res) => {
         const result = await db.collection('post').aggregate(searchCriteria).toArray();
         if (result.length > 0){
             const isRead = await updateLocation(req, 'list');
-            const resizeImg = await handleImageResize(result);
+            const resizeImg = await optimizeThumbnail(result);
             return res.render('search.ejs', { 글목록: result, resizeImg, isRead })
         }
         return res.status(404).send("<script>alert('존재하지 않는 글 입니다.');window.location.replace(`/list/1`)</script>");
@@ -80,7 +68,7 @@ router.get('/:num', async (req, res) => {
             return res.status(404).send("<script>alert('게시글이 존재하지 않습니다.');window.location.replace(`/list/1`)</script>");
         }
         const cnt = await db.collection('post').count();
-        const resizeImg = await handleImageResize(result);
+        const resizeImg = await optimizeThumbnail(result);
         const isRead = await updateLocation(req, 'list');
         return res.render('list.ejs', { 글목록: result, 글수: cnt, 페이지넘버: req.params.num, resizeImg, isRead });
     } catch (err) {
@@ -98,7 +86,7 @@ router.get('/next/:num', async (req, res) => {
             return res.status(404).send("<script>alert('다음페이지가 존재하지 않습니다.');history.go(-1);</script>");
         }
         const pageNumber = req.query.pageNum;
-        const resizeImg = await handleImageResize(result);
+        const resizeImg = await optimizeThumbnail(result);
         const isRead = await updateLocation(req, 'list');
         return res.render('list.ejs', { 글목록: result, 글수: cnt, 페이지넘버: pageNumber, resizeImg, isRead });
     } catch (err) {
@@ -117,7 +105,7 @@ router.get('/prev/:num', async (req, res) => {
             return res.status(404).send("<script>alert('이전페이지가 존재하지 않습니다.');history.go(-1);</script>");
         }
         const pageNumber = req.query.pageNum;
-        const resizeImg = await handleImageResize(result);
+        const resizeImg = await optimizeThumbnail(result);
         const isRead = await updateLocation(req, 'list');
         return res.render('list.ejs', { 글목록: result, 글수: cnt, 페이지넘버: pageNumber, resizeImg, isRead });
     } catch (err) {

@@ -82,7 +82,7 @@
                     alert('닉네임이 성공적으로 변경되었습니다.');
                     location.replace('/mypage')
                 } else if(response.status == 400){
-                    alert('아이디는 20글자 이하로 지정해주세요.');
+                    alert('아이디는 15글자 이하로 지정해주세요.');
                 } else if(response.status == 409){
                     alert('이미 존재하는 아이디 입니다.');
                 } else if(response.status == 500){

@@ -683,7 +683,18 @@
     overflow: auto;
   }
   .img-box > img {
-    max-width: 330px;
+    max-width: 100%;
+  }
+  .img-box > video {
+    max-width: 100%;
+  }
+  @media (min-width: 1024px) {
+    .img-box > img {
+        max-width: 80%;
+    }
+    .img-box > video {
+      max-width: 80%;
+    }
   }
   .comment-write > textarea {
     width: 80%; 

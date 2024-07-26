@@ -13,11 +13,12 @@ connectDB.then((client) => {
     console.log(err)
 })
 
+// 채팅방의 상대방 리스트 만들기
 function getCounterpart(chatrooms, username) {
     const counterpart = [];
     chatrooms.forEach(obj => {
         obj.name.forEach(nameElement => {
-            if (nameElement !== username) {
+            if (nameElement !== username) { 
                 counterpart.push(nameElement);
             }
         });

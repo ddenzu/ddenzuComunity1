@@ -15,7 +15,6 @@ function onMouseDown(event) {
     offsetY = event.clientY - rect.top;
 }
 function onTouchStart(event) {
-    console.log('asdf')
     isDragging = true;
     const touch = event.touches[0];
     const rect = draggableElement.getBoundingClientRect();

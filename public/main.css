@@ -318,16 +318,17 @@
   }
   .reComment_input {
     margin-top: 5px;
-    font-size: 12px;
+    font-size: 16px;
     width: 180px;
     background: transparent;
     color: #EFEFEF;
-    height: 20px;
+    height: 25px;
     resize: none;
     border: none;
     border-bottom: 1px solid #B8B8B3;
   }
   .reComment_input::placeholder {
+    font-size: 14px;
     color: rgba(255,255,255,0.4)
   }
   .reComment_cancel {
@@ -1118,16 +1119,17 @@
   }
   .form-control {
     height: 25px; 
-    font-size: .8em; 
+    font-size: 16px;
     background: rgba(255,255,255,0.4);
     border: 0;
     border-top: 1px solid #212121;
-    box-shadow: 0px 4px 0px 0px rgba(0, 0, 0, 0.3);
+    box-shadow: 0px 3px 0px 0px rgba(0, 0, 0, 0.3);
   }
   .form-control:focus {
     color: black;
   }
   .form-control::placeholder {
+    font-size: 15px;
     color: rgba(255,255,255,0.7); 
   }
   .profile-header {

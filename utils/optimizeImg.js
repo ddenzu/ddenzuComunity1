@@ -17,15 +17,30 @@ async function optimizeImage(imageUrl, w, h) {
     }
 }
 
-async function optimizeThumbnail(items) {
-    return await Promise.all(
-        items.map(async (item) => {
-            if (item.imgName) {
-                return optimizeImage(Array.isArray(item.imgName) ? item.imgName[0] : item.imgName, 75, 85);
+async function optimizeThumbnail(postList) {
+    const imageOptimizationPromises = postList.map(async (post) => {
+        if (post) {
+            const imageUrl = post ? post : '';
+            if (imageUrl) {
+                return await optimizeImage(imageUrl, 75, 85); // 원하는 너비와 높이로 조정
             }
-            return ''; // 빈 문자열 추가
-        })
-    );
-};
+        }
+        return '';
+    });
+    return Promise.all(imageOptimizationPromises);
+}
 
-module.exports = optimizeThumbnail;
+// 게시물에서 썸네일 url 추출
+async function getThumbnail(postList) {
+    const thumbailUrls = [];
+    for (const post of postList) {
+        if (post.imgName) {
+            thumbailUrls.push(Array.isArray(post.imgName) ? post.imgName[0] : post.imgName);
+        } else {
+            thumbailUrls.push('');
+        }
+    }
+    return thumbailUrls;
+}
+
+module.exports = {optimizeThumbnail, getThumbnail};

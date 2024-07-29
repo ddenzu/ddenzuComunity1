@@ -1,7 +1,7 @@
 const router = require('express').Router()
 const { ObjectId } = require('mongodb')
 const serverError = require('../utils/error.js')
-const optimizeThumbnail = require('../utils/optimizeImg.js');
+const {getThumbnail} = require('../utils/optimizeImg.js');
 const updateLocation = require('../utils/location.js')
 let connectDB = require('../utils/database.js')
 const verify = require('../utils/verify.js')
@@ -21,16 +21,16 @@ router.get('/search', async (req, res) => {
                 index: 'titleSearch',
                 text: {query: req.query.value,path:'title'}}
             },
-            { $sort: { _id: 1 } },
+            { $sort: { _id: -1 } },
             { $limit: 10 }, 
         ]
         const postList = await db.collection('post').aggregate(searchCriteria).toArray();
         if (postList.length > 0){
-            const [isRead, resizeImg] = await Promise.all([
+            const [isRead, thumbailUrls] = await Promise.all([
                 updateLocation(req, 'list'), 
-                optimizeThumbnail(postList)   
+                getThumbnail(postList)   
             ]);
-            return res.render('search.ejs', { 글목록: postList, resizeImg, isRead })
+            return res.render('search.ejs', { 글목록: postList, thumbailUrls, isRead })
         }
         return res.status(404).send("<script>alert('존재하지 않는 글 입니다.');window.location.replace(`/list/1`)</script>");
     } catch (err) {
@@ -59,16 +59,17 @@ router.delete('', verify, async (req, res) => {
 // 게시글 페이지 변경
 router.get('/:num', async (req, res) => {
     try {
-        const postList = await db.collection('post').find().sort({ _id: -1 }).skip((req.params.num - 1) * 5).limit(5).toArray()
+        const postList = await db.collection('post')
+            .find().sort({ _id: -1 }).skip((req.params.num - 1) * 5).limit(5).toArray()
         if (!postList || postList.length === 0) {
             return res.status(404).send("<script>alert('게시글이 존재하지 않습니다.');window.location.replace(`/list/1`)</script>");
         }
-        const [cnt, resizeImg, isRead] = await Promise.all([
-            db.collection('post').count(),        
-            optimizeThumbnail(postList),                
-            updateLocation(req, 'list')                   
+        const [thumbailUrls, cnt, isRead] = await Promise.all([
+            getThumbnail(postList),
+            db.collection('post').count(),                        
+            updateLocation(req, 'list')               
         ]);
-        return res.render('list.ejs', { 글목록: postList, 글수: cnt, 페이지넘버: req.params.num, resizeImg, isRead });
+        return res.render('list.ejs', { 글목록: postList, 글수: cnt, 페이지넘버: req.params.num, thumbailUrls, isRead });
     } catch (err) {
         serverError(err, res)
     }
@@ -83,12 +84,12 @@ router.get('/next/:num', async (req, res) => {
             return res.status(404).send("<script>alert('다음페이지가 존재하지 않습니다.');history.go(-1);</script>");
         }
         const pageNumber = req.query.pageNum;
-        const [cnt, resizeImg, isRead] = await Promise.all([
-            db.collection('post').count(),        
-            optimizeThumbnail(postList),                
-            updateLocation(req, 'list')                   
+        const [thumbailUrls, cnt, isRead] = await Promise.all([
+            getThumbnail(postList),
+            db.collection('post').count(),                        
+            updateLocation(req, 'list')               
         ]);
-        return res.render('list.ejs', { 글목록: postList, 글수: cnt, 페이지넘버: pageNumber, resizeImg, isRead });
+        return res.render('list.ejs', { 글목록: postList, 글수: cnt, 페이지넘버: pageNumber, thumbailUrls, isRead });
     } catch (err) {
         serverError(err, res)
     }
@@ -104,12 +105,12 @@ router.get('/prev/:num', async (req, res) => {
         }
         postList.reverse(); // 몽고디비 sort 대신 reverse함수
         const pageNumber = req.query.pageNum;
-        const [cnt, resizeImg, isRead] = await Promise.all([
-            db.collection('post').count(),        
-            optimizeThumbnail(postList),                
-            updateLocation(req, 'list')                   
+        const [thumbailUrls, cnt, isRead] = await Promise.all([
+            getThumbnail(postList),
+            db.collection('post').count(),                        
+            updateLocation(req, 'list')               
         ]);
-        return res.render('list.ejs', { 글목록: postList, 글수: cnt, 페이지넘버: pageNumber, resizeImg, isRead });
+        return res.render('list.ejs', { 글목록: postList, 글수: cnt, 페이지넘버: pageNumber, thumbailUrls, isRead });
     } catch (err) {
         serverError(err, res)
     }

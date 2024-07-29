@@ -52,6 +52,7 @@ app.use('/edit', require('./routes/edit.js'))
 app.use('/log', require('./routes/log.js'))
 app.use('/register', require('./routes/register.js'))
 app.use('/chat', require('./routes/chat.js'))
+app.use('/optimize', require('./routes/optimize.js'))
 
 app.get('/', (req, res) => {
     res.redirect('/list/1')

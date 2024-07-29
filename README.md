@@ -54,3 +54,4 @@ Node.js + Express + EJS + MongoDB 커뮤니티 웹사이트
 #### AWS
 - AWS Elastic Beanstalk 를 사용하여 배포
 - 로드 밸런싱을 사용하여 사이트 주소에 접근할 때 https 로 리디렉션
+- 구입한 도메인을 Route53 에 등록하여 사용

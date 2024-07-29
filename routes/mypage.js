@@ -16,9 +16,11 @@ connectDB.then((client) => {
 // 마이페이지 로드
 router.get('', verify, async (req, res) => {
     try {
-        const isRead = await updateLocation(req, 'mypage')
-        const result = await db.collection('user').findOne({ username: req.user.username });
-        return res.render('mypage.ejs', { 아이디: result, isRead });
+        const [isRead, user] = await Promise.all([
+            updateLocation(req, 'mypage'), 
+            db.collection('user').findOne({ username: req.user.username })  
+        ]);
+        return res.render('mypage.ejs', { 아이디: user, isRead });
     } catch (err) {
         serverError(err, res)
     }
@@ -30,13 +32,12 @@ router.put('/name', async (req, res) => {
         if (req.body.name.length > 15) {
             return res.status(400).send('아이디가 15글자를 초과');
         }
-        const beforeUsername = req.user.username
         const result = await db.collection('user').findOne({ username: req.body.name })
         if (result) {
             return res.status(409).send("이미 존재하는 아이디");
         }
+        const beforeUsername = req.user.username
         await db.collection('user').updateOne({ _id: new ObjectId(req.user._id) }, { $set: { username: req.body.name } })
-        // 업데이트 쿼리 병렬 처리
         await Promise.all([
             db.collection('comment').updateMany(
                 { userId: new ObjectId(req.user._id) },
@@ -68,8 +69,16 @@ router.put('/name', async (req, res) => {
 // 프로필 사진 변경
 router.put('/profile-image', upload.single('img1'), async (req, res) => {
     try {
-        await db.collection('user').updateOne({ _id: new ObjectId(req.user._id) }, { $set: { imgName: req.file.key } })
-        await db.collection('comment').updateMany({ userId: new ObjectId(req.user._id) }, { $set: { userprofile: req.file.key } })
+        await Promise.all([
+            db.collection('user').updateOne(
+                { _id: new ObjectId(req.user._id) }, 
+                { $set: { imgName: req.file.key } }
+            ),
+            db.collection('comment').updateMany(
+                { userId: new ObjectId(req.user._id) }, 
+                { $set: { userprofile: req.file.key } }
+            )
+        ]);
         return res.status(200).send("프로필 사진 변경 성공");
     } catch (err) {
         serverError(err, res)

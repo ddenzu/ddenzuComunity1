@@ -15,11 +15,11 @@ connectDB.then((client) => {
 router.get('/:id', verify, async (req, res) => {
     try {
         const isRead = req.user ? req.user.isRead : true;
-        const result = await db.collection('post').findOne({ _id: new ObjectId(req.params.id) })
-        if (!result) {
+        const editPost = await db.collection('post').findOne({ _id: new ObjectId(req.params.id) })
+        if (!editPost) {
             return res.status(404).send('게시글이 db에 존재하지 않음');
         }
-        return res.render('edit.ejs', { result, isRead });
+        return res.render('edit.ejs', { result:editPost, isRead });
     } catch (err) {
         serverError(err, res)
     }

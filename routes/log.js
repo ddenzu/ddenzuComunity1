@@ -57,8 +57,8 @@ router.get('/logout', function (req, res, next) {
 
 // 사용자의 현재 위치정보 저장
 router.put('/locations', async (req, res) => { 
-    if(!req.user){ // 로그인 하지 않고 페이지를 넘기는 과정에서 verify 의 else 문을 거치면
-        return // 성능저하가 발생할 수 있기 때문에 verify 함수 사용 x
+    if(!req.user){ 
+        return
     }
     try {
         if (!req.body) {

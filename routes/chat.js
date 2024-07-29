@@ -34,24 +34,24 @@ router.post('/messages', verify, async function (req, res) {
         };
         const messageData = {
             parent: req.body.parent, // 채팅방의 id
-            content: req.body.content, // 채팅 내용
+            content: req.body.content, 
             userid: req.user._id, // 채팅 발신자 id
             date: dateFormat1.dateFormat(new Date()),
         };
         const result = await db.collection('message').insertOne(messageData);
         if (result) {
-            const receiver = await db.collection('chatroom').findOne({ _id: new ObjectId(req.body.parent) }).
-                then(data => data.name.filter(name => name !== req.user.username));
-            // 수신자가 chatroom 에 없다면 isRead: false 설정으로 안읽음 표시
+            const receiver = await db.collection('chatroom')
+                .findOne({ _id: new ObjectId(req.body.parent) })
+                .then(data => data.name.filter(name => name !== req.user.username));
+            // 수신자가 chatroom 에 없다면 안읽음 표시
             if (await db.collection('user').findOne({ username: receiver[0], location: { $ne: "chatroom" } })) {
                 await db.collection('user').updateOne(
-                    { username: receiver[0] }, // username이 receiver[0]와 일치하는 문서를 찾음
-                    { $set: { isRead: false } } // 해당 문서에 isRead 컬럼을 추가하고 false로 설정
+                    { username: receiver[0] }, 
+                    { $set: { isRead: false } } 
                 );
             }
             return res.status(200).send('메세지 저장 성공');
-        }
-        else {
+        } else {
             return res.status(500).send("서버 오류");
         }
     } catch (err) {
@@ -88,12 +88,14 @@ router.delete('', verify, async (req, res) => {
         if (!req.body.삭제id) {
             return res.status(400).send('삭제할 채팅방의 ID가 존재하지 않음');
         }
-        await db.collection('chatroom').deleteOne({ _id: new ObjectId(req.body.삭제id) });
-        await db.collection('message').deleteMany({ parent: req.body.삭제id });
+        await Promise.all([
+            db.collection('chatroom').deleteOne({ _id: new ObjectId(req.body.삭제id) }),
+            db.collection('message').deleteMany({ parent: req.body.삭제id })
+        ]);
+        const chatroomList = await db.collection('chatroom').find({ member: req.user._id }).toArray();
         const isRead = req.user ? req.user.isRead : true;
-        const result1 = await db.collection('chatroom').find({ member: req.user._id }).toArray();
-        const counterpart = getCounterpart(result1, req.user.username)
-        return res.render('chat.ejs', { data: result1, cur: req.user._id, arrow: 0, counterpart, isRead });
+        const counterpart = getCounterpart(chatroomList, req.user.username)
+        return res.render('chat.ejs', { data: chatroomList, cur: req.user._id, arrow: 0, counterpart, isRead });
     } catch (err) {
         serverError(err, res)
     }
@@ -105,10 +107,9 @@ router.get('/matches', verify, async function (req, res) {
         if (req.query.name == req.user.username) {
             return res.send("<script>window.location.replace('/chat')</script>");
         }
-        const isRead = await updateLocation(req, 'chatroom', true) 
-        let result = await db.collection('chatroom').findOne({ name: { $all: [req.user.username, req.query.name] } })
+        const result = await db.collection('chatroom').findOne({ name: { $all: [req.user.username, req.query.name] } })
         if (result == null) {
-            var roomData = {
+            const roomData = {
                 receiver: req.query.name,
                 sender: req.user.username,
                 member: [new ObjectId(req.query.id), req.user._id],
@@ -117,10 +118,13 @@ router.get('/matches', verify, async function (req, res) {
             }
             await db.collection('chatroom').insertOne(roomData)
         }
-        const result1 = await db.collection('chatroom').find({ member: req.user._id }).toArray()
-        const result2 = await db.collection('chatroom').findOne({ name: { $all: [req.user.username, req.query.name] } })
-        const counterpart = getCounterpart(result1, req.user.username)
-        return res.render('chat.ejs', { data: result1, cur: req.user._id, arrow: result2._id, counterpart: counterpart, isRead })
+        const [chatroomList, curCounterpart, isRead] = await Promise.all([
+            db.collection('chatroom').find({ member: req.user._id }).toArray(),
+            db.collection('chatroom').findOne({ name: { $all: [req.user.username, req.query.name] } }),
+            updateLocation(req, 'chatroom', true) 
+        ]);
+        const counterpart = getCounterpart(chatroomList, req.user.username)
+        return res.render('chat.ejs', { data: chatroomList, cur: req.user._id, arrow: curCounterpart._id, counterpart, isRead })
     } catch (err) {
         serverError(err, res)
     }
@@ -129,10 +133,12 @@ router.get('/matches', verify, async function (req, res) {
 // 네이게이션바에서 chatroom을 클릭했을 때
 router.get('', verify, async function (req, res) { 
     try {
-        const isRead = await updateLocation(req, 'chatroom', true) // 최신 isRead 를 가져오기 위해
-        const result = await db.collection('chatroom').find({ member: req.user._id }).toArray();
-        const counterpart = getCounterpart(result, req.user.username)
-        return res.render('chat.ejs', { data: result, cur: req.user._id, arrow: 0, counterpart: counterpart, isRead });
+        const [isRead, chatroomList] = await Promise.all([
+            updateLocation(req, 'chatroom', true), 
+            db.collection('chatroom').find({ member: req.user._id }).toArray() 
+        ]);
+        const counterpart = getCounterpart(chatroomList, req.user.username)
+        return res.render('chat.ejs', { data: chatroomList, cur: req.user._id, arrow: 0, counterpart, isRead });
     } catch (err) {
         serverError(err, res)
     }

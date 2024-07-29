@@ -20,21 +20,23 @@ router.get('/:id', async (req, res) => {
         if (!result) {
             return res.status(404).send("<script>alert('게시글이 존재하지 않습니다.');window.location.replace(`/list/1`)</script>")
         }
-        const result2 = await db.collection('comment').find({ postId: new ObjectId(req.params.id), parentId: null }).toArray()
-        const result3 = await db.collection('user').findOne({ _id: result.작성자_id })
-        const result4 = await db.collection('comment').find({ postId: new ObjectId(req.params.id), parentId: { $exists: true } }).toArray()
-        const 이미지주소 = Array.isArray(result.imgName) ? result.imgName : (result.imgName ? [result.imgName] : []);
-        const 동영상주소 = Array.isArray(result.vidName) ? result.vidName : (result.vidName ? [result.vidName] : []);
-        const 프로필 = result3.imgName ? result3.imgName : '';
-        const isRead = await updateLocation(req, 'detail')
+        const [comments, result2, reComments, isRead] = await Promise.all([
+            db.collection('comment').find({ postId: new ObjectId(req.params.id), parentId: null }).toArray(),
+            db.collection('user').findOne({ _id: result.작성자_id }),
+            db.collection('comment').find({ postId: new ObjectId(req.params.id), parentId: { $exists: true } }).toArray(),
+            updateLocation(req, 'detail')
+        ]);
+        const imageUrl = Array.isArray(result.imgName) ? result.imgName : (result.imgName ? [result.imgName] : []);
+        const vidUrl = Array.isArray(result.vidName) ? result.vidName : (result.vidName ? [result.vidName] : []);
+        const profile = result2.imgName ? result2.imgName : '';
         return res.render('detail.ejs', {
             글목록: result,
-            댓글목록: result2,
-            이미지주소,
-            프로필,
-            동영상주소,
+            댓글목록: comments,
+            이미지주소: imageUrl,
+            프로필: profile,
+            동영상주소: vidUrl,
             dateFormat1,
-            대댓글: result4,
+            대댓글: reComments,
             isRead
         });
     }
@@ -67,9 +69,9 @@ router.post('/comments', verify, async (req, res) => {
 // 게시글의 댓글을 삭제
 router.delete('/comments', verify, async (req, res) => {
     try {
-        const 비교1 = JSON.stringify(req.user._id)
-        const 비교2 = JSON.stringify(req.body.userId)
-        if (비교1 == 비교2) {
+        const compare1 = JSON.stringify(req.user._id)
+        const compare2 = JSON.stringify(req.body.userId)
+        if (compare1 == compare2) {
             const deletedComment = await db.collection('comment').deleteOne({ _id: new ObjectId(req.body.id) })
             if (deletedComment) {
                 return res.status(200).send('댓글 삭제 성공');

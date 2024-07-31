@@ -22,7 +22,7 @@ const connectDB = require('./utils/database.js')
 
 app.use(passport.initialize())
 app.use(session({
-    secret: '비번',
+    secret: '비밀번호',
     resave: false, 
     saveUninitialized: false, 
     cookie: { maxAge: 60 * 60 * 1000 }, 
@@ -44,16 +44,10 @@ connectDB.then((client) => {
 })
 
 // Routes
-app.use('/list', require('./routes/list.js'))
-app.use('/detail', require('./routes/detail.js'))
-app.use('/write', require('./routes/write.js'))
-app.use('/mypage', require('./routes/mypage.js'))
-app.use('/edit', require('./routes/edit.js'))
-app.use('/log', require('./routes/log.js'))
-app.use('/register', require('./routes/register.js'))
+app.use('/users', require('./routes/users.js'))
+app.use('/posts', require('./routes/posts.js'))
 app.use('/chat', require('./routes/chat.js'))
-app.use('/optimize', require('./routes/optimize.js'))
 
 app.get('/', (req, res) => {
-    res.redirect('/list/1')
+    res.redirect('/posts/page/1')
 })

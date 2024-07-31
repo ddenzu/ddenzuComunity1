@@ -4,15 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>승뮤니티</title>
-    <meta name="description" content="로그인 페이지 입니다. 아이디와 비밀번호를 입력하여
-    로그인을 시도할 수 있습니다.">
+    <meta name="description" content="회원가입 페이지입니다. 아이디와 비밀번호를 입력하여
+    회원가입을 시도할 수 있습니다.">
     <link rel="stylesheet" href="\main.css">
     <style>
         button {
             width: 100%;
             height: 40px;
             border-radius: 40px;
-            background: #EFEFEF;
             background: linear-gradient(135deg, rgba(251, 204, 154, 1) 0%, rgba(121, 179, 151, 1) 46%, rgba(121, 179, 151, 1) 100%);
             border: none;
             cursor: pointer;
@@ -21,13 +20,13 @@
         }
     </style>
 </head>
-<%- include('nav.ejs', { isRead: isRead }) %>
+<%- include('../partials/nav.ejs', { isRead: isRead }) %>
 <body>
     <div class="section">
         <div class="form-box2">
             <div class="form-value">
-                <form action="/log/login" id="login-form" method="POST">
-                    <h2>LogIn</h2>
+                <form id="registerForm" action="/register" method="POST">
+                    <h2>REGISTER</h2>
                     <div class="inputbox">
                         <ion-icon name="mail-outline"></ion-icon>
                         <input name="username" required>
@@ -38,19 +37,18 @@
                         <input name="password" type="password" required> 
                         <label for="">PASSWORD</label>
                     </div>
-                    <button type="submit" aria-label="로그인 버튼">
-                        <p style="color: #EFEFEF;">로그인</p>
+                    <button type="submit" aria-label="회원가입 버튼">
+                        <p style="color: #EFEFEF;">가입하기</p>
                     </button>
                     <div class="register">
-                        <p>아이디가 없다면 <a href="/register" aria-label="회원가입 페이지로 이동">
-                            회원가입</a>
+                        <p>가입했으면 <a href="/log" aria-label="로그인 페이지로 이동">
+                            로그인하기</a>
                         </p>
                     </div>
                 </form>
             </div>
         </div>
     </div>
-
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
     <script type="module">
@@ -59,12 +57,12 @@
             for (let i = 0; i < 40; i++){
                 setTimeout(makeSnowflake(), 500 * i);
             }
-        }      
+        }       
     </script>
     <script>
-        //로그인
-        document.getElementById('login-form').addEventListener('submit', async function(event) {
-            event.preventDefault();
+        // 회원가입
+        document.getElementById('registerForm').addEventListener('submit', async function(event) {
+            event.preventDefault(); 
             const form = event.target;
             const formData = new FormData(form);
             if (!formData.get('username') || !formData.get('password')){
@@ -76,28 +74,28 @@
                 password: formData.get('password')
             };
             try {
-                const response = await fetch(form.action, {
+                const response = await fetch('/register', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
                 });
-                if (response.ok){
+                if (response.ok) {
+                    alert('가입이 성공적으로 완료되었습니다.');
                     window.location.replace('/list/1');
                     return
-                } else if (response.status == 400){
-                    alert('아이디 또는 비밀번호를 입력해주세요.');
-                } else if (response.status == 401){
-                    alert('존재하지 않는 아이디입니다.')
-                } else if (response.status == 500){
-                    alert('서버 오류가 발생했습니다');
+                } else if(response.status == 400){
+                    alert('아이디 또는 비밀번호는 15글자 이하로 지정해주세요.');
+                } else if(response.status == 409){
+                    alert('이미 존재하는 아이디입니다');
+                } else if(response.status == 500){
+                    alert('서버 오류가 발생했습니다.');
                 } else {
                     alert('알 수 없는 오류가 발생했습니다');
                 }
-            } catch(error){
-                alert('네트워크 오류가 발생했습니다');
+            } catch (error) {
+                alert('네트워크 오류가 발생했습니다.');
             }
-        })
+        });
     </script>
-
 </body>
 </html>

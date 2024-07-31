@@ -10,19 +10,19 @@
     <link rel="stylesheet" href="\main.css">
 </head>
 <body class="fix" style="position: relative;">
-    <%- include('nav.ejs', { isRead: isRead }) %>
+    <%- include('../partials/nav.ejs', { isRead: isRead }) %>
     <div class="section2">
         <div class="section2-1"></div>
         <%for (let i=0; i<글목록.length; i++){ %>
             <% k = 0 %>
             <div class="white-bg">
                 <div class="list-box">
-                <a href="/detail/<%= 글목록[i]._id %>" aria-label="게시물 세부사항 페이지로 이동">
+                <a href="/posts/<%= 글목록[i]._id %>" aria-label="게시물 세부사항 페이지로 이동">
                     <img class="list-left" src='/image/dinosaur.webp' onerror="this.src='/image/dinosaur.webp'" 
                     alt="썸네일" loading="lazy" />
                 </a>
                     <h4 class="list-right">
-                        <a href="/detail/<%= 글목록[i]._id %>" aria-label="게시물 세부사항 페이지로 이동"><%= 글목록[i].title %></a>
+                        <a href="/posts/<%= 글목록[i]._id %>" aria-label="게시물 세부사항 페이지로 이동"><%= 글목록[i].title %></a>
                         <span class="delete" data-id="<%= 글목록[i]._id %>">
                             <ion-icon style="font-size: 20px;" name="trash-outline"
                             data-id="<%= 글목록[i]._id %>"></ion-icon>
@@ -102,7 +102,7 @@
                 document.querySelectorAll('.delete')[i].addEventListener('click', async function(e){
                     if (confirm('정말 삭제하시겠습니까?')==true){
                         try{
-                            const response = await fetch('/list/?docid=' + e.target.dataset.id, {
+                            const response = await fetch('/posts/?docid=' + e.target.dataset.id, {
                                 method : 'DELETE',
                             })
                             if(response.ok){
@@ -132,7 +132,7 @@
                     alert('검색어를 입력해 주세요.');
                     return;
                 }
-                window.location.replace('/list/search?value='+encodeURIComponent(searchWord))
+                window.location.replace('/posts/search?value='+encodeURIComponent(searchWord))
             }
             $('#ssearch').click(function(){
                 search()
@@ -150,27 +150,26 @@
             $('.page-btn').click(function(e){
                 $('.page-btn').removeClass('nowPage')
                 const num = e.target.dataset.num;
-                window.location.href=`/list/${num}?페이지넘버=`+num;
+                window.location.href=`/posts/page/${num}`;
             });
-
             // 첫 번째 페이지로 이동
             $('.first').click(function(){
-                window.location.href=`/list/1?페이지넘버=1`;
+                window.location.href=`/posts/page/1`;
             })
             // 마지막 페이지로 이동
             $('.last').click(function(){
                 const lastPage = Math.ceil(totalPosts/5)
-                window.location.href=`/list/${lastPage}?페이지넘버=`+ lastPage;
+                window.location.href=`/posts/page/${lastPage}`;
             })  
             // -1 페이지로 이동
             $('.back').click(function(){
                 const prevPage = currentPage - 1;
-                window.location.href=`/list/prev/<%= 글목록[글목록.length-글목록.length]._id %>?pageNum=`+ prevPage;
+                window.location.href=`/posts/page/prev/<%= 글목록[글목록.length-글목록.length]._id %>?pageNum=`+ prevPage;
             })
             // +1 페이지로 이동
             $('.forward').click(function(){
                 const nextPage = currentPage + 1;
-                window.location.href=`/list/next/<%= 글목록[글목록.length-1]._id %>?pageNum=`+ nextPage;
+                window.location.href=`/posts/page/prev/<%= 글목록[글목록.length-1]._id %>?pageNum=`+ nextPage;
             })
 
             const socket = io();
@@ -203,7 +202,7 @@
                 const what = {
                     content : "list",
                 }
-                const response = await fetch('/log/locations', {
+                const response = await fetch('/users/locations', {
                     method : 'PUT',
                     headers : { 'Content-Type' : 'application/json' },
                     body : JSON.stringify(what)
@@ -219,7 +218,7 @@
         document.addEventListener('DOMContentLoaded', async function() {
             const urlArray = '<%= thumbailUrls %>'.split(',');
             try {
-                const response = await fetch('/optimize/thumbnails', {
+                const response = await fetch('/posts/optimize-thumbnails', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(urlArray)

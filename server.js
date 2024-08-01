@@ -1,12 +1,10 @@
 const express = require('express')
 const app = express()
 const methodOverride = require('method-override') // form 태그에서 put, delete 요청 가능
-const MongoStore = require('connect-mongo')
 const http = require('http').createServer(app);
-const useWebSocket = require('./utils/websocket.js')
-const io = useWebSocket(http)
+const useWebSocket = require('./utils/websocket.js');
+const io = useWebSocket(http);
 require('dotenv').config()
-const session = require('express-session')
 const cors = require('cors');
 
 app.use(methodOverride('_method'))
@@ -16,21 +14,12 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cors());
 
-// utils
-const passport = require('./utils/auth.js');
-const connectDB = require('./utils/database.js')
-
+// Middlewares, utils
+const passport = require('./middlewares/passport');
+const sessionMiddleware = require('./middlewares/session.js');
+const connectDB = require('./utils/database.js');
 app.use(passport.initialize())
-app.use(session({
-    secret: '비밀번호',
-    resave: false, 
-    saveUninitialized: false, 
-    cookie: { maxAge: 60 * 60 * 1000 }, 
-    store: MongoStore.create({
-        mongoUrl: process.env.DB_URL,
-        dbName: 'forum',
-    })
-}))
+app.use(sessionMiddleware)
 app.use(passport.session())
 
 let db

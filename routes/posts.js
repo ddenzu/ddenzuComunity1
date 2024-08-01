@@ -1,31 +1,24 @@
 const router = require('express').Router()
-let connectDB = require('../utils/database.js')
-const verify = require('../utils/verify.js')
+const verify = require('../middlewares/verify.js')
 const upload = require('../utils/upload.js')
 const postController = require('../controllers/postController');
 
-let db
-connectDB.then((client) => {
-    db = client.db('forum')
-}).catch((err) => {
-    console.log(err)
-})
-
-router.get('', postController.redirectFirstPage);
-router.get('/search', postController.searchPosts);
-router.post('/optimize-thumbnails', postController.optimizeThumbnails);
-router.delete('', verify, postController.deletePost);
-router.get('/page/:num', postController.getPostsPage);
-router.get('/page/next/:num', postController.getNextPagePosts);
-router.get('/page/prev/:num', postController.getPrevPagePosts);
-router.get('/write', verify, postController.getWritePage);
-router.post('', verify, upload.array('img1'), postController.createPost);
-router.get('/edit/:id', verify, postController.getEditPage);
-router.put('/edit', postController.updatePost);
-router.get('/:id', postController.getPostDetail);
-router.post('/comments', verify, postController.postComment);
-router.delete('/comments', verify, postController.deleteComment);
-router.post('/recomments', verify, postController.postReComment);
-router.put('/like', postController.updateLike);
+//posts api
+router.get('', postController.redirectFirstPage); // 첫 페이지 조회
+router.post('', verify, upload.array('img1'), postController.createPost); // 게시물 작성
+router.get('/write', verify, postController.getWritePage); // 게시물 작성 페이지 조회
+router.get('/search', postController.searchPosts); // 게시물 검색
+router.get('/page/:page', postController.getPostsPage); // 게시물 리스트 페이지 조회
+router.get('/page/next/:postId', postController.getNextPagePosts); // 게시물 리스트 페이지 + 1
+router.get('/page/prev/:postId', postController.getPrevPagePosts); // 게시물 리스트 페이지 - 1
+router.post('/optimize-thumbnails', postController.optimizeThumbnails); // 썸네일 최적화 요청
+router.get('/:postId/edit', verify, postController.getEditPage); // 게시물 업데이트 페이지 조회
+router.get('/:postId', postController.getPostDetail); // 게시물 조회
+router.delete('/:postId', verify, postController.deletePost); // 게시물 삭제
+router.put('/:postId', postController.updatePost); // 게시물 업데이트
+router.put('/:postId/like', postController.updateLike); // 게시물의 좋아요 + 1
+router.post('/:postId/comments', verify, postController.postComment); // 게시물에 댓글 작성
+router.post('/:postId/recomments', verify, postController.postReComment); // 댓글에 대댓글 작성
+router.delete('/:postId/comments', verify, postController.deleteComment); // 댓글 삭제
 
 module.exports = router

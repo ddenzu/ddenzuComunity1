@@ -1,7 +1,7 @@
 const axios = require('axios');
 const sharp = require('sharp');
 
-// 썸네일 이미지 최적화
+// 이미지 최적화
 async function optimizeImage(imageUrl, w, h) {
     try {
         const { data } = await axios.get(`https://ddenzubucket.s3.ap-northeast-2.amazonaws.com/${imageUrl}`, { responseType: 'arraybuffer' });
@@ -17,6 +17,7 @@ async function optimizeImage(imageUrl, w, h) {
     }
 }
 
+// 썸네일 최적화
 async function optimizeThumbnail(postList) {
     const imageOptimizationPromises = postList.map(async (post) => {
         if (post) {

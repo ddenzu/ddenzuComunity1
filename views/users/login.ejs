@@ -26,7 +26,7 @@
     <div class="section">
         <div class="form-box2">
             <div class="form-value">
-                <form action="/log/login" id="login-form" method="POST">
+                <form action="/users/login" id="login-form" method="POST">
                     <h2>LogIn</h2>
                     <div class="inputbox">
                         <ion-icon name="mail-outline"></ion-icon>
@@ -42,7 +42,7 @@
                         <p style="color: #EFEFEF;">로그인</p>
                     </button>
                     <div class="register">
-                        <p>아이디가 없다면 <a href="/register" aria-label="회원가입 페이지로 이동">
+                        <p>아이디가 없다면 <a href="/users/register" aria-label="회원가입 페이지로 이동">
                             회원가입</a>
                         </p>
                     </div>
@@ -82,7 +82,7 @@
                     body: JSON.stringify(data)
                 });
                 if (response.ok){
-                    window.location.replace('/list/1');
+                    window.location.replace('/posts/page/1');
                     return
                 } else if (response.status == 400){
                     alert('아이디 또는 비밀번호를 입력해주세요.');

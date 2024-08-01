@@ -23,7 +23,7 @@
                     alt="작성자의 프로필 사진" loading="lazy" onerror="this.src='/image/dinosaur.webp'"/>
                     <%= 글목록.작성자 %>
                 </a> 
-                <a class="postEdit" href="/edit/<%= 글목록._id %>">
+                <a class="postEdit" href="/posts/<%= 글목록._id %>/edit">
                     <ion-icon style="font-size: 20px;" name="create-outline"></ion-icon>
                 </a>
             </p>
@@ -63,7 +63,7 @@
             </p>
             <div class="like-box">
                 <div id="likee">
-                    <span name="like" class="like" data-postId="<%= 글목록._id %>" id="likeButton">
+                    <span name="like" class="like" id="likeButton">
                         <i class="fa-solid fa-thumbs-up like-icon"></i>
                     </span>
                     <span id="like-cnt" >
@@ -134,15 +134,14 @@
                                             <p class="recommentTime"><%= time1 %></p>
                                         </div>
                                         <span style="margin: 7px 0px 0px 7px;" name="add" id="commentDel" data-id="<%= 대댓글[j]._id %>"
-                                            data-postId="<%= 대댓글[j].postId %>" data-userId="<%= 대댓글[j].userId %>">
+                                            data-userId="<%= 대댓글[j].userId %>">
                                             <ion-icon style="font-size: 20px;" name="trash-outline"></ion-icon>
                                         </span>
                                     </div>
                                 <%} %>
                             <%}%>
                         </div>
-                        <span name="add" id="commentDel" data-id="<%= 댓글목록[i]._id %>"
-                            data-postId="<%= 댓글목록[i].postId %>" data-userId="<%= 댓글목록[i].userId %>">
+                        <span name="add" id="commentDel" data-id="<%= 댓글목록[i]._id %>" data-userId="<%= 댓글목록[i].userId %>">
                             <ion-icon style="font-size: 20px;" name="trash-outline"></ion-icon>
                         </span>
                     </p>
@@ -201,11 +200,10 @@
                 return;
             }
             const data = {
-                parent : curPostId,
                 content : commentContent,
             }
             try {
-                const response = await fetch('/posts/comments', {
+                const response = await fetch(`/posts/${curPostId}/comments`, {
                     method : 'POST',
                     headers : { 'Content-Type' : 'application/json' },
                     body : JSON.stringify(data)
@@ -225,13 +223,12 @@
                 return;
             }
             document.querySelectorAll('#reComment-input')[e.target.dataset.num].value = '';
-            var data = {
-                parent : curPostId,
-                reparent : e.target.dataset.id,
+            const data = {
+                parentCommentId : e.target.dataset.id,
                 content : reCommentContent,
             }
             try {
-                const response = await fetch('/detail/recomments', {
+                const response = await fetch(`/posts/${curPostId}/recomments`, {
                     method : 'POST',
                     headers : { 'Content-Type' : 'application/json' },
                     body : JSON.stringify(data)
@@ -245,12 +242,12 @@
         // 댓글 삭제 버튼 클릭 시
         $(document).on("click","span[name='add']", async function(e){
             if (confirm('정말로 삭제하시겠습니까?')==true){
-                var data = {
-                    id : this.dataset.id, // 댓글 id
+                const data = {
+                    commentId : this.dataset.id, // 댓글 id
                     userId : this.dataset.userid // 댓글 작성자 id
                 } 
                 try {
-                    const response = await fetch('/detail/comments', {
+                    const response = await fetch(`/posts/${curPostId}/comments`, {
                         method : 'DELETE',
                         headers : { 'Content-Type' : 'application/json' },
                         body : JSON.stringify(data)
@@ -264,11 +261,9 @@
 
         // 좋아요 버튼 클릭 시
         $(document).on("click","span[name='like']", async function(e){
-            const data = { postid : curPostId }
-            const response = await fetch('/detail/like', {
+            const response = await fetch(`/posts/${curPostId}/like`, {
                 method: 'PUT',
-                headers: {'Content-Type': 'application/json' },
-                body: JSON.stringify(data) 
+                headers: {'Content-Type': 'application/json' }
             })
             if(response.ok){
                 $('#like-cnt').load(location.href+' #like-cnt');
@@ -315,7 +310,7 @@
             const what = {
                 content : "detail",
             }
-            const response = await fetch('/log/locations', {
+            const response = await fetch('/users/locations', {
                 method : 'PUT',
                 headers : { 'Content-Type' : 'application/json' },
                 body : JSON.stringify(what)

@@ -16,7 +16,7 @@
             <div class="profile-header">
                 <div class="profile-image">
                     <img src="https://ddenzubucket.s3.ap-northeast-2.amazonaws.com/<%= 아이디.imgName %>"
-                    alt="사용자의 프로필 사진">
+                    alt="사용자의 프로필 사진" onerror="this.src='/image/dinosaur.webp'">
                 </div>
             </div>
             
@@ -24,7 +24,7 @@
             <ion-icon id="beforeChange1" class="edit-icon" name="create-outline"></ion-icon>
 
             <form class="changeProfile changeNameVisible" id="profileImageForm" method="POST" 
-            action="/mypage/profile-image?_method=PUT" enctype="multipart/form-data">
+            action="/users/mypage/profile-image?_method=PUT" enctype="multipart/form-data">
                 <input type="file" name="img1" accept="image/*" required>
                 <button type="submit" aria-label="프로필 사진 변경">프로필사진 적용</button>
             </form>
@@ -34,7 +34,7 @@
             <p class="username"><%= 아이디.username %></p>
             <ion-icon id="beforeChange2" class="edit-icon" name="create-outline"></ion-icon>
             <form class="changeName changeNameVisible" id="changeNameForm" method="POST" 
-            action="/mypage/name?_method=PUT">
+            action="/users/mypage/name?_method=PUT">
                 <input id="newNameInput" type="text" name="name" placeholder="새로운 닉네임을 작성해주세요.">
                 <button type="submit" aria-label="닉네임 변경">닉네임 적용</button>
             </form>
@@ -42,7 +42,7 @@
             <div class="mypage-divider"></div>
 
             <form class="logout-form">
-                <a href="/log/logout" aria-label="로그아웃">로그아웃</a>
+                <a href="/users/logout" aria-label="로그아웃">로그아웃</a>
             </form>
         </div>
         
@@ -73,14 +73,14 @@
                 return
             }
             try {
-                const response = await fetch('/mypage/name?_method=PUT', {
+                const response = await fetch('/users/mypage/name?_method=PUT', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ name: newName })
                 });
                 if (response.ok) {
                     alert('닉네임이 성공적으로 변경되었습니다.');
-                    location.replace('/mypage')
+                    location.replace('/users/mypage')
                 } else if(response.status == 400){
                     alert('아이디는 15글자 이하로 지정해주세요.');
                 } else if(response.status == 409){
@@ -101,13 +101,13 @@
             const form = event.target;
             const formData = new FormData(form);
             try {
-                const response = await fetch('/mypage/profile-image?_method=PUT', {
+                const response = await fetch('/users/mypage/profile-image?_method=PUT', {
                     method: 'POST',
                     body: formData
                 });
                 if (response.ok) {
                     alert('프로필 사진이 성공적으로 변경되었습니다.');
-                    location.replace('/mypage')
+                    location.replace('/users/mypage')
                 } else if(response.status == 500){
                     alert('서버 오류가 발생했습니다.');
                 } else {
@@ -123,7 +123,7 @@
             const what = {
                 content : "mypage",
             }
-            const response = await fetch('/log/locations', {
+            const response = await fetch('/users/locations', {
                 method : 'PUT',
                 headers : { 'Content-Type' : 'application/json' },
                 body : JSON.stringify(what)

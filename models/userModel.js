@@ -1,4 +1,6 @@
 const { ObjectId } = require('mongodb');
+const bcrypt = require('bcrypt');
+const saltRounds = 10; 
 let connectDB = require('../utils/database.js')
 let db;
 
@@ -8,14 +10,28 @@ connectDB.then((client) => {
     console.log(err);
 });
 
-// 이름이 일치하는 사용자 찾기
-exports.findUserByUsername = async (name) => {
-    return db.collection('user').findOne({ username: name });
+// 비밀번호 해싱
+exports.hashPassword = async (password) => {
+    return bcrypt.hash(password, saltRounds);
+};
+
+// 비밀번호 검사
+exports.comparePassword = async (password, hashedPassword) => {
+    return bcrypt.compare(password, hashedPassword);
+};
+
+// 이름으로 사용자 찾기
+exports.findUserByUsername = async (username) => {
+    return db.collection('user').findOne({ username });
 };
 
 // 사용자 등록하기
 exports.insertUser = async ({ username, password }) => {
-    return db.collection('user').insertOne({ username, password });
+    return db.collection('user').insertOne({ 
+        username, 
+        password, 
+        isRead: false 
+    });
 };
 
 // 사용자 이름 업데이트
@@ -42,7 +58,7 @@ exports.updateUserprofileInComments = async (userId, fileKey) => {
     );
 };
 
-// 사용자 id 로 사용자 찾기
+// id 로 사용자 찾기
 exports.findUserByUserId = async (userId) => {
     return db.collection('user').findOne({ _id: new ObjectId(userId) });
 };
@@ -50,7 +66,7 @@ exports.findUserByUserId = async (userId) => {
 // 사용자 위치 찾기
 exports.findUserLocation = async (username, location) => {
     return db.collection('user').findOne({ 
-        username: username, 
+        username, 
         location: { $ne: location }
     });
 };
@@ -93,4 +109,23 @@ exports.updateChatroomNames = async (beforeUsername, newUsername) => {
         { 'name': beforeUsername },
         { $set: { 'name.$': newUsername } }
     );
+};
+
+// 사용자 위치 업데이트 (메세지 알람에 사용)
+exports.updateLocation = async (req, location, isRead) => {
+    if (req.user) {
+        if (isRead !== undefined) {
+            await db.collection('user').updateOne(
+                { _id: req.user._id },
+                { $set: { location: location, isRead: isRead } }
+            );
+        } else {
+            await db.collection('user').updateOne(
+                { _id: req.user._id },
+                { $set: { location: location } }
+            );
+        }
+        return isRead !== undefined ? isRead : req.user.isRead; // 최신 isRead 반환
+    }
+    return true;
 };

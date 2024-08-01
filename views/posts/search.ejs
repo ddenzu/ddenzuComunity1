@@ -16,12 +16,12 @@
             <%for (let i=0; i<글목록.length; i++){ %>
                 <div class="white-bg">
                     <div class="list-box">
-                        <a href="/detail/<%= 글목록[i]._id %>" aria-label="게시물 세부사항 페이지로 이동">
+                        <a href="/posts/<%= 글목록[i]._id %>" aria-label="게시물 세부사항 페이지로 이동">
                             <img class="list-left" src='/image/dinosaur.webp' onerror="this.src='/image/dinosaur.webp'" 
                             alt="썸네일" loading="lazy" />
                         </a>
                         <h4 class="list-right">
-                            <a href="/detail/<%= 글목록[i]._id %>" aria-label="게시물 세부사항 페이지로 이동"><%= 글목록[i].title %></a>
+                            <a href="/posts/<%= 글목록[i]._id %>" aria-label="게시물 세부사항 페이지로 이동"><%= 글목록[i].title %></a>
                             <span class="delete" data-id="<%= 글목록[i]._id %>">
                                 <ion-icon style="font-size: 20px;" name="trash-outline"
                                 data-id="<%= 글목록[i]._id %>"></ion-icon>
@@ -47,7 +47,7 @@
         document.addEventListener('DOMContentLoaded', async function() {
             const urlArray = '<%= thumbailUrls %>'.split(',');
             try {
-                const response = await fetch('/optimize/thumbnails', {
+                const response = await fetch('/posts/optimize-thumbnails', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(urlArray)

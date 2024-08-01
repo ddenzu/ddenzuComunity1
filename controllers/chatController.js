@@ -1,8 +1,9 @@
 const chatModel = require('../models/chatModel');
 const userModel = require('../models/userModel');
 const serverError = require('../utils/error');
-const updateLocation = require('../utils/location.js')
+const getCounterpart = require('../utils/counterpart.js')
 const dateFormat1 = require("./../public/time.js");
+const { ObjectId } = require('mongodb');
 
 exports.postMessage = async (req, res) => {
     try {
@@ -10,14 +11,14 @@ exports.postMessage = async (req, res) => {
             return res.status(400).send("메세지 내용이 없음");
         }
         const messageData = {
-            parent: req.body.parent, // 채팅방의 id
+            parent: req.params.chatroomId, 
             content: req.body.content,
-            userid: req.user._id, // 채팅 발신자 id
+            userid: req.user._id, 
             date: dateFormat1.dateFormat(new Date()),
         };
         const result = await chatModel.insertMessage(messageData);
         if (result) {
-            const receiver = await chatModel.findReceiver(req.body.parent, req.user.username);
+            const receiver = await chatModel.findReceiver(req.params.chatroomId, req.user.username);
             if (await userModel.findUserLocation(receiver[0], "chatroom")) { // 수신자 위치가 챗룸이 아니면
                 await chatModel.updateUserReadStatus(receiver[0], false); // 메세지 안읽음 처리
             }
@@ -37,11 +38,11 @@ exports.getMessages = (req, res) => {
         "Cache-Control": "no-cache",
         "X-Accel-Buffering": "no",
     });
-    chatModel.findMessages(req.params.id).then((result) => {
+    chatModel.findMessages(req.params.chatroomId).then((result) => {
         res.write('event: test\n');
         res.write('data: ' + JSON.stringify(result) + '\n\n');
     });
-    const changeStream = chatModel.watchMessages(req.params.id);
+    const changeStream = chatModel.watchMessages(req.params.chatroomId);
     changeStream.on('change', result => {
         var 추가된문서 = [result.fullDocument];
         res.write('event: test\n');
@@ -51,16 +52,16 @@ exports.getMessages = (req, res) => {
 
 exports.deleteChatroom = async (req, res) => {
     try {
-        if (!req.body.삭제id) {
+        if (!req.params.chatroomId) {
             return res.status(400).send('삭제할 채팅방의 ID가 존재하지 않음');
         }
         await Promise.all([
-            chatModel.deleteChatroom(req.body.삭제id),
-            chatModel.deleteMessages(req.body.삭제id)
+            chatModel.deleteChatroom(req.params.chatroomId),
+            chatModel.deleteMessages(req.params.chatroomId)
         ]);
         const chatroomList = await chatModel.findChatrooms(req.user._id);
         const isRead = req.user ? req.user.isRead : true;
-        const counterpart = chatModel.getCounterpart(chatroomList, req.user.username);
+        const counterpart = getCounterpart(chatroomList, req.user.username);
         return res.render('chat/chat.ejs', { data: chatroomList, cur: req.user._id, arrow: 0, counterpart, isRead });
     } catch (err) {
         serverError(err, res);
@@ -86,9 +87,9 @@ exports.startChat = async (req, res) => {
         const [chatroomList, curCounterpart, isRead] = await Promise.all([
             chatModel.findChatrooms(req.user._id),
             chatModel.findChatroom([req.user.username, req.query.name]),
-            updateLocation(req, 'chatroom', true)
+            userModel.updateLocation(req, 'chatroom', true)
         ]);
-        const counterpart = chatModel.getCounterpart(chatroomList, req.user.username);
+        const counterpart = getCounterpart(chatroomList, req.user.username);
         return res.render('chat/chat.ejs', { data: chatroomList, cur: req.user._id, arrow: curCounterpart._id, counterpart, isRead });
     } catch (err) {
         serverError(err, res);
@@ -98,10 +99,10 @@ exports.startChat = async (req, res) => {
 exports.getChatroom = async (req, res) => {
     try {
         const [isRead, chatroomList] = await Promise.all([
-            updateLocation(req, 'chatroom', true),
+            userModel.updateLocation(req, 'chatroom', true),
             chatModel.findChatrooms(req.user._id)
         ]);
-        const counterpart = chatModel.getCounterpart(chatroomList, req.user.username);
+        const counterpart = getCounterpart(chatroomList, req.user.username);
         return res.render('chat/chat.ejs', { data: chatroomList, cur: req.user._id, arrow: 0, counterpart, isRead });
     } catch (err) {
         serverError(err, res);

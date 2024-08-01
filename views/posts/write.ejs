@@ -47,18 +47,18 @@
               return;
             }
             try {
-                const response = await fetch('/write', {
+                const response = await fetch('/posts', {
                     method: 'POST',
                     body: formData 
                 });
                 if (response.ok) {
-                    window.location.replace('/list/1');
+                    window.location.replace('/posts/page/1');
                     return
                 } else if(response.status == 400){
                     alert("제목을 20글자 이하로 지정해주세요.")
                 } else if(response.status == 401){
                     if (confirm('게시글 작성을 위해 로그인 페이지로 이동하시겠습니까?')) {
-                        window.location.replace('/log');
+                        window.location.replace('/users/login');
                     }
                 } else if(response.status == 500){
                     alert('서버 오류가 발생했습니다.');

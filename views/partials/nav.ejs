@@ -17,14 +17,14 @@
                 </a>
             </h2>
             <nav class="navigation">
-                <a href="/mypage" aria-label="마이 페이지로 이동">MYPAGE</a>
+                <a href="/users/mypage" aria-label="마이 페이지로 이동">MYPAGE</a>
                 <% if (!isRead) { %>
                     <a id="chatAlert" href="/chat" aria-label="채팅 페이지로 이동">CHATROOM</a>
                 <% } else { %>
                     <a href="/chat" aria-label="채팅 페이지로 이동">CHATROOM</a>
                 <% } %>
-                <a href="/log" aria-label="로그인 페이지로 이동">LOGIN</a>
-                <a href="/register" aria-label="회원가입 페이지로 이동">REGISTER</a>
+                <a href="/users/login" aria-label="로그인 페이지로 이동">LOGIN</a>
+                <a href="/users/register" aria-label="회원가입 페이지로 이동">REGISTER</a>
             </nav>
         </div> 
     </div>

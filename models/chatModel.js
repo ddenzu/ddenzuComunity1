@@ -8,18 +8,6 @@ connectDB.then((client) => {
     console.log(err);
 });
 
-exports.getCounterpart = (chatrooms, username) => {
-    const counterpart = [];
-    chatrooms.forEach(obj => {
-        obj.name.forEach(nameElement => {
-            if (nameElement !== username) {
-                counterpart.push(nameElement);
-            }
-        });
-    });
-    return counterpart;
-};
-
 exports.insertMessage = (messageData) => {
     return db.collection('message').insertOne(messageData);
 };
@@ -37,31 +25,36 @@ exports.updateUserReadStatus = (receiver, check) => {
     );
 };
 
-exports.findMessages = (parentId) => {
-    return db.collection('message').find({ parent: parentId }).toArray();
+exports.findMessages = (chatroomId) => {
+    return db.collection('message').find({ parent: chatroomId }).toArray();
 };
 
-exports.watchMessages = (parentId) => {
+exports.watchMessages = (chatroomId) => {
     const pipeline = [
-        { $match: { 'fullDocument.parent': parentId } }
+        { $match: { 'fullDocument.parent': chatroomId } }
     ];
     return db.collection('message').watch(pipeline);
 };
 
 exports.deleteChatroom = (chatroomId) => {
-    return db.collection('chatroom').deleteOne({ _id: new ObjectId(chatroomId) });
+    return db.collection('chatroom')
+    .deleteOne({ _id: new ObjectId(chatroomId) });
 };
 
 exports.deleteMessages = (chatroomId) => {
-    return db.collection('message').deleteMany({ parent: chatroomId });
+    return db.collection('message')
+    .deleteMany({ parent: chatroomId });
 };
 
 exports.findChatrooms = (userId) => {
-    return db.collection('chatroom').find({ member: userId }).toArray();
+    return db.collection('chatroom')
+        .find({ member: userId })
+        .toArray();
 };
 
 exports.findChatroom = (usernames) => {
-    return db.collection('chatroom').findOne({ name: { $all: usernames } });
+    return db.collection('chatroom')
+        .findOne({ name: { $all: usernames } });
 };
 
 exports.createChatroom = (roomData) => {

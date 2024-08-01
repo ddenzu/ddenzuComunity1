@@ -25,7 +25,7 @@
     <div class="section">
         <div class="form-box2">
             <div class="form-value">
-                <form id="registerForm" action="/register" method="POST">
+                <form id="registerForm" action="/users/register" method="POST">
                     <h2>REGISTER</h2>
                     <div class="inputbox">
                         <ion-icon name="mail-outline"></ion-icon>
@@ -41,7 +41,7 @@
                         <p style="color: #EFEFEF;">가입하기</p>
                     </button>
                     <div class="register">
-                        <p>가입했으면 <a href="/log" aria-label="로그인 페이지로 이동">
+                        <p>가입했으면 <a href="/users/login" aria-label="로그인 페이지로 이동">
                             로그인하기</a>
                         </p>
                     </div>
@@ -74,14 +74,14 @@
                 password: formData.get('password')
             };
             try {
-                const response = await fetch('/register', {
+                const response = await fetch('/users/register', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
                 });
                 if (response.ok) {
                     alert('가입이 성공적으로 완료되었습니다.');
-                    window.location.replace('/list/1');
+                    window.location.replace('/posts/page/1');
                     return
                 } else if(response.status == 400){
                     alert('아이디 또는 비밀번호는 15글자 이하로 지정해주세요.');

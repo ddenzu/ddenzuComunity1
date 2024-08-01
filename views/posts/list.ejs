@@ -53,7 +53,7 @@
                 <ion-icon style="font-size: 24px;" class="last" name="ellipsis-horizontal-outline"></ion-icon>
             </div>
             <div class="newPost">
-                <a href="/write" aria-label="글쓰기 페이지로 이동">글쓰기✏️</a>
+                <a href="/posts/write" aria-label="글쓰기 페이지로 이동">글쓰기✏️</a>
             </div>
         </div>
         <div class="ccontainer">
@@ -101,8 +101,9 @@
             for (let i=0; i<'<%= 글목록.length %>'; i++){ 
                 document.querySelectorAll('.delete')[i].addEventListener('click', async function(e){
                     if (confirm('정말 삭제하시겠습니까?')==true){
+                        const postId = e.target.dataset.id;
                         try{
-                            const response = await fetch('/posts/?docid=' + e.target.dataset.id, {
+                            const response = await fetch(`/posts/${postId}`, {
                                 method : 'DELETE',
                             })
                             if(response.ok){
@@ -164,12 +165,12 @@
             // -1 페이지로 이동
             $('.back').click(function(){
                 const prevPage = currentPage - 1;
-                window.location.href=`/posts/page/prev/<%= 글목록[글목록.length-글목록.length]._id %>?pageNum=`+ prevPage;
+                window.location.href=`/posts/page/prev/<%= 글목록[0]._id %>?page=`+ prevPage;
             })
             // +1 페이지로 이동
             $('.forward').click(function(){
                 const nextPage = currentPage + 1;
-                window.location.href=`/posts/page/prev/<%= 글목록[글목록.length-1]._id %>?pageNum=`+ nextPage;
+                window.location.href=`/posts/page/next/<%= 글목록[글목록.length-1]._id %>?page=`+ nextPage;
             })
 
             const socket = io();

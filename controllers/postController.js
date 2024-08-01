@@ -1,108 +1,17 @@
 const { ObjectId } = require('mongodb')
 const serverError = require('../utils/error.js')
 const {getThumbnail} = require('../utils/optimizeImg.js');
-const updateLocation = require('../utils/location.js')
 const dateFormat1 = require("./../public/time.js");
 const postModel = require('../models/postModel');
 const userModel = require('../models/userModel');
 const {optimizeThumbnail} = require('../utils/optimizeImg.js');
 
+// 첫 페이지 조회
 exports.redirectFirstPage = (req, res) => {
     res.redirect('/posts/page/1');
 };
 
-exports.getPostsPage = async (req, res) => {
-    try {
-        const postList = await postModel.findPostsByPage(req.params.num);
-        if (!postList || postList.length === 0) {
-            return res.status(404).send("<script>alert('게시글이 존재하지 않습니다.');window.location.replace(`/posts/page/1`)</script>");
-        }
-        const [thumbailUrls, cnt, isRead] = await Promise.all([
-            getThumbnail(postList),
-            postModel.countPosts(),
-            updateLocation(req, 'list'),
-        ]);
-        return res.render('posts/list.ejs', { 글목록: postList, 글수: cnt, 페이지넘버: req.params.num, thumbailUrls, isRead });
-    } catch (err) {
-        serverError(err, res);
-    }
-};
-
-exports.getNextPagePosts = async (req, res) => {
-    try {
-        const postList = await postModel.findNextPagePostsById(req.params.num);
-        if (postList.length === 0) {
-            return res.status(404).send("<script>alert('다음페이지가 존재하지 않습니다.');history.go(-1);</script>");
-        }
-        const pageNumber = req.query.pageNum;
-        const [thumbailUrls, cnt, isRead] = await Promise.all([
-            getThumbnail(postList),
-            postModel.countPosts(),
-            updateLocation(req, 'list'),
-        ]);
-        return res.render('posts/list.ejs', { 글목록: postList, 글수: cnt, 페이지넘버: pageNumber, thumbailUrls, isRead });
-    } catch (err) {
-        serverError(err, res);
-    }
-};
-
-exports.getPrevPagePosts = async (req, res) => {
-    try {
-        const postList = await postModel.findPrevPagePostsById(req.params.num);
-        if (postList.length === 0) {
-            return res.status(404).send("<script>alert('이전페이지가 존재하지 않습니다.');history.go(-1);</script>");
-        }
-        postList.reverse();
-        const pageNumber = req.query.pageNum;
-        const [thumbailUrls, cnt, isRead] = await Promise.all([
-            getThumbnail(postList),
-            postModel.countPosts(),
-            updateLocation(req, 'list'),
-        ]);
-        return res.render('posts/list.ejs', { 글목록: postList, 글수: cnt, 페이지넘버: pageNumber, thumbailUrls, isRead });
-    } catch (err) {
-        serverError(err, res);
-    }
-};
-
-exports.searchPosts = async (req, res) => {
-    try {
-        const postList = await postModel.findPostsBySearch(req.query.value);
-        if (postList.length > 0) {
-            const [isRead, thumbailUrls] = await Promise.all([
-                updateLocation(req, 'list'),
-                getThumbnail(postList),
-            ]);
-            return res.render('posts/search.ejs', { 글목록: postList, thumbailUrls, isRead });
-        }
-        return res.status(404).send("<script>alert('존재하지 않는 글 입니다.');window.location.replace(`/posts/page/1`)</script>");
-    } catch (err) {
-        serverError(err, res);
-    }
-};
-
-exports.deletePost = async (req, res) => {
-    try {
-        const deletePost = await postModel.deletePostByUsername(req.user.username, req.query.docid);
-        if (deletePost.deletedCount > 0) {
-            return res.status(200).send('삭제 완료');
-        } else {
-            return res.status(403).send('본인이 작성한 글이 아님');
-        }
-    } catch (err) {
-        serverError(err, res);
-    }
-};
-
-exports.getWritePage = async (req, res) => {
-    try {
-        const isRead = req.user ? req.user.isRead : true;
-        return res.render('posts/write.ejs', { isRead });
-    } catch (err) {
-        serverError(err, res);
-    }
-};
-
+// 게시물 작성
 exports.createPost = async (req, res) => {
     try {
         if (!req.body.title || !req.body.content) {
@@ -145,10 +54,108 @@ exports.createPost = async (req, res) => {
     }
 };
 
+// 게시물 작성 페이지 조회
+exports.getWritePage = async (req, res) => {
+    try {
+        const isRead = req.user ? req.user.isRead : true;
+        return res.render('posts/write.ejs', { isRead });
+    } catch (err) {
+        serverError(err, res);
+    }
+};
+
+// 게시물 검색
+exports.searchPosts = async (req, res) => {
+    try {
+        const postList = await postModel.findPostsBySearch(req.query.value);
+        if (postList.length > 0) {
+            const [isRead, thumbailUrls] = await Promise.all([
+                userModel.updateLocation(req, 'list'),
+                getThumbnail(postList),
+            ]);
+            return res.render('posts/search.ejs', { 글목록: postList, thumbailUrls, isRead });
+        }
+        return res.status(404).send("<script>alert('존재하지 않는 글 입니다.');window.location.replace(`/posts/page/1`)</script>");
+    } catch (err) {
+        serverError(err, res);
+    }
+};
+
+// 게시물 리스트 페이지 조회
+exports.getPostsPage = async (req, res) => {
+    try {
+        const postList = await postModel.findPostsByPage(req.params.page);
+        if (!postList || postList.length === 0) {
+            return res.status(404).send("<script>alert('게시글이 존재하지 않습니다.');window.location.replace(`/posts/page/1`)</script>");
+        }
+        const [thumbailUrls, cnt, isRead] = await Promise.all([
+            getThumbnail(postList),
+            postModel.countPosts(),
+            userModel.updateLocation(req, 'list'),
+        ]);
+        return res.render('posts/list.ejs', { 글목록: postList, 글수: cnt, 페이지넘버: req.params.page, thumbailUrls, isRead });
+    } catch (err) {
+        serverError(err, res);
+    }
+};
+
+// 게시물 리스트 페이지 + 1
+exports.getNextPagePosts = async (req, res) => {
+    try {
+        const postList = await postModel.findNextPagePostsById(req.params.postId);
+        if (postList.length === 0) {
+            return res.status(404).send("<script>alert('다음페이지가 존재하지 않습니다.');history.go(-1);</script>");
+        }
+        const pageNumber = req.query.page;
+        const [thumbailUrls, cnt, isRead] = await Promise.all([
+            getThumbnail(postList),
+            postModel.countPosts(),
+            userModel.updateLocation(req, 'list'),
+        ]);
+        return res.render('posts/list.ejs', { 글목록: postList, 글수: cnt, 페이지넘버: pageNumber, thumbailUrls, isRead });
+    } catch (err) {
+        serverError(err, res);
+    }
+};
+
+// 게시물 리스트 페이지 - 1
+exports.getPrevPagePosts = async (req, res) => {
+    try {
+        const postList = await postModel.findPrevPagePostsById(req.params.postId);
+        if (postList.length === 0) {
+            return res.status(404).send("<script>alert('이전페이지가 존재하지 않습니다.');history.go(-1);</script>");
+        }
+        postList.reverse();
+        const pageNumber = req.query.page;
+        const [thumbailUrls, cnt, isRead] = await Promise.all([
+            getThumbnail(postList),
+            postModel.countPosts(),
+            userModel.updateLocation(req, 'list'),
+        ]);
+        return res.render('posts/list.ejs', { 글목록: postList, 글수: cnt, 페이지넘버: pageNumber, thumbailUrls, isRead });
+    } catch (err) {
+        serverError(err, res);
+    }
+};
+
+// 썸네일 최적화 요청
+exports.optimizeThumbnails = async (req, res) => {
+    try{
+        const result = await optimizeThumbnail(req.body)
+        if(result === 0){
+            return res.status(404).send('썸네일 최적화 실패')
+        }
+        return res.status(200).json(result)
+    } catch(err) {
+        serverError(err, res)
+    }
+};
+
+// 게시물 업데이트 페이지 조회
 exports.getEditPage = async (req, res) => {
     try {
         const isRead = req.user ? req.user.isRead : true;
-        const editPost = await postModel.findPostByPostId(req.params.id);
+        const editPost = await postModel.findPostByPostId(req.params.postId);
         if (!editPost) {
             return res.status(404).send('게시글이 db에 존재하지 않음');
         }
@@ -158,38 +165,18 @@ exports.getEditPage = async (req, res) => {
     }
 };
 
-exports.updatePost = async (req, res) => {
-    try {
-        if (req.body.title.length > 20) {
-            return res.status(400).send('제목이 20자 초과임');
-        }
-        const originalWriter = JSON.stringify(req.body.userId);
-        if (originalWriter === JSON.stringify(req.user._id)) {
-            const updatedPost = {
-                title: req.body.title,
-                content: req.body.content
-            };
-            await postModel.updatePostByPostId(req.body.id, updatedPost);
-            return res.redirect('/list/1');
-        } else {
-            return res.status(403).send("본인이 작성한 글이 아님");
-        }
-    } catch (err) {
-        serverError(err, res);
-    }
-};
-
+// 게시물 조회
 exports.getPostDetail = async (req, res) => {
     try {
-        const result = await postModel.findPostByPostId(req.params.id);
+        const result = await postModel.findPostByPostId(req.params.postId);
         if (!result) {
             return res.status(404).send("<script>alert('게시글이 존재하지 않습니다.');window.location.replace(`/list/1`)</script>");
         }
         const [comments, result2, reComments, isRead] = await Promise.all([
-            postModel.findCommentsByPostId(req.params.id),
+            postModel.findCommentsByPostId(req.params.postId),
             userModel.findUserByUserId(result.작성자_id),
-            postModel.findReCommentsByPostId(req.params.id),
-            updateLocation(req, 'detail')
+            postModel.findReCommentsByPostId(req.params.postId),
+            userModel.updateLocation(req, 'detail')
         ]);
         const imageUrl = Array.isArray(result.imgName) ? result.imgName : (result.imgName ? [result.imgName] : []);
         const vidUrl = Array.isArray(result.vidName) ? result.vidName : (result.vidName ? [result.vidName] : []);
@@ -209,13 +196,60 @@ exports.getPostDetail = async (req, res) => {
     }
 };
 
+// 게시물 삭제
+exports.deletePost = async (req, res) => {
+    try {
+        const deletePost = await postModel.deletePostByUsername(req.user.username, req.params.postId);
+        if (deletePost.deletedCount > 0) {
+            return res.status(200).send('삭제 완료');
+        } else {
+            return res.status(403).send('본인이 작성한 글이 아님');
+        }
+    } catch (err) {
+        serverError(err, res);
+    }
+};
+
+// 게시물 업데이트
+exports.updatePost = async (req, res) => {
+    try {
+        if (req.body.title.length > 20) {
+            return res.status(400).send('제목이 20자 초과임');
+        }
+        const originalWriter = JSON.stringify(req.body.userId);
+        if (originalWriter === JSON.stringify(req.user._id)) {
+            const updatedPost = {
+                title: req.body.title,
+                content: req.body.content
+            };
+            await postModel.updatePostByPostId(req.params.postId, updatedPost);
+            return res.status(200).send('게시물 수정 성공');
+        } else {
+            return res.status(403).send("본인이 작성한 글이 아님");
+        }
+    } catch (err) {
+        serverError(err, res);
+    }
+};
+
+// 게시물의 좋아요 + 1
+exports.updateLike = async (req, res) => {
+    try {
+        await postModel.incrementLike(req.params.postId);
+        return res.status(200).send('좋아요 + 1 성공');
+    } catch (err) {
+        serverError(err, res);
+    }
+};
+
+// 게시물에 댓글 작성
 exports.postComment = async (req, res) => {
     try {
         if (!req.body.content) {
             return res.status(400).send("댓글내용이 존재하지 않음");
         }
         const commentData = {
-            postId: new ObjectId(req.body.parent),
+            postId: new ObjectId(req.params.postId),
             content: req.body.content,
             username: req.user.username,
             userId: req.user._id,
@@ -229,14 +263,15 @@ exports.postComment = async (req, res) => {
     }
 };
 
+// 댓글에 대댓글 작성
 exports.postReComment = async (req, res) => {
     try {
         if (!req.body.content) {
             return res.status(400).send("대댓글내용이 존재하지 않음");
         }
         const recommentData = {
-            postId: new ObjectId(req.body.parent),
-            parentId: new ObjectId(req.body.reparent),
+            postId: new ObjectId(req.params.postId),
+            parentId: new ObjectId(req.body.parentCommentId),
             content: req.body.content,
             username: req.user.username,
             userId: req.user._id,
@@ -250,12 +285,11 @@ exports.postReComment = async (req, res) => {
     }
 };
 
+// 댓글 삭제
 exports.deleteComment = async (req, res) => {
     try {
-        const compare1 = JSON.stringify(req.user._id);
-        const compare2 = JSON.stringify(req.body.userId);
-        if (compare1 == compare2) {
-            const deletedComment = await postModel.deleteCommentByCommentId(req.body.id);
+        if (req.user._id.equals(req.body.userId)) {
+            const deletedComment = await postModel.deleteCommentByCommentId(req.body.commentId);
             if (deletedComment) {
                 return res.status(200).send('댓글 삭제 성공');
             } else {
@@ -266,27 +300,5 @@ exports.deleteComment = async (req, res) => {
         }
     } catch (err) {
         serverError(err, res);
-    }
-};
-
-exports.updateLike = async (req, res) => {
-    try {
-        await postModel.incrementLike(req.body.postid);
-        return res.status(200).send('좋아요 + 1 성공');
-    } catch (err) {
-        serverError(err, res);
-    }
-};
-
-// 썸네일 최적화 api
-exports.optimizeThumbnails = async (req, res) => {
-    try{
-        const result = await optimizeThumbnail(req.body)
-        if(result === 0){
-            return res.status(404).send('썸네일 최적화 실패')
-        }
-        return res.status(200).json(result)
-    } catch(err) {
-        serverError(err, res)
     }
 };

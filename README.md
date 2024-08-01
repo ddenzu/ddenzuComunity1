@@ -10,6 +10,9 @@ Node.js + Express + EJS + MongoDB 커뮤니티 웹사이트
 ### 🌎 배포 주소
  - https://www.ddenzu.store/
 
+### 🌎 API 문서화
+ - https://ddenzucomunity-api-ddenzu.koyeb.app/swagger/
+
 ### 🕰️ 개발 시작일
  - 23.10.25일 
 
@@ -30,7 +33,7 @@ Node.js + Express + EJS + MongoDB 커뮤니티 웹사이트
 #### 회원가입
 - 아이디 중복 체크
 - 아이디, 비밀번호 포맷 체크
-- bcrypt 를 사용하여 비밀번호를 해싱하여 DB 에 저장
+- bcrypt 를 사용하여 비밀번호를 해싱하여 저장
 #### 마이페이지
 - 닉네임 변경
 - 프로필 사진 변경
@@ -45,10 +48,10 @@ Node.js + Express + EJS + MongoDB 커뮤니티 웹사이트
 - YouTube 링크를 동영상으로 변환, 그 외의 링크는 일반 하이퍼링크로 변환
 - 댓글과 대댓글을 작성, 삭제
 - 게시물 좋아요 카운트
-- 유저의 프로필 사진을 클릭 시 유저와 채팅 가능
+- 유저의 프로필 사진을 클릭 시 유저와 채팅
 #### 채팅룸
 - MongoDB 의 Change Stream 을 사용하여 실시간 채팅 구현
-- 채팅방 리스트 중 한 곳을 선택하여 해당 유저와 채팅 진행 가능
+- 채팅방 리스트 중 한 곳을 선택하여 해당 유저와 채팅 진행
 - 채팅방 삭제 기능
 ## 🌎 배포
 #### AWS

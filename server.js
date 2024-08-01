@@ -37,6 +37,6 @@ app.use('/users', require('./routes/users.js'))
 app.use('/posts', require('./routes/posts.js'))
 app.use('/chat', require('./routes/chat.js'))
 
-app.get('/', (req, res) => {
+app.get('/*', (req, res) => {
     res.redirect('/posts/page/1')
 })

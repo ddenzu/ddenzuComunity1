@@ -71,7 +71,7 @@ exports.deleteChatroom = async (req, res) => {
 exports.startChat = async (req, res) => {
     try {
         if (req.query.name == req.user.username) {
-            return res.send("<script>window.location.replace('/chat')</script>");
+            return res.redirect('/chat');
         }
         const result = await chatModel.findChatroom([req.user.username, req.query.name]);
         if (result == null) {

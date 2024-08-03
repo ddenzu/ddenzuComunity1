@@ -75,7 +75,7 @@ exports.searchPosts = async (req, res) => {
             ]);
             return res.render('posts/search.ejs', { 글목록: postList, thumbailUrls, isRead });
         }
-        return res.status(404).send("<script>alert('존재하지 않는 글 입니다.');window.location.replace(`/posts/page/1`)</script>");
+        return res.status(404).send("<script>alert('존재하지 않는 글 입니다.');window.location.replace(`/posts/pages/1`)</script>");
     } catch (err) {
         serverError(err, res);
     }
@@ -132,7 +132,7 @@ exports.getPostDetail = async (req, res) => {
     try {
         const result = await postModel.findPostByPostId(req.params.postId);
         if (!result) {
-            return res.status(404).send("<script>alert('게시글이 존재하지 않습니다.');window.location.replace(`/list/1`)</script>");
+            return res.status(404).send("<script>alert('게시글이 존재하지 않습니다.');window.location.replace(`/posts/pages/1`)</script>");
         }
         const [comments, result2, reComments, isRead] = await Promise.all([
             postModel.findCommentsByPostId(req.params.postId),

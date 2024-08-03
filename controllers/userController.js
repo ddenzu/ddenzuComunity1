@@ -68,7 +68,7 @@ exports.logoutUser = (req, res) => {
                 serverError(err, res);
                 return;
             }
-            return res.redirect('/posts/page/1');
+            return res.redirect('/posts/pages/1');
         });
     } catch (err) {
         serverError(err, res);

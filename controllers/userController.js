@@ -91,21 +91,21 @@ exports.getMyPage = async (req, res) => {
 // 사용자 이름 업데이트
 exports.updateUsername = async (req, res) => {
     try {
-        if (req.body.name.length > 15) {
+        if (req.body.username.length > 15) {
             return res.status(400).send('아이디가 15글자를 초과');
         }
-        const result = await userModel.findUserByUsername(req.body.name);
+        const result = await userModel.findUserByUsername(req.body.username);
         if (result) {
             return res.status(409).send("이미 존재하는 아이디");
         }
         const beforeUsername = req.user.username;
-        await userModel.updateUsername(req.user._id, req.body.name);
+        await userModel.updateUsername(req.user._id, req.body.username);
         await Promise.all([
-            userModel.updateUsernamesInComments(req.user._id, req.body.name),
-            userModel.updatePostsUsername(req.user._id, req.body.name),
-            userModel.updateChatroomReceiver(beforeUsername, req.body.name),
-            userModel.updateChatroomSender(beforeUsername, req.body.name),
-            userModel.updateChatroomNames(beforeUsername, req.body.name),
+            userModel.updateUsernamesInComments(req.user._id, req.body.username),
+            userModel.updatePostsUsername(req.user._id, req.body.username),
+            userModel.updateChatroomReceiver(beforeUsername, req.body.username),
+            userModel.updateChatroomSender(beforeUsername, req.body.username),
+            userModel.updateChatroomNames(beforeUsername, req.body.username),
         ]);
         return res.status(200).send("닉네임 변경 성공");
     } catch (err) {

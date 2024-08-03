@@ -34,7 +34,7 @@
             <p class="username"><%= 아이디.username %></p>
             <ion-icon id="beforeChange2" class="edit-icon" name="create-outline"></ion-icon>
             <form class="changeName changeNameVisible" id="changeNameForm" method="POST" 
-            action="/users/mypage/name?_method=PUT">
+            action="/users/mypage/username?_method=PUT">
                 <input id="newNameInput" type="text" name="name" placeholder="새로운 닉네임을 작성해주세요.">
                 <button type="submit" aria-label="닉네임 변경">닉네임 적용</button>
             </form>
@@ -73,10 +73,10 @@
                 return
             }
             try {
-                const response = await fetch('/users/mypage/name?_method=PUT', {
+                const response = await fetch('/users/mypage/username?_method=PUT', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name: newName })
+                    body: JSON.stringify({ username: newName })
                 });
                 if (response.ok) {
                     alert('닉네임이 성공적으로 변경되었습니다.');

@@ -18,7 +18,7 @@
                 <p class="date-p"><%= 글목록.date %></p>
             </h4>
             <p>
-                <a class="profile-image-box" href="/chat/matches?name=<%= 글목록.작성자 %>&id=<%= 글목록.작성자_id %>">
+                <a class="profile-image-box" href="/chat/start?name=<%= 글목록.작성자 %>&id=<%= 글목록.작성자_id %>">
                     <img src="https://ddenzubucket.s3.ap-northeast-2.amazonaws.com/<%= 프로필 %>" 
                     alt="작성자의 프로필 사진" loading="lazy" onerror="this.src='/image/dinosaur.webp'"/>
                     <%= 글목록.작성자 %>
@@ -90,7 +90,7 @@
                         <div class="profile">
                             <div class="profileImage" data-name="<%= 댓글목록[i].username %>" data-id="<%= 댓글목록[i].userId %>">
                                 <button style="background: transparent; border: none;" aria-label="<%= 댓글목록[i].username %> 와 채팅">
-                                    <a href="/chat/matches?name=<%= 댓글목록[i].username %>&id=<%= 댓글목록[i].userId %>">
+                                    <a href="/chat/start?name=<%= 댓글목록[i].username %>&id=<%= 댓글목록[i].userId %>">
                                         <img class="comment-profile-image" loading="lazy" alt="댓글 작성자의 프로필 사진"
                                         src="https://ddenzubucket.s3.ap-northeast-2.amazonaws.com/<%= 댓글목록[i].userprofile %>"
                                         onerror="this.src='/image/dinosaur.webp'" />
@@ -121,7 +121,7 @@
                                 <%if(a==b){%>
                                     <div class="reComment-box">
                                         <div style="display: flex; flex-direction: column;">
-                                            <a href="/chat/matches?name=<%= 대댓글[j].username %>&id=<%= 대댓글[j].userId %>" aria-label="<%= 대댓글[j].username %> 와 채팅">
+                                            <a href="/chat/start?name=<%= 대댓글[j].username %>&id=<%= 대댓글[j].userId %>" aria-label="<%= 대댓글[j].username %> 와 채팅">
                                                 <img class="comment-profile-image" style="padding-left: 8px;" loading="lazy" alt="대댓글 작성자의 프로필 사진" 
                                                 src="https://ddenzubucket.s3.ap-northeast-2.amazonaws.com/<%= 대댓글[j].userprofile %>"
                                                 onerror="this.src='/image/dinosaur.webp'" />
@@ -261,7 +261,7 @@
 
         // 좋아요 버튼 클릭 시
         $(document).on("click","span[name='like']", async function(e){
-            const response = await fetch(`/posts/${curPostId}/like`, {
+            const response = await fetch(`/posts/${curPostId}/thumbs-up`, {
                 method: 'PUT',
                 headers: {'Content-Type': 'application/json' }
             })

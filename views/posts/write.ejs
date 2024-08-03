@@ -52,7 +52,7 @@
                     body: formData 
                 });
                 if (response.ok) {
-                    window.location.replace('/posts/page/1');
+                    window.location.replace('/posts/pages/1');
                     return
                 } else if(response.status == 400){
                     alert("제목을 20글자 이하로 지정해주세요.")

@@ -8,7 +8,7 @@ const {optimizeThumbnail} = require('../utils/optimizeImg.js');
 
 // 첫 페이지 조회
 exports.redirectFirstPage = (req, res) => {
-    res.redirect('/posts/page/1');
+    res.redirect('/posts/pages/1');
 };
 
 // 게시물 작성
@@ -84,55 +84,17 @@ exports.searchPosts = async (req, res) => {
 // 게시물 리스트 페이지 조회
 exports.getPostsPage = async (req, res) => {
     try {
-        const postList = await postModel.findPostsByPage(req.params.page);
+        const page = parseInt(req.params.page, 10) || 1;
+        const postList = await postModel.findPostsByPage(page);
         if (!postList || postList.length === 0) {
-            return res.status(404).send("<script>alert('게시글이 존재하지 않습니다.');window.location.replace(`/posts/page/1`)</script>");
+            return res.status(404).send("<script>alert('게시글이 존재하지 않습니다.');history.go(-1);</script>");
         }
         const [thumbailUrls, cnt, isRead] = await Promise.all([
             getThumbnail(postList),
             postModel.countPosts(),
             userModel.updateLocation(req, 'list'),
         ]);
-        return res.render('posts/list.ejs', { 글목록: postList, 글수: cnt, 페이지넘버: req.params.page, thumbailUrls, isRead });
-    } catch (err) {
-        serverError(err, res);
-    }
-};
-
-// 게시물 리스트 페이지 + 1
-exports.getNextPagePosts = async (req, res) => {
-    try {
-        const postList = await postModel.findNextPagePostsById(req.params.postId);
-        if (postList.length === 0) {
-            return res.status(404).send("<script>alert('다음페이지가 존재하지 않습니다.');history.go(-1);</script>");
-        }
-        const pageNumber = req.query.page;
-        const [thumbailUrls, cnt, isRead] = await Promise.all([
-            getThumbnail(postList),
-            postModel.countPosts(),
-            userModel.updateLocation(req, 'list'),
-        ]);
-        return res.render('posts/list.ejs', { 글목록: postList, 글수: cnt, 페이지넘버: pageNumber, thumbailUrls, isRead });
-    } catch (err) {
-        serverError(err, res);
-    }
-};
-
-// 게시물 리스트 페이지 - 1
-exports.getPrevPagePosts = async (req, res) => {
-    try {
-        const postList = await postModel.findPrevPagePostsById(req.params.postId);
-        if (postList.length === 0) {
-            return res.status(404).send("<script>alert('이전페이지가 존재하지 않습니다.');history.go(-1);</script>");
-        }
-        postList.reverse();
-        const pageNumber = req.query.page;
-        const [thumbailUrls, cnt, isRead] = await Promise.all([
-            getThumbnail(postList),
-            postModel.countPosts(),
-            userModel.updateLocation(req, 'list'),
-        ]);
-        return res.render('posts/list.ejs', { 글목록: postList, 글수: cnt, 페이지넘버: pageNumber, thumbailUrls, isRead });
+        return res.render('posts/list.ejs', { 글목록: postList, 글수: cnt, 페이지넘버: page, thumbailUrls, isRead });
     } catch (err) {
         serverError(err, res);
     }

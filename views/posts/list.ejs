@@ -31,7 +31,7 @@
                         <div>
                             <button class="btn" data-id="<%= 글목록[i].작성자_id %>" aria-label="<%= 글목록[i].작성자 %> 와 채팅"
                                 data-name="<%= 글목록[i].작성자 %>">
-                                <a class="btn-a" href="/chat/matches?name=<%= 글목록[i].작성자 %>&id=<%= 글목록[i].작성자_id %>">채팅하기</a>
+                                <a class="btn-a" href="/chat/start?name=<%= 글목록[i].작성자 %>&id=<%= 글목록[i].작성자_id %>">채팅하기</a>
                             </button>
                         </div>
                     </h4>
@@ -151,26 +151,29 @@
             $('.page-btn').click(function(e){
                 $('.page-btn').removeClass('nowPage')
                 const num = e.target.dataset.num;
-                window.location.href=`/posts/page/${num}`;
+                window.location.href=`/posts/pages/${num}`;
             });
             // 첫 번째 페이지로 이동
             $('.first').click(function(){
-                window.location.href=`/posts/page/1`;
+                window.location.href=`/posts/pages/1`;
             })
             // 마지막 페이지로 이동
             $('.last').click(function(){
                 const lastPage = Math.ceil(totalPosts/5)
-                window.location.href=`/posts/page/${lastPage}`;
+                window.location.href=`/posts/pages/${lastPage}`;
             })  
             // -1 페이지로 이동
             $('.back').click(function(){
-                const prevPage = currentPage - 1;
-                window.location.href=`/posts/page/prev/<%= 글목록[0]._id %>?page=`+ prevPage;
+                let prevPage = currentPage - 1;
+                if (prevPage <= 0){
+                    prevPage = 1;
+                }
+                window.location.href=`/posts/pages/${prevPage}`;
             })
             // +1 페이지로 이동
             $('.forward').click(function(){
                 const nextPage = currentPage + 1;
-                window.location.href=`/posts/page/next/<%= 글목록[글목록.length-1]._id %>?page=`+ nextPage;
+                window.location.href=`/posts/pages/${nextPage}`;
             })
 
             const socket = io();

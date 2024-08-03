@@ -88,7 +88,7 @@
             eventSource.close()
           }
           var currentUser  = '<%= cur %>';
-          eventSource = new EventSource(`/chat/messages/${curChatroomId}`); // get요청
+          eventSource = new EventSource(`/chat/${curChatroomId}/messages`); // get요청
           eventSource.addEventListener('test', function(e){
             var messages = JSON.parse(e.data);
             messages.forEach(function(message) {
@@ -123,7 +123,7 @@
                 content : messageContent,
             }
             try {
-              const response = await fetch(`/chat/messages/${curChatroomId}`, {
+              const response = await fetch(`/chat/${curChatroomId}/messages`, {
                 method: 'POST',
                 headers : { 'Content-Type' : 'application/json' },
                 body : JSON.stringify(messageData)

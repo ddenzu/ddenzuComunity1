@@ -28,24 +28,6 @@ exports.findPostsByPage = async (page) => {
     .toArray();
 };
 
-// 다음 페이지 게시물 찾기
-exports.findNextPagePostsById = async (postId) => {
-    return db.collection('post')
-    .find({ _id: { $lt: new ObjectId(postId) } })
-    .sort({ _id: -1 })
-    .limit(5)
-    .toArray();
-};
-
-// 이전 페이지 게시물 찾기
-exports.findPrevPagePostsById = async (postId) => {
-    return db.collection('post')
-    .find({ _id: { $gt: new ObjectId(postId) } })
-    .sort({ _id: 1 }) 
-    .limit(5)
-    .toArray();
-};
-
 // 게시물 찾기
 exports.findPostByPostId = async (postId) => {
     return db.collection('post')

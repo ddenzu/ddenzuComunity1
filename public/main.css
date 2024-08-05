@@ -1176,6 +1176,11 @@
     border: 1px #494a51 solid;
     background: transparent;
   }
+  .highlight {
+    background-color: yellow;
+    color:#121212;
+    border-radius: 2px;
+  }
   @media (min-width: 1024px) {
     .fix {
       background-color: #1c1c1c;

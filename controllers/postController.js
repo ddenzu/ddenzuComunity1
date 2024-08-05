@@ -73,7 +73,7 @@ exports.searchPosts = async (req, res) => {
                 userModel.updateLocation(req, 'list'),
                 getThumbnail(postList),
             ]);
-            return res.render('posts/search.ejs', { 글목록: postList, thumbailUrls, isRead });
+            return res.render('posts/search.ejs', { 글목록: postList, thumbailUrls, keyword: req.query.value, isRead });
         }
         return res.status(404).send("<script>alert('존재하지 않는 글 입니다.');window.location.replace(`/posts/pages/1`)</script>");
     } catch (err) {

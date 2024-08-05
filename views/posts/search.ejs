@@ -21,7 +21,7 @@
                             alt="썸네일" loading="lazy" />
                         </a>
                         <h4 class="list-right">
-                            <a href="/posts/<%= 글목록[i]._id %>" aria-label="게시물 세부사항 페이지로 이동"><%= 글목록[i].title %></a>
+                            <a class="post-title" href="/posts/<%= 글목록[i]._id %>" aria-label="게시물 세부사항 페이지로 이동"><%= 글목록[i].title %></a>
                             <span class="delete" data-id="<%= 글목록[i]._id %>">
                                 <ion-icon style="font-size: 20px;" name="trash-outline"
                                 data-id="<%= 글목록[i]._id %>"></ion-icon>
@@ -43,9 +43,19 @@
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
     <script>
-        // 썸네일 이미지 최적화 api 요청
         document.addEventListener('DOMContentLoaded', async function() {
             const urlArray = '<%= thumbailUrls %>'.split(',');
+            const keyword = '<%= keyword %>';
+            // 검색어 강조 효과
+            if (keyword) {
+                const titles = document.querySelectorAll('.post-title');
+                console.log(titles)
+                titles.forEach(title => {
+                    const regex = new RegExp(`(${keyword})`, 'gi');
+                    title.innerHTML = title.textContent.replace(regex, '<span class="highlight">$1</span>');
+                });
+            }
+            // 썸네일 이미지 최적화 api 요청
             try {
                 const response = await fetch('/posts/optimize-thumbnails', {
                     method: 'POST',

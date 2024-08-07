@@ -10,8 +10,11 @@ Node.js + Express + EJS + MongoDB 커뮤니티 웹사이트
 ### 🌎 배포 주소
  - https://www.ddenzu.store/
 
-### 🌎 API 문서화
+### 📋 API 문서화
  - https://ddenzucomunity-api-ddenzu.koyeb.app/swagger/
+
+### 📃 세부 내용
+ - https://tidal-sky-46b.notion.site/Seung-Ju-Kim-ce8841c405754d8da3b302c3e7abfbc8?p=022199140ed443ce8e28c54f87803f57&pm=c
 
 ### 🕰️ 개발 시작일
  - 23.10.25일 

@@ -23,11 +23,12 @@ passport.use(new LocalStrategy(async (username, password, cb) => {
     }
 })) 
 
+// 세션 생성
 passport.serializeUser((user, done) => {
-    process.nextTick(() => { // 비동기적으로 실행
+    process.nextTick(() => { 
         done(null, { id: user._id, username: user.username })
     })
-}) // 로그인할 때 세션만들고 쿠키주기
+})
 
 passport.deserializeUser(async (user, done) => {
     const result = await db.collection('user').findOne({ _id: new ObjectId(user.id) })
@@ -35,6 +36,6 @@ passport.deserializeUser(async (user, done) => {
     process.nextTick(() => {
         return done(null, result)
     })
-}) // 유저가 보낸 쿠키를 분석(세션데이터랑 비교)하는 함수 , 이제 api 에서 (요청.user) 사용가능
+}) // 유저 쿠키를 분석, api 에서 (req.user) 사용가능
 
 module.exports = passport;

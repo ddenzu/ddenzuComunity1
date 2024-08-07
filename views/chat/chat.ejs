@@ -149,8 +149,7 @@
           if (confirm('정말 삭제하시겠습니까?')==true){
             try{
               const response = await fetch(`/chat/${chatroomId}`, {
-                method : 'DELETE',
-                headers : { 'Content-Type' : 'application/json' }
+                method : 'DELETE'
               })
               if(response.ok){
                 location.replace('/chat')

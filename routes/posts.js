@@ -13,7 +13,7 @@ router.get('/pages/:page', postController.getPostsPage); // 게시물 리스트 
 router.get('/:postId/edit', verify, postController.getEditPage); // 게시물 업데이트 페이지 조회
 router.get('/:postId', postController.getPostDetail); // 게시물 조회
 router.delete('/:postId', verify, postController.deletePost); // 게시물 삭제
-router.put('/:postId', postController.updatePost); // 게시물 업데이트
+router.put('/:postId', verify, postController.updatePost); // 게시물 업데이트
 router.put('/:postId/thumbs-up', postController.updateLike); // 게시물의 좋아요 + 1
 router.post('/:postId/comments', verify, postController.postComment); // 게시물에 댓글 작성
 router.post('/:postId/recomments', verify, postController.postReComment); // 댓글에 대댓글 작성
